@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>$id$</id>
+    <version>$version$</version>
+    <title>ReportPortal SpecFlow</title>
+    <authors>Nikolay Borisenko</authors>
+    <owners>$author$</owners>
+    <licenseUrl>https://raw.githubusercontent.com/reportportal/agent-net-specflow/master/LICENSE</licenseUrl>
+    <projectUrl>https://github.com/reportportal/agent-net-specflow</projectUrl>
+    <iconUrl>https://reportportal.github.io/img/rp_logo.png</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Report Portal SpecFlow agent</description>
+    <copyright>Copyright 2016</copyright>
+    <tags>reportportal testing</tags>
+
+    <dependencies>
+      <group>
+        <dependency id="ReportPortal.Shared" />
+      </group>
+    </dependencies>
+
+    <frameworkAssemblies>
+      <frameworkAssembly assemblyName="System.Configuration" />
+    </frameworkAssemblies>
+
+  </metadata>
+  <files>
+    <file src="tools\" target="tools" />
+    <file src="content\" target="content" />
+  </files>
+
+</package>

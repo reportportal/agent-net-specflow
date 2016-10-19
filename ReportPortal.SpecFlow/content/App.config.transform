@@ -1,0 +1,11 @@
+﻿<configuration>
+  <specFlow>
+    <plugins>
+      <add name="ReportPortal" type="Runtime" />
+    </plugins>
+
+    <stepAssemblies>
+      <stepAssembly assembly="ReportPortal.SpecFlow" />
+    </stepAssemblies>
+  </specFlow>
+</configuration>
