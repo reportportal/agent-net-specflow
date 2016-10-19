@@ -1,7 +1,9 @@
-﻿using BoDi;
+﻿using System;
+using BoDi;
 using ReportPortal.SpecFlow;
 using TechTalk.SpecFlow.Configuration;
 using TechTalk.SpecFlow.Infrastructure;
+using TechTalk.SpecFlow.Plugins;
 using TechTalk.SpecFlow.Tracing;
 
 [assembly: RuntimePlugin(typeof(Plugin))]
@@ -12,22 +14,12 @@ namespace ReportPortal.SpecFlow
     /// </summary>
     public class Plugin: IRuntimePlugin
     {
-        public void RegisterDependencies(ObjectContainer container)
+        public void Initialize(RuntimePluginEvents runtimePluginEvents, RuntimePluginParameters runtimePluginParameters)
         {
             if (Configuration.ReportPortal.Enabled)
             {
-                container.RegisterTypeAs<ReportPortalAddin, ITestTracer>();
+                // container.RegisterTypeAs<ReportPortalAddin, ITestTracer>();
             }
-        }
-
-        public void RegisterConfigurationDefaults(RuntimeConfiguration runtimeConfiguration)
-        {
-
-        }
-
-        public void RegisterCustomizations(ObjectContainer container, RuntimeConfiguration runtimeConfiguration)
-        {
-
         }
     }
 }
