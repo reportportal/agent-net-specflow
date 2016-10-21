@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("ReportPortal.Addins.SpecFlow")]
+[assembly: AssemblyTitle("ReportPortal.SpecFlowPlugin")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("EPAM Systems")]
-[assembly: AssemblyProduct("ReportPortal.Addins.SpecFlow")]
+[assembly: AssemblyProduct("ReportPortal.SpecFlowPlugin")]
 [assembly: AssemblyCopyright("Copyright © EPAM Systems 2014")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

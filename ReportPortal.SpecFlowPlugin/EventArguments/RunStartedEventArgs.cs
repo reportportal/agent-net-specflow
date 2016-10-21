@@ -2,20 +2,20 @@
 using ReportPortal.Client;
 using ReportPortal.Client.Requests;
 
-namespace ReportPortal.SpecFlow.EventArguments
+namespace ReportPortal.SpecFlowPlugin.EventArguments
 {
-    public class TestItemStartedEventArgs: EventArgs
+    public class RunStartedEventArgs: EventArgs
     {
         private readonly Service _service;
-        private readonly StartTestItemRequest _request;
+        private readonly StartLaunchRequest _request;
         private readonly string _id;
-        public TestItemStartedEventArgs(Service service, StartTestItemRequest request)
+        public RunStartedEventArgs(Service service, StartLaunchRequest request)
         {
             _service = service;
             _request = request;
         }
 
-        public TestItemStartedEventArgs(Service service, StartTestItemRequest request, string id)
+        public RunStartedEventArgs(Service service, StartLaunchRequest request, string id)
             :this(service, request)
         {
             _id = id;
@@ -26,7 +26,7 @@ namespace ReportPortal.SpecFlow.EventArguments
             get { return _service; }
         }
 
-        public StartTestItemRequest TestItem
+        public StartLaunchRequest Launch
         {
             get { return _request; }
         }

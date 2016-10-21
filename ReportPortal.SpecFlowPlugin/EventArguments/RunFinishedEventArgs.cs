@@ -2,23 +2,23 @@
 using ReportPortal.Client;
 using ReportPortal.Client.Requests;
 
-namespace ReportPortal.SpecFlow.EventArguments
+namespace ReportPortal.SpecFlowPlugin.EventArguments
 {
-    public class RunStartedEventArgs: EventArgs
+    public class RunFinishedEventArgs: EventArgs
     {
         private readonly Service _service;
-        private readonly StartLaunchRequest _request;
-        private readonly string _id;
-        public RunStartedEventArgs(Service service, StartLaunchRequest request)
+        private readonly FinishLaunchRequest _request;
+        private readonly string _message;
+        public RunFinishedEventArgs(Service service, FinishLaunchRequest request)
         {
             _service = service;
             _request = request;
         }
 
-        public RunStartedEventArgs(Service service, StartLaunchRequest request, string id)
+        public RunFinishedEventArgs(Service service, FinishLaunchRequest request, string message)
             :this(service, request)
         {
-            _id = id;
+            _message = message;
         }
 
         public Service Service
@@ -26,14 +26,14 @@ namespace ReportPortal.SpecFlow.EventArguments
             get { return _service; }
         }
 
-        public StartLaunchRequest Launch
+        public FinishLaunchRequest Launch
         {
             get { return _request; }
         }
 
         public string Id
         {
-            get { return _id; }
+            get { return _message; }
         }
 
         public bool Canceled { get; set; }

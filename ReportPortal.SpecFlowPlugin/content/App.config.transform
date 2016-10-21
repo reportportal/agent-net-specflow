@@ -5,7 +5,7 @@
     </plugins>
 
     <stepAssemblies>
-      <stepAssembly assembly="ReportPortal.SpecFlow" />
+      <stepAssembly assembly="ReportPortal.SpecFlowPlugin" />
     </stepAssemblies>
   </specFlow>
 </configuration>
