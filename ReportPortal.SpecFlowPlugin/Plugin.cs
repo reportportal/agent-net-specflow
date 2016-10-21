@@ -1,13 +1,9 @@
-﻿using System;
-using BoDi;
-using ReportPortal.SpecFlow;
-using TechTalk.SpecFlow.Configuration;
-using TechTalk.SpecFlow.Infrastructure;
+﻿using ReportPortal.SpecFlowPlugin;
 using TechTalk.SpecFlow.Plugins;
 using TechTalk.SpecFlow.Tracing;
 
 [assembly: RuntimePlugin(typeof(Plugin))]
-namespace ReportPortal.SpecFlow
+namespace ReportPortal.SpecFlowPlugin
 {
     /// <summary>
     /// Registered SpecFlow plugin from configuration file.
@@ -18,7 +14,10 @@ namespace ReportPortal.SpecFlow
         {
             if (Configuration.ReportPortal.Enabled)
             {
-                // container.RegisterTypeAs<ReportPortalAddin, ITestTracer>();
+                runtimePluginEvents.CustomizeTestThreadDependencies += (sender, e) =>
+                {
+                    e.ObjectContainer.RegisterTypeAs<ReportPortalAddin, ITestTracer>();
+                };
             }
         }
     }

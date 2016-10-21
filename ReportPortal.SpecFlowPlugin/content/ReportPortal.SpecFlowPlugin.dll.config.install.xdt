@@ -1,6 +1,6 @@
 ﻿<configuration xmlns:xdt="http://schemas.microsoft.com/XML-Document-Transform">
   <configSections xdt:Transform="InsertIfMissing">
-    <section name="reportPortal" type="ReportPortal.SpecFlow.ReportPortalSection, ReportPortal.SpecFlow, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"  xdt:Transform="InsertIfMissing" />
+    <section name="reportPortal" type="ReportPortal.SpecFlowPlugin.ReportPortalSection, ReportPortal.SpecFlowPlugin, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"  xdt:Transform="InsertIfMissing" />
   </configSections>
   <reportPortal enabled="true" xdt:Transform="InsertIfMissing">
     <server url="https://evbyminsd7776.minsk.epam.com:8443/reportportal-ws/api/v1/" project="default_project" xdt:Transform="InsertIfMissing">

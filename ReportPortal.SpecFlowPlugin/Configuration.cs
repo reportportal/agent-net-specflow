@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Configuration;
 
-namespace ReportPortal.SpecFlow
+namespace ReportPortal.SpecFlowPlugin
 {
     static class Configuration
     {

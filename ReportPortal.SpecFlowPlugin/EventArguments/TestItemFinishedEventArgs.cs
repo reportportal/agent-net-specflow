@@ -2,7 +2,7 @@
 using ReportPortal.Client;
 using ReportPortal.Client.Requests;
 
-namespace ReportPortal.SpecFlow.EventArguments
+namespace ReportPortal.SpecFlowPlugin.EventArguments
 {
     public class TestItemFinishedEventArgs: EventArgs
     {

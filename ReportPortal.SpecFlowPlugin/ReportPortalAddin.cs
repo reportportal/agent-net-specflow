@@ -1,17 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
-using ReportPortal.SpecFlow.EventArguments;
 using ReportPortal.Client;
 using ReportPortal.Client.Models;
 using ReportPortal.Client.Requests;
 using ReportPortal.Shared;
+using ReportPortal.SpecFlowPlugin.EventArguments;
 using TechTalk.SpecFlow;
 using TechTalk.SpecFlow.Bindings;
 using TechTalk.SpecFlow.Tracing;
 
-namespace ReportPortal.SpecFlow
+namespace ReportPortal.SpecFlowPlugin
 {
     [Binding]
     public class ReportPortalAddin : ITestTracer
@@ -164,7 +163,7 @@ namespace ReportPortal.SpecFlow
         {
             if (CurrentFeatureId != null)
             {
-                _status = Status.Passed;
+                Status = Status.Passed;
                 var request = new StartTestItemRequest
                     {
                         LaunchId = Bridge.Context.LaunchId,
@@ -190,7 +189,8 @@ namespace ReportPortal.SpecFlow
         public static event ScenarioFinishedHandler BeforeScenarioFinished;
         public static event ScenarioFinishedHandler AfterScenarioFinished;
 
-        private Status _status = Status.Passed;
+
+        private static Status Status = Status.Passed;
 
         [AfterScenario]
         public void AfterScenario()
@@ -200,7 +200,7 @@ namespace ReportPortal.SpecFlow
                 var request = new FinishTestItemRequest
                     {
                         EndTime = DateTime.UtcNow,
-                        Status = _status
+                        Status = Status
                     };
 
                 var eventArg = new TestItemFinishedEventArgs(Bridge.Service, request);
@@ -290,7 +290,7 @@ namespace ReportPortal.SpecFlow
         {
             if (CurrentScenarioId != null)
             {
-                _status = Status.Failed;
+                Status = Status.Failed;
 
                 var request = new FinishTestItemRequest
                 {
@@ -321,7 +321,7 @@ namespace ReportPortal.SpecFlow
         {
             if (CurrentScenarioId != null)
             {
-                _status = Status.Failed;
+                Status = Status.Failed;
 
                 var request = new FinishTestItemRequest
                 {
@@ -352,7 +352,7 @@ namespace ReportPortal.SpecFlow
         {
             if (CurrentScenarioId != null)
             {
-                _status = Status.Failed;
+                Status = Status.Failed;
 
                 var errorRequest = new AddLogItemRequest
                 {
@@ -383,7 +383,7 @@ namespace ReportPortal.SpecFlow
         {
             if (CurrentScenarioId != null)
             {
-                _status = Status.Failed;
+                Status = Status.Failed;
 
                 var errorRequest = new AddLogItemRequest
                 {
