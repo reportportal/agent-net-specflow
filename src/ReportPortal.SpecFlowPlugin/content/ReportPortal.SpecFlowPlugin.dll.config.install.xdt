@@ -3,8 +3,8 @@
     <section name="reportPortal" type="ReportPortal.SpecFlowPlugin.ReportPortalSection, ReportPortal.SpecFlowPlugin, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"  xdt:Transform="InsertIfMissing" />
   </configSections>
   <reportPortal enabled="true" xdt:Transform="InsertIfMissing">
-    <server url="https://evbyminsd7776.minsk.epam.com:8443/reportportal-ws/api/v1/" project="default_project" xdt:Transform="InsertIfMissing">
-      <authentication username="default" password="1q2w3e"  xdt:Transform="InsertIfMissing" />
+    <server url="https://rp.epam.com/api/v1/" project="default_project" xdt:Transform="InsertIfMissing">
+      <authentication username="default" password="aa19555c-c9ce-42eb-bb11-87757225d535"  xdt:Transform="InsertIfMissing" />
     </server>
     <launch name="SpecFlow Demo Launch" debugMode="true" tags="t1,t2"  xdt:Transform="InsertIfMissing" />
   </reportPortal>
