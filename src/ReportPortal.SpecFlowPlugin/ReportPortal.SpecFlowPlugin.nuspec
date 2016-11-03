@@ -1,11 +1,11 @@
 <?xml version="1.0"?>
 <package >
   <metadata>
-    <id>$id$</id>
+    <id>ReportPortal.SpecFlow</id>
     <version>$version$</version>
     <title>ReportPortal SpecFlow</title>
     <authors>Nikolay Borisenko</authors>
-    <owners>$author$</owners>
+    <owners>Nikolay Borisenko</owners>
     <licenseUrl>https://raw.githubusercontent.com/reportportal/agent-net-specflow/master/LICENSE</licenseUrl>
     <projectUrl>https://github.com/reportportal/agent-net-specflow</projectUrl>
     <iconUrl>https://reportportal.github.io/img/rp_logo.png</iconUrl>
@@ -16,7 +16,8 @@
 
     <dependencies>
       <group>
-        <dependency id="ReportPortal.Shared" />
+        <dependency id="ReportPortal.Shared" version="[1.1.1,)"/>
+        <dependency id="SpecFlow.CustomPlugin" version="[2.1,)"/>
       </group>
     </dependencies>
 
@@ -26,8 +27,10 @@
 
   </metadata>
   <files>
-    <file src="tools\" target="tools" />
-    <file src="content\" target="content" />
+    <file src="..\..\tools\" target="tools" />
+    <file src="..\..\content\" target="content" />
+    <file src="ReportPortal.SpecFlowPlugin.dll" target="lib" />
+
   </files>
 
 </package>
