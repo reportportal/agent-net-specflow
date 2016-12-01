@@ -21,6 +21,8 @@ namespace ReportPortal.SpecFlowPlugin
 
         public static string CurrentStepId { get; private set; }
 
+        public static string CurrentScenarioDescription { get; private set; }
+
         static ReportPortalAddin()
         {
             var uri = new Uri(Configuration.ReportPortal.Server.Url);
@@ -48,10 +50,10 @@ namespace ReportPortal.SpecFlowPlugin
             if (Configuration.ReportPortal.Enabled)
             {
                 var request = new StartLaunchRequest
-                    {
-                        Name = Configuration.ReportPortal.Launch.Name,
-                        StartTime = DateTime.UtcNow
-                    };
+                {
+                    Name = Configuration.ReportPortal.Launch.Name,
+                    StartTime = DateTime.UtcNow
+                };
                 if (Configuration.ReportPortal.Launch.DebugMode)
                 {
                     request.Mode = LaunchMode.Debug;
@@ -79,9 +81,9 @@ namespace ReportPortal.SpecFlowPlugin
             if (Bridge.Context.LaunchId != null)
             {
                 var request = new FinishLaunchRequest
-                    {
-                        EndTime = DateTime.UtcNow
-                    };
+                {
+                    EndTime = DateTime.UtcNow
+                };
 
                 var eventArg = new RunFinishedEventArgs(Bridge.Service, request);
                 if (BeforeRunFinished != null) BeforeRunFinished(null, eventArg);
@@ -106,14 +108,14 @@ namespace ReportPortal.SpecFlowPlugin
             if (Bridge.Context.LaunchId != null)
             {
                 var request = new StartTestItemRequest
-                    {
-                        LaunchId = Bridge.Context.LaunchId,
-                        Name = FeatureContext.Current.FeatureInfo.Title,
-                        Description = FeatureContext.Current.FeatureInfo.Description,
-                        StartTime = DateTime.UtcNow,
-                        Type = TestItemType.Suite,
-                        Tags = new List<string>(FeatureContext.Current.FeatureInfo.Tags)
-                    };
+                {
+                    LaunchId = Bridge.Context.LaunchId,
+                    Name = FeatureContext.Current.FeatureInfo.Title,
+                    Description = FeatureContext.Current.FeatureInfo.Description,
+                    StartTime = DateTime.UtcNow,
+                    Type = TestItemType.Suite,
+                    Tags = new List<string>(FeatureContext.Current.FeatureInfo.Tags)
+                };
 
                 var eventArg = new TestItemStartedEventArgs(Bridge.Service, request);
                 if (BeforeFeatureStarted != null) BeforeFeatureStarted(null, eventArg);
@@ -137,10 +139,10 @@ namespace ReportPortal.SpecFlowPlugin
             if (CurrentFeatureId != null)
             {
                 var request = new FinishTestItemRequest
-                    {
-                        EndTime = DateTime.UtcNow,
-                        Status = Status.Skipped
-                    };
+                {
+                    EndTime = DateTime.UtcNow,
+                    Status = Status.Skipped
+                };
 
                 var eventArg = new TestItemFinishedEventArgs(Bridge.Service, request);
                 if (BeforeFeatureFinished != null) BeforeFeatureFinished(null, eventArg);
@@ -163,21 +165,25 @@ namespace ReportPortal.SpecFlowPlugin
         {
             if (CurrentFeatureId != null)
             {
+                CurrentScenarioDescription = string.Empty;
+
                 Status = Status.Passed;
                 var request = new StartTestItemRequest
-                    {
-                        LaunchId = Bridge.Context.LaunchId,
-                        Name = ScenarioContext.Current.ScenarioInfo.Title,
-                        StartTime = DateTime.UtcNow,
-                        Type = TestItemType.Step,
-                        Tags = new List<string>(ScenarioContext.Current.ScenarioInfo.Tags)
-                    };
+                {
+                    LaunchId = Bridge.Context.LaunchId,
+                    Name = ScenarioContext.Current.ScenarioInfo.Title,
+                    StartTime = DateTime.UtcNow,
+                    Type = TestItemType.Step,
+                    Description = CurrentScenarioDescription,
+                    Tags = new List<string>(ScenarioContext.Current.ScenarioInfo.Tags)
+                };
 
                 var eventArg = new TestItemStartedEventArgs(Bridge.Service, request);
                 if (BeforeScenarioStarted != null) BeforeScenarioStarted(this, eventArg);
                 if (!eventArg.Canceled)
                 {
                     CurrentScenarioId = Bridge.Service.StartTestItem(CurrentFeatureId, request).Id;
+                    
                     if (AfterScenarioStarted != null)
                         AfterScenarioStarted(this,
                                              new TestItemStartedEventArgs(Bridge.Service, request, CurrentScenarioId));
@@ -198,10 +204,10 @@ namespace ReportPortal.SpecFlowPlugin
             if (CurrentScenarioId != null)
             {
                 var request = new FinishTestItemRequest
-                    {
-                        EndTime = DateTime.UtcNow,
-                        Status = Status
-                    };
+                {
+                    EndTime = DateTime.UtcNow,
+                    Status = Status
+                };
 
                 var eventArg = new TestItemFinishedEventArgs(Bridge.Service, request);
                 if (BeforeScenarioFinished != null) BeforeScenarioFinished(this, eventArg);
@@ -211,6 +217,7 @@ namespace ReportPortal.SpecFlowPlugin
                     if (AfterScenarioFinished != null) AfterScenarioFinished(this, new TestItemFinishedEventArgs(Bridge.Service, request, message));
 
                     CurrentScenarioId = null;
+                    CurrentScenarioDescription = string.Empty;
                 }
             }
         }
@@ -222,49 +229,51 @@ namespace ReportPortal.SpecFlowPlugin
         {
             if (CurrentScenarioId != null)
             {
-                var description = stepInstance.MultilineTextArgument;
+                CurrentScenarioDescription += Environment.NewLine + stepInstance.Keyword + " " + stepInstance.Text;
+
+                if (stepInstance.MultilineTextArgument != null)
+                {
+                    CurrentScenarioDescription += Environment.NewLine + stepInstance.MultilineTextArgument;
+                }
+
+                var tableDescription = string.Empty;
                 if (stepInstance.TableArgument != null)
                 {
-                    description = string.Empty;
+                    tableDescription = string.Empty;
                     foreach (var header in stepInstance.TableArgument.Header)
                     {
-                        description += "| " + header + "\t";
+                        tableDescription += "| " + header + "\t";
                     }
-                    description += "|\n";
+                    tableDescription += "|\n";
                     foreach (var row in stepInstance.TableArgument.Rows)
                     {
                         foreach (var value in row.Values)
                         {
-                            description += "| " + value + "\t";
+                            tableDescription += "| " + value + "\t";
                         }
-                        description += "|\n";
+                        tableDescription += "|\n";
                     }
                 }
-                var request = new StartTestItemRequest
+                if (!string.IsNullOrEmpty(tableDescription))
                 {
-                    LaunchId = Bridge.Context.LaunchId,
-                    Name = stepInstance.Keyword + " " + stepInstance.Text,
-                    Description = description,
-                    StartTime = DateTime.UtcNow,
-                    Type = TestItemType.Step
+                    CurrentScenarioDescription += Environment.NewLine + tableDescription;
+                }
+
+                var updateScenarioRequest = new UpdateTestItemRequest
+                {
+                    Description = CurrentScenarioDescription
                 };
+                Bridge.Service.UpdateTestItem(CurrentScenarioId, updateScenarioRequest);
+
 
                 var stepInfoRequest = new AddLogItemRequest
                 {
                     TestItemId = CurrentScenarioId,
                     Level = LogLevel.Info,
                     Time = DateTime.UtcNow,
-                    Text = string.Format("{0}\r{1}", stepInstance.Keyword + " " + stepInstance.Text, description)
+                    Text = string.Format("{0}\r{1}", stepInstance.Keyword + " " + stepInstance.Text, tableDescription)
                 };
                 Bridge.Service.AddLogItem(stepInfoRequest);
-
-                var eventArg = new TestItemStartedEventArgs(Bridge.Service, request);
-                if (BeforeStepStarted != null) BeforeStepStarted(this, eventArg);
-                if (!eventArg.Canceled)
-                {
-                    Bridge.Context.TestId = CurrentScenarioId;
-                    if (AfterStepStarted != null) AfterStepStarted(this, new TestItemStartedEventArgs(Bridge.Service, request, CurrentScenarioId));
-                }
             }
         }
 
@@ -419,9 +428,9 @@ namespace ReportPortal.SpecFlowPlugin
                     Status = Status.Skipped,
                     EndTime = DateTime.UtcNow,
                     Issue = new Issue
-                        {
-                            Type = IssueType.NoDefect
-                        }
+                    {
+                        Type = IssueType.NoDefect
+                    }
                 };
 
                 if (BeforeStepFinished != null) BeforeStepFinished(this, new TestItemFinishedEventArgs(Bridge.Service, request));
