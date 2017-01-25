@@ -3,7 +3,7 @@ using System.Configuration;
 
 namespace ReportPortal.SpecFlowPlugin
 {
-    static class Configuration
+    public static class Configuration
     {
         static readonly ReportPortalSection ReportPortalSection;
 
