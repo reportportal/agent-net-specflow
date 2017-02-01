@@ -1,4 +1,5 @@
 ﻿using ReportPortal.SpecFlowPlugin;
+using TechTalk.SpecFlow.Bindings;
 using TechTalk.SpecFlow.Plugins;
 using TechTalk.SpecFlow.Tracing;
 
@@ -17,6 +18,11 @@ namespace ReportPortal.SpecFlowPlugin
                 runtimePluginEvents.CustomizeTestThreadDependencies += (sender, e) =>
                 {
                     e.ObjectContainer.RegisterTypeAs<ReportPortalAddin, ITestTracer>();
+                };
+
+                runtimePluginEvents.CustomizeGlobalDependencies += (sender, e) =>
+                {
+                    e.ObjectContainer.RegisterTypeAs<SafeBindingInvoker, IBindingInvoker>();
                 };
             }
         }
