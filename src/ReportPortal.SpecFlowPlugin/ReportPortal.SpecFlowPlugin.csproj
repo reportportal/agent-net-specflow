@@ -95,6 +95,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Configuration.cs" />
     <Compile Include="ReportPortalAddin.cs" />
+    <Compile Include="SafeBindingInvoker.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

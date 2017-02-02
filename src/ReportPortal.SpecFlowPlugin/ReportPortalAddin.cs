@@ -44,7 +44,7 @@ namespace ReportPortal.SpecFlowPlugin
         public static event RunStartedHandler BeforeRunStarted;
         public static event RunStartedHandler AfterRunStarted;
 
-        [BeforeTestRun]
+        [BeforeTestRun(Order = -20000)]
         public static void BeforeTestRun()
         {
             if (Configuration.ReportPortal.Enabled)
@@ -75,7 +75,7 @@ namespace ReportPortal.SpecFlowPlugin
         public static event RunFinishedHandler BeforeRunFinished;
         public static event RunFinishedHandler AfterRunFinished;
 
-        [AfterTestRun]
+        [AfterTestRun(Order = 20000)]
         public static void AfterTestRun()
         {
             if (Bridge.Context.LaunchId != null)
@@ -102,7 +102,7 @@ namespace ReportPortal.SpecFlowPlugin
         public static event FeatureStartedHandler BeforeFeatureStarted;
         public static event FeatureStartedHandler AfterFeatureStarted;
 
-        [BeforeFeature]
+        [BeforeFeature(Order = -20000)]
         public static void BeforeFeature()
         {
             if (Bridge.Context.LaunchId != null)
@@ -133,7 +133,7 @@ namespace ReportPortal.SpecFlowPlugin
         public static event FeatureFinishedHandler BeforeFeatureFinished;
         public static event FeatureFinishedHandler AfterFeatureFinished;
 
-        [AfterFeature]
+        [AfterFeature(Order = 20000)]
         public static void AfterFeature()
         {
             if (CurrentFeatureId != null)
@@ -160,7 +160,7 @@ namespace ReportPortal.SpecFlowPlugin
         public static event ScenarioStartedHandler BeforeScenarioStarted;
         public static event ScenarioStartedHandler AfterScenarioStarted;
 
-        [BeforeScenario]
+        [BeforeScenario(Order = -20000)]
         public void BeforeScenario()
         {
             if (CurrentFeatureId != null)
@@ -198,7 +198,7 @@ namespace ReportPortal.SpecFlowPlugin
 
         private static Status Status = Status.Passed;
 
-        [AfterScenario]
+        [AfterScenario(Order = 20000)]
         public void AfterScenario()
         {
             if (CurrentScenarioId != null)
