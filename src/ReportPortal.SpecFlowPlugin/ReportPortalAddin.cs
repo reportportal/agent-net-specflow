@@ -183,7 +183,8 @@ namespace ReportPortal.SpecFlowPlugin
                 if (!eventArg.Canceled)
                 {
                     CurrentScenarioId = Bridge.Service.StartTestItem(CurrentFeatureId, request).Id;
-                    
+                    Bridge.Context.TestId = CurrentScenarioId;
+
                     if (AfterScenarioStarted != null)
                         AfterScenarioStarted(this,
                                              new TestItemStartedEventArgs(Bridge.Service, request, CurrentScenarioId));
@@ -216,6 +217,7 @@ namespace ReportPortal.SpecFlowPlugin
                     var message = Bridge.Service.FinishTestItem(CurrentScenarioId, request).Info;
                     if (AfterScenarioFinished != null) AfterScenarioFinished(this, new TestItemFinishedEventArgs(Bridge.Service, request, message));
 
+                    Bridge.Context.TestId = null;
                     CurrentScenarioId = null;
                     CurrentScenarioDescription = string.Empty;
                 }
