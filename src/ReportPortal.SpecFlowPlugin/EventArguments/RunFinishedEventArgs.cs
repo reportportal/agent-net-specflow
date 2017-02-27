@@ -1,40 +1,24 @@
 ﻿using System;
 using ReportPortal.Client;
 using ReportPortal.Client.Requests;
+using ReportPortal.Shared;
 
 namespace ReportPortal.SpecFlowPlugin.EventArguments
 {
-    public class RunFinishedEventArgs: EventArgs
+    public class RunFinishedEventArgs : EventArgs
     {
-        private readonly Service _service;
-        private readonly FinishLaunchRequest _request;
-        private readonly string _message;
-        public RunFinishedEventArgs(Service service, FinishLaunchRequest request)
+        public RunFinishedEventArgs(Service service, FinishLaunchRequest request, LaunchReporter launchReporter)
         {
-            _service = service;
-            _request = request;
+            Service = service;
+            Launch = request;
+            LaunchReporter = launchReporter;
         }
 
-        public RunFinishedEventArgs(Service service, FinishLaunchRequest request, string message)
-            :this(service, request)
-        {
-            _message = message;
-        }
+        public Service Service { get; }
 
-        public Service Service
-        {
-            get { return _service; }
-        }
+        public FinishLaunchRequest Launch { get; }
 
-        public FinishLaunchRequest Launch
-        {
-            get { return _request; }
-        }
-
-        public string Id
-        {
-            get { return _message; }
-        }
+        public LaunchReporter LaunchReporter { get; }
 
         public bool Canceled { get; set; }
     }
