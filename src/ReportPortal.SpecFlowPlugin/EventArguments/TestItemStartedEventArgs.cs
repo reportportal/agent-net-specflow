@@ -19,12 +19,12 @@ namespace ReportPortal.SpecFlowPlugin.EventArguments
             TestReporter = testReporter;
         }
 
-        public Service Service { get; }
+        public Service Service { get; private set; }
 
-        public StartTestItemRequest TestItem { get; }
+        public StartTestItemRequest TestItem { get; private set; }
 
-        public TestReporter TestReporter { get; }
+        public TestReporter TestReporter { get; private set; }
 
-        public bool Canceled { get; set; }
+        public bool Canceled { get; set;}
     }
 }
