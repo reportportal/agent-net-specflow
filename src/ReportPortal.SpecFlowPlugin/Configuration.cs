@@ -5,17 +5,31 @@ namespace ReportPortal.SpecFlowPlugin
 {
     public static class Configuration
     {
-        static readonly ReportPortalSection ReportPortalSection;
+        static readonly Lazy<ReportPortalSection> ReportPortalSection = new Lazy<ReportPortalSection>(() => LoadConfigurationFromPluginAssembly() ?? LoadConfigurationFromAssemblyThatUsingThePlugin());
 
-        static Configuration()
+        private static ReportPortalSection LoadConfigurationFromAssemblyThatUsingThePlugin()
+        {
+            return ConfigurationManager.GetSection("reportPortal") as ReportPortalSection;
+        }
+
+        private static ReportPortalSection LoadConfigurationFromPluginAssembly()
         {
             var exeConfigPath = new Uri(typeof(Configuration).Assembly.CodeBase).LocalPath;
-            ReportPortalSection = ConfigurationManager.OpenExeConfiguration(exeConfigPath).GetSection("reportPortal") as ReportPortalSection;
+            return ConfigurationManager.OpenExeConfiguration(exeConfigPath).GetSection("reportPortal") as ReportPortalSection;
+        }
+
+        private static void ThrowAnErrorIfReportalPortalConfigurationSectionIsNull()
+        {
+            if (ReportPortalSection.Value == null)
+                throw new ConfigurationErrorsException("No ReportPortalSection in config file!");
         }
 
         public static ReportPortalSection ReportPortal
         {
-            get { return ReportPortalSection; }
+            get {
+                    ThrowAnErrorIfReportalPortalConfigurationSectionIsNull();
+                    return ReportPortalSection.Value; 
+                }
         }
     }
 

@@ -25,7 +25,6 @@ After installing NuGet package your App.config is modified. Report Portal plugin
 # Configuration
 All settings are stored in *ReportPortal.SpecFlowPlugin.dll.config* file which was added into your project by nuget installation.
 
-
 Example of config file:
 ```xml
 <configuration>
@@ -40,3 +39,6 @@ Example of config file:
   </reportPortal>
 </configuration>
 ```
+
+Alternatively,you could configure the plugin via app.config of your application, instead of *ReportPortal.SpecFlowPlugin.dll.config*.Just add above mentioned config 
+options to app.config and remove *ReportPortal.SpecFlowPlugin.dll.config*.
