@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Net;
-using System.Threading.Tasks;
 using ReportPortal.Client;
 using ReportPortal.Client.Models;
 using ReportPortal.Client.Requests;
@@ -232,8 +230,6 @@ namespace ReportPortal.SpecFlowPlugin
         }
 
         public delegate void StepStartedHandler(object sender, TestItemStartedEventArgs e);
-        public static event StepStartedHandler BeforeStepStarted;
-        public static event StepStartedHandler AfterStepStarted;
         public void TraceStep(StepInstance stepInstance, bool showAdditionalArguments)
         {
             if (CurrentScenario != null)
