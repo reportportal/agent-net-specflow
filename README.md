@@ -60,7 +60,7 @@ public static void BeforeTestRunPart()
 
 public static void ReportPortalAddin_BeforeRunStarted(object sender, RunStartedEventArgs e)
 {
-	var launchId = SettingsManager.CommonSettings.ReportPortalLaunchId;
+	var launchId = System.Configuration.ConfigurationManager.AppSettings["ReportPortalLaunchId"];
 	if (launchId.IsNullOrEmpty() == false)
 	{
 		e.Canceled = true;
@@ -70,7 +70,7 @@ public static void ReportPortalAddin_BeforeRunStarted(object sender, RunStartedE
 
 public static void ReportPortalAddin_BeforeRunFinished(object sender, RunFinishedEventArgs e)
 {
-	var launchId = SettingsManager.CommonSettings.ReportPortalLaunchId;
+	var launchId = System.Configuration.ConfigurationManager.AppSettings["ReportPortalLaunchId"];
 	if (launchId.IsNullOrEmpty() == false)
 	{
 		e.Canceled = true;
