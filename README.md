@@ -25,6 +25,17 @@ After installing NuGet package your App.config is modified. Report Portal plugin
 # Configuration
 All settings are stored in *ReportPortal.SpecFlowPlugin.dll.config* file which was added into your project by nuget installation.
 
+|Property |Description|
+|-------- |-----------|
+|enabled |Enable/Disable reporting to Report Portal server|
+|server - url |The base URI to Report Portal REST web service|
+|server - project |Name of the project|
+|authentication - username |Name of the user|
+|authentication - password |Password of the user. UID can be used instead of opened password. You can find it on user's profile page|
+|launch - debugMode |Turn on/off debugging of your tests. Only you have access for test results if test execution is proceeded in debug mode|
+|launch - name |Name of test execution|
+|launch - tags |Comma separated tags for test execution|
+
 Example of config file:
 ```xml
 <configuration>
@@ -32,7 +43,7 @@ Example of config file:
     <section name="reportPortal" type="ReportPortal.SpecFlowPlugin.ReportPortalSection, ReportPortal.SpecFlowPlugin, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
   </configSections>
   <reportPortal enabled="true">
-    <server url="https://rp.epam.com/api/v1/" project="default_project">
+    <server url="https://{SERVER}:{PORT}/api/v1/" project="default_project">
       <authentication username="default" password="aa19555c-c9ce-42eb-bb11-87757225d535" />
     </server>
     <launch name="SpecFlow Demo Launch" debugMode="true" tags="t1,t2" />
