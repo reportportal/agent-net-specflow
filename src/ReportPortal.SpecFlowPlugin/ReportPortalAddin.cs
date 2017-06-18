@@ -277,8 +277,7 @@ namespace ReportPortal.SpecFlowPlugin
                 var stepInfoRequest = new AddLogItemRequest
                 {
                     Level = LogLevel.Info,
-                    //TODO log time should be greater than test time
-                    Time = DateTime.UtcNow.AddMilliseconds(1),
+                    Time = DateTime.UtcNow,
                     Text = string.Format("{0}\r{1}", stepInstance.Keyword + " " + stepInstance.Text, tableDescription)
                 };
                 CurrentScenario.Log(stepInfoRequest);
@@ -323,7 +322,7 @@ namespace ReportPortal.SpecFlowPlugin
                 var errorRequest = new AddLogItemRequest
                 {
                     Level = LogLevel.Error,
-                    Time = DateTime.UtcNow.AddMilliseconds(1),
+                    Time = DateTime.UtcNow,
                     Text = ex.ToString()
                 };
                 CurrentScenario.Log(errorRequest);
@@ -353,7 +352,7 @@ namespace ReportPortal.SpecFlowPlugin
                 var errorRequest = new AddLogItemRequest
                 {
                     Level = LogLevel.Error,
-                    Time = DateTime.UtcNow.AddMilliseconds(1),
+                    Time = DateTime.UtcNow,
                     Text = ex.ToString()
                 };
 
@@ -373,7 +372,7 @@ namespace ReportPortal.SpecFlowPlugin
                 var errorRequest = new AddLogItemRequest
                 {
                     Level = LogLevel.Error,
-                    Time = DateTime.UtcNow.AddMilliseconds(1),
+                    Time = DateTime.UtcNow,
                     Text = "No matching step definition."
                 };
 
@@ -382,7 +381,7 @@ namespace ReportPortal.SpecFlowPlugin
                 var request = new FinishTestItemRequest
                 {
                     Status = Status.Failed,
-                    EndTime = DateTime.UtcNow,
+                    EndTime = DateTime.UtcNow.AddMilliseconds(1),
                     Issue = new Issue
                     {
                         Type = IssueType.AutomationBug,
@@ -404,7 +403,7 @@ namespace ReportPortal.SpecFlowPlugin
                 var errorRequest = new AddLogItemRequest
                 {
                     Level = LogLevel.Error,
-                    Time = DateTime.UtcNow.AddMilliseconds(1),
+                    Time = DateTime.UtcNow,
                     Text = "One or more step definitions are not implemented yet.\r" + match.StepBinding.Method.Name + "(" + ")"
                 };
 
@@ -413,7 +412,7 @@ namespace ReportPortal.SpecFlowPlugin
                 var request = new FinishTestItemRequest
                 {
                     Status = Status.Failed,
-                    EndTime = DateTime.UtcNow,
+                    EndTime = DateTime.UtcNow.AddMilliseconds(1),
                     Issue = new Issue
                     {
                         Type = IssueType.ToInvestigate,
@@ -452,7 +451,7 @@ namespace ReportPortal.SpecFlowPlugin
                 var request = new AddLogItemRequest
                 {
                     Level = LogLevel.Warning,
-                    Time = DateTime.UtcNow.AddMilliseconds(1),
+                    Time = DateTime.UtcNow,
                     Text = text
                 };
 
