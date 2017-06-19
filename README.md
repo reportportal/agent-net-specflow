@@ -88,6 +88,7 @@ public static void ReportPortalAddin_BeforeRunFinished(object sender, RunFinishe
 	{
 		e.Canceled = true;
 		Bridge.Context.LaunchReporter.FinishTask = Task.Run(() => { StartTask.Wait(); TestNodes.ForEach(tn => tn.FinishTask.Wait()); });
+		Bridge.Context.LaunchReporter.FinishTask.Wait();
 	}
 }
 ```
