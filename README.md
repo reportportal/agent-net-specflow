@@ -87,6 +87,7 @@ public static void ReportPortalAddin_BeforeRunFinished(object sender, RunFinishe
 	if (launchId.IsNullOrEmpty() == false)
 	{
 		e.Canceled = true;
+		Bridge.Context.LaunchReporter.FinishTask = Task.Run(() => { StartTask.Wait(); TestNodes.ForEach(tn => tn.FinishTask.Wait()); });
 	}
 }
 ```
