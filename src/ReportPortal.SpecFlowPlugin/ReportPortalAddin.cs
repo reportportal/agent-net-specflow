@@ -314,7 +314,7 @@ namespace ReportPortal.SpecFlowPlugin
                     EndTime = DateTime.UtcNow.AddMilliseconds(1),
                     Issue = new Issue
                     {
-                        Type = IssueType.AutomationBug,
+                        Type = WellKnownIssueType.AutomationBug,
                         Comment = ex.Message
                     }
                 };
@@ -344,7 +344,7 @@ namespace ReportPortal.SpecFlowPlugin
                     EndTime = DateTime.UtcNow.AddMilliseconds(1),
                     Issue = new Issue
                     {
-                        Type = IssueType.ToInvestigate,
+                        Type = WellKnownIssueType.ToInvestigate,
                         Comment = ex.Message
                     }
                 };
@@ -384,7 +384,7 @@ namespace ReportPortal.SpecFlowPlugin
                     EndTime = DateTime.UtcNow.AddMilliseconds(1),
                     Issue = new Issue
                     {
-                        Type = IssueType.AutomationBug,
+                        Type = WellKnownIssueType.AutomationBug,
                         Comment = "No matching step definition."
                     }
                 };
@@ -415,7 +415,7 @@ namespace ReportPortal.SpecFlowPlugin
                     EndTime = DateTime.UtcNow.AddMilliseconds(1),
                     Issue = new Issue
                     {
-                        Type = IssueType.ToInvestigate,
+                        Type = WellKnownIssueType.ToInvestigate,
                         Comment = "Pending"
                     }
                 };
@@ -435,7 +435,7 @@ namespace ReportPortal.SpecFlowPlugin
                     EndTime = DateTime.UtcNow.AddMilliseconds(1),
                     Issue = new Issue
                     {
-                        Type = IssueType.NoDefect
+                        Type = WellKnownIssueType.NotDefect
                     }
                 };
 

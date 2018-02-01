@@ -16,7 +16,7 @@
 
     <dependencies>
       <group>
-        <dependency id="ReportPortal.Shared" version="[1.4.1,1.5)"/>
+        <dependency id="ReportPortal.Shared" version="[2.0.0-beta1,)"/>
         <dependency id="SpecFlow.CustomPlugin" version="[2.2,)"/>
       </group>
     </dependencies>
