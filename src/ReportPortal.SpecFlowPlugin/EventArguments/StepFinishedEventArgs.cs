@@ -5,9 +5,9 @@ using ReportPortal.Shared;
 
 namespace ReportPortal.SpecFlowPlugin.EventArguments
 {
-    public class TestItemFinishedEventArgs: EventArgs
+    public class StepFinishedEventArgs : EventArgs
     {
-        public TestItemFinishedEventArgs(Service service, FinishTestItemRequest request, TestReporter testReporter)
+        public StepFinishedEventArgs(Service service, AddLogItemRequest request, TestReporter testReporter)
         {
             Service = service;
             TestItem = request;
@@ -16,7 +16,7 @@ namespace ReportPortal.SpecFlowPlugin.EventArguments
 
         public Service Service { get; }
 
-        public FinishTestItemRequest TestItem { get; }
+        public AddLogItemRequest TestItem { get; }
 
         public TestReporter TestReporter { get; }
 

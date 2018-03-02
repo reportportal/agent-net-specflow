@@ -10,7 +10,7 @@ using TechTalk.SpecFlow.Tracing;
 
 namespace ReportPortal.SpecFlowPlugin
 {
-    public class SafeBindingInvoker : BindingInvoker
+    internal class SafeBindingInvoker : BindingInvoker
     {
         public SafeBindingInvoker(SpecFlowConfiguration specFlowConfiguration, IErrorProvider errorProvider)
             : base(specFlowConfiguration, errorProvider)
@@ -65,17 +65,17 @@ namespace ReportPortal.SpecFlowPlugin
         {
             if (context != null && context.TestError == null)
             {
-                context.GetType().GetProperty("TestStatus", BindingFlags.Instance | BindingFlags.NonPublic)
-                    .SetValue(context, TestStatus.TestError);
+                context.GetType().GetProperty("ScenarioExecutionStatus")
+                    ?.SetValue(context, ScenarioExecutionStatus.TestError);
 
                 context.GetType().GetProperty("TestError")
-                    .SetValue(context, ex);
+                    ?.SetValue(context, ex);
             }
         }
 
         private static void PreserveStackTrace(Exception ex)
         {
-            typeof(Exception).GetMethod("InternalPreserveStackTrace", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(ex, new object[0]);
+            typeof(Exception).GetMethod("InternalPreserveStackTrace", BindingFlags.Instance | BindingFlags.NonPublic)?.Invoke(ex, new object[0]);
         }
     }
 }

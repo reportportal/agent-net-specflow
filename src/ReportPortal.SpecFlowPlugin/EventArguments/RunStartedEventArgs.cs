@@ -19,11 +19,11 @@ namespace ReportPortal.SpecFlowPlugin.EventArguments
             LaunchReporter = launchReporter;
         }
 
-        public Service Service { get; private set; }
+        public Service Service { get; }
 
-        public StartLaunchRequest Launch { get; private set; }
+        public StartLaunchRequest Launch { get; }
 
-        public LaunchReporter LaunchReporter { get; private set; }
+        public LaunchReporter LaunchReporter { get; }
 
         public bool Canceled { get; set; }
     }
