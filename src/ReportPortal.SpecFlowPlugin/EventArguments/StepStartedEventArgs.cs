@@ -5,15 +5,15 @@ using ReportPortal.Shared;
 
 namespace ReportPortal.SpecFlowPlugin.EventArguments
 {
-    public class TestItemStartedEventArgs : EventArgs
+    public class StepStartedEventArgs : EventArgs
     {
-        public TestItemStartedEventArgs(Service service, StartTestItemRequest request)
+        public StepStartedEventArgs(Service service, AddLogItemRequest request)
         {
             Service = service;
             TestItem = request;
         }
 
-        public TestItemStartedEventArgs(Service service, StartTestItemRequest request, TestReporter testReporter)
+        public StepStartedEventArgs(Service service, AddLogItemRequest request, TestReporter testReporter)
             : this(service, request)
         {
             TestReporter = testReporter;
@@ -21,7 +21,7 @@ namespace ReportPortal.SpecFlowPlugin.EventArguments
 
         public Service Service { get; }
 
-        public StartTestItemRequest TestItem { get; }
+        public AddLogItemRequest TestItem { get; }
 
         public TestReporter TestReporter { get; }
 
