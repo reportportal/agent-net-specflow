@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Linq;
 using System.Net;
 using ReportPortal.Client;
 using ReportPortal.Shared;
@@ -11,9 +12,19 @@ namespace ReportPortal.SpecFlowPlugin
     public class ReportPortalAddin
     {
         private static readonly ConcurrentDictionary<FeatureInfo, TestReporter> FeatureTestReporters = new ConcurrentDictionary<FeatureInfo, TestReporter>(new FeatureInfoEqualityComparer());
+
         private static readonly ConcurrentDictionary<FeatureInfo, int> FeatureThreadCount = new ConcurrentDictionary<FeatureInfo, int>(new FeatureInfoEqualityComparer());
 
         private static readonly ConcurrentDictionary<ScenarioInfo, TestReporter> ScenarioTestReporters = new ConcurrentDictionary<ScenarioInfo, TestReporter>();
+
+        [Obsolete("Use thread-safe method GetFeatureTestReporter to get the current feature TestReporter.")]
+        public static TestReporter CurrentFeature => FeatureTestReporters.Select(kv => kv.Value).LastOrDefault(reporter => reporter.FinishTask == null);
+
+        [Obsolete("Use thread-safe method GetScenarioTestReporter to get the current scenario TestReporter.")]
+        public static TestReporter CurrentScenario => ScenarioTestReporters.Select(kv => kv.Value).LastOrDefault(reporter => reporter.FinishTask == null);
+
+        [Obsolete]
+        public static string CurrentScenarioDescription { get; } = string.Empty;
 
         static ReportPortalAddin()
         {

@@ -25,16 +25,16 @@ After installing NuGet package your App.config is modified. Report Portal plugin
 # Configuration
 All settings are stored in *ReportPortal.SpecFlowPlugin.dll.config* file which was added into your project by nuget installation.
 
-|Property |Description|
-|-------- |-----------|
-|enabled |Enable/Disable reporting to Report Portal server|
-|server - url |The base URI to Report Portal REST web service|
-|server - project |Name of the project|
-|authentication - username |Name of the user|
-|authentication - password |Password of the user. UID can be used instead of opened password. You can find it on user's profile page|
-|launch - debugMode |Turn on/off debugging of your tests. Only you have access for test results if test execution is proceeded in debug mode|
-|launch - name |Name of test execution|
-|launch - tags |Comma separated tags for test execution|
+| Property                  | Description                                                                                                             |
+| ------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| enabled                   | Enable/Disable reporting to Report Portal server                                                                        |
+| server - url              | The base URI to Report Portal REST web service                                                                          |
+| server - project          | Name of the project                                                                                                     |
+| authentication - username | Name of the user                                                                                                        |
+| authentication - password | Password of the user. UID can be used instead of opened password. You can find it on user's profile page                |
+| launch - debugMode        | Turn on/off debugging of your tests. Only you have access for test results if test execution is proceeded in debug mode |
+| launch - name             | Name of test execution                                                                                                  |
+| launch - tags             | Comma separated tags for test execution                                                                                 |
 
 Example of config file:
 ```xml
@@ -93,3 +93,126 @@ public static void ReportPortalAddin_BeforeRunFinished(object sender, RunFinishe
 }
 ```
 4. When all tests run, CI server closes the RP launch.
+
+# Parallel Execution Support
+
+Parallel Execution can be crucial if you have to run many tests in a short period of time. That is why `ReportPortal.SpecFlow` is going to support it out-of-box starting version `1.2.2-beta-12`.
+
+It became possible after SpecFlow implemented support of Parallel Execution in version 2.0.0 and addressed the issue with `FeatureContext` injection in Before/After Feature hooks.
+Please refer to [Parallel Execution](http://specflow.org/documentation/Parallel-Execution/) for more information about parallel execution in SpecFlow.
+
+## Limitations
+
+**At the moment only feature-level parallelization is supported.** Scenario-level parallelization might also work but it's very likely that it will create several test items per feature on Report Portal.
+
+Some test runners (especially ones that are integrated into Visual Studio) may also create several test items per feature. The reason behind it is that these test runners execute tests individually triggering Before/After Feature hooks for each test.
+
+### Memory (AppDomain) Isolation
+
+In order for the functionality to work correctly, a test runner must execute all test threads in the same AppDomain. If it's not the case, each thread will create a separate launch on Report Portal.
+
+## Unit Test Providers
+
+Currently only NUnit v3 (`nunit`), xUnit v2 (`xunit`) and SpecFlow+ Runner (`specrun`) support running tests in parallel.
+
+### NUnit v3
+
+NUnit v3 supports both feature- and scenario-level parallelization although SpecFlow doesn't currently work with scenario-level parallelization (see [techtalk/SpecFlow#894](https://github.com/techtalk/SpecFlow/issues/894))
+
+Add the following attributes to `AssemblyInfo.cs` to enable parallel execution:
+```c#
+[assembly: LevelOfParallelism(5)]
+[assembly: Parallelizable(ParallelScope.Fixtures)]
+```
+
+### XUnit v2
+
+XUnit v2 only supports feature-level parallelization.
+
+Add the following attributes to `AssemblyInfo.cs` to enable parallel execution:
+```c#
+[assembly: CollectionBehavior(DisableTestParallelization = false, MaxParallelThreads = 5)]
+```
+
+### SpecRun
+
+SpecRun is the most flexible test runner allowing you to control many aspects to test execution. SpecFlow+ Runner profiles (`.srprofile` file extension) are XML files that determine how SpecFlow+ Runner executes your tests.
+
+Here is a sample profile file that configures SpecRun for running tests in parallel with enabled Report Portal integration:
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<TestProfile xmlns="http://www.specflow.org/schemas/plus/TestProfile/1.5">
+  <Settings projectName="SpecRun.Project.Name" />
+  <Execution stopAfterFailures="0" testThreadCount="3" testSchedulingMode="Sequential" retryCount="0"/>
+  <Environment testThreadIsolation="SharedAppDomain"/>
+  <TestAssemblyPaths>
+    <TestAssemblyPath>SpecRun.Project.Name.dll</TestAssemblyPath>
+  </TestAssemblyPaths>
+</TestProfile>
+```
+| Attribute             | Value             | Comment                                                                                                                              |
+| --------------------- | ----------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| `testThreadCount`     | `2` or more       | The number of tests threads used to execute tests. Turns on parallel execution.                                                      |
+| `testSchedulingMode`  | `Sequential`      | Determines the order in which SpecRun executes tests. The other values may produce multiple test items per feature on Report Portal. |
+| `testThreadIsolation` | `SharedAppDomain` | Determines the level of thread isolation. If the value is `AppDomain` or `Process`, each test thread will create a separate launch.  |
+
+Refer to [SpecFlow+ Runner Profiles](http://specflow.org/plus/documentation/SpecFlowPlus-Runner-Profiles/) for more information.
+
+### MSTest V2
+
+At the moment MSTest V2 only supports assembly-level parallelization.
+
+Feature- and scenario-level parallelization were recently added in MSTest V2 v1.3.0 Beta2 (see [MSTest V2: in-assembly parallel test execution](https://blogs.msdn.microsoft.com/devops/2018/01/30/mstest-v2-in-assembly-parallel-test-execution/)).
+
+## Loggers
+
+Any .NET logger library for Report Portal should work as long as it references ReportPortal.Shared `2.0.0-beta3` and above.
+Just be sure to log messages from the main test thread. Logging messages from other threads (e.g. from code in `async` methods) may have unpredictable results.
+
+The following code may log messages under a wrong scenario or may not log them at all. 
+
+```c#
+[Binding]
+public class StepDefinitions : Steps
+{
+    private readonly ILog _log = LogManager.GetLogger(typeof(StepDefinitions));
+
+    private async Task DoSomethingAsync()
+    {
+        await DoSomethingElseAsync();
+
+        _log.Warn("Ad ornatus adipisci expetendis pro.");
+    }
+}
+```
+
+```c#
+[Binding]
+public class StepDefinitions : Steps
+{
+    private IEnumerable<string> DoSomething(List<string> names)
+    {
+        return names.AsParallel().Select(name =>
+        {
+            Bridge.LogMessage(LogLevel.Info, $"Lorem ipsum dolor sit amet {name}.");
+
+            return DoSomethingElse(name);
+        });
+    }
+}
+```
+
+## Thread-safe TestReporter
+
+`ReportPortalAddin.CurrentFeature` and `ReportPortalAddin.CurrentScenario` static properties are deprecated and shouldn't be used when running tests in parallel.
+
+To retrieve TestReporter for the current feature or for the current scenario, use `ReportPortalAddin.GetFeatureTestReporter` and `ReportPortalAddin.GetScenarioTestReporter` methods. These methods will work when called from any thread.
+
+```c#
+[Given("I have entered (.*) into the calculator")]
+public void GivenIHaveEnteredSomethingIntoTheCalculator(int number)
+{
+    var featureTestReporter = ReportPortalAddin.GetFeatureTestReporter(this.FeatureContext);
+    var scenarioTestReporter = ReportPortalAddin.GetScenarioTestReporter(this.ScenarioContext);
+}
+```
