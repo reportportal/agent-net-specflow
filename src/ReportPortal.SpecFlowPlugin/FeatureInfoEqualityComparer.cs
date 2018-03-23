@@ -33,7 +33,7 @@ namespace ReportPortal.SpecFlowPlugin
         public static int GetFeatureInfoHashCode(FeatureInfo obj)
         {
             return obj.Title.GetHashCode()
-                   ^ obj.Description.GetHashCode()
+                   ^ (obj.Description ?? string.Empty).GetHashCode()
                    ^ obj.GenerationTargetLanguage.GetHashCode()
                    ^ obj.Language.DisplayName.GetHashCode()
                    ^ ((IStructuralEquatable)obj.Tags).GetHashCode(EqualityComparer<string>.Default);
