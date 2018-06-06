@@ -180,13 +180,19 @@ namespace ReportPortal.SpecFlowPlugin
                     case ScenarioExecutionStatus.TestError:
                         status = Status.Failed;
 
+                        issue = new Issue
+                        {
+                            Type = WellKnownIssueType.ToInvestigate,
+                            Comment = this.ScenarioContext.TestError?.Message
+                        };
+
                         currentScenario.Log(new AddLogItemRequest
                         {
                             Level = LogLevel.Error,
                             Time = DateTime.UtcNow,
-                            Text = this.ScenarioContext.TestError?.Message
+                            Text = this.ScenarioContext.TestError?.ToString()
                         });
-
+                        
                         break;
                     case ScenarioExecutionStatus.BindingError:
                         status = Status.Failed;
@@ -278,7 +284,7 @@ namespace ReportPortal.SpecFlowPlugin
                 }
             }
         }
-
+        
         [AfterStep(Order = 20000)]
         public void AfterStep()
         {
@@ -286,58 +292,11 @@ namespace ReportPortal.SpecFlowPlugin
 
             if (currentScenario != null)
             {
-                AddLogItemRequest logRequest = null;
-
-                switch (this.ScenarioContext.ScenarioExecutionStatus)
-                {
-                    case ScenarioExecutionStatus.TestError:
-                        logRequest = new AddLogItemRequest
-                        {
-                            Level = LogLevel.Error,
-                            Time = DateTime.UtcNow,
-                            Text = this.ScenarioContext.TestError.ToString()
-                        };
-
-                        break;
-                    case ScenarioExecutionStatus.BindingError:
-                        logRequest = new AddLogItemRequest
-                        {
-                            Level = LogLevel.Error,
-                            Time = DateTime.UtcNow,
-                            Text = this.ScenarioContext.TestError.ToString()
-                        };
-
-                        break;
-                    case ScenarioExecutionStatus.UndefinedStep:
-                        logRequest = new AddLogItemRequest
-                        {
-                            Level = LogLevel.Error,
-                            Time = DateTime.UtcNow,
-                            Text = new MissingStepDefinitionException().Message
-                        };
-
-                        break;
-                    case ScenarioExecutionStatus.StepDefinitionPending:
-                        logRequest = new AddLogItemRequest
-                        {
-                            Level = LogLevel.Warning,
-                            Time = DateTime.UtcNow,
-                            Text = new PendingStepException().Message
-                        };
-
-                        break;
-                }
-
-                var eventArg = new StepFinishedEventArgs(Bridge.Service, logRequest, null);
+                var eventArg = new StepFinishedEventArgs(Bridge.Service, null, null);
                 ReportPortalAddin.OnBeforeStepFinished(this, eventArg);
 
                 if (!eventArg.Canceled)
                 {
-                    if (logRequest != null)
-                    {
-                        currentScenario.Log(logRequest);
-                    }
-
                     ReportPortalAddin.OnAfterStepFinished(this, eventArg);
                 }
             }
