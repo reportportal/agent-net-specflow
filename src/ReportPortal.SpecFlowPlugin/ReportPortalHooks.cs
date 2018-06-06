@@ -180,11 +180,12 @@ namespace ReportPortal.SpecFlowPlugin
                     case ScenarioExecutionStatus.TestError:
                         status = Status.Failed;
 
-                        issue = new Issue
+                        currentScenario.Log(new AddLogItemRequest
                         {
-                            Type = WellKnownIssueType.ToInvestigate,
-                            Comment = this.ScenarioContext.TestError?.Message
-                        };
+                            Level = LogLevel.Error,
+                            Time = DateTime.UtcNow,
+                            Text = this.ScenarioContext.TestError?.Message
+                        });
 
                         break;
                     case ScenarioExecutionStatus.BindingError:
