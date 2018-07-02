@@ -16,7 +16,8 @@ namespace ReportPortal.SpecFlowPlugin
         {
             get
             {
-                if (this.ScenarioContext.TryGetValue("CurrentScenarioDescription", out string value))
+                string value;
+                if (this.ScenarioContext.TryGetValue("CurrentScenarioDescription", out value))
                 {
                     return value;
                 }
