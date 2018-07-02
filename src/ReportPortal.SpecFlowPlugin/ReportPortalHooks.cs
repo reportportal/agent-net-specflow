@@ -12,6 +12,20 @@ namespace ReportPortal.SpecFlowPlugin
     [Binding]
     internal class ReportPortalHooks : Steps
     {
+        private string CurrentScenarioDescription
+        {
+            get
+            {
+                if (this.ScenarioContext.TryGetValue("CurrentScenarioDescription", out string value))
+                {
+                    return value;
+                }
+
+                return string.Empty;
+            }
+            set { this.ScenarioContext.Set(value, "CurrentScenarioDescription"); }
+        }
+
         [BeforeTestRun(Order = -20000)]
         public static void BeforeTestRun()
         {
@@ -144,12 +158,15 @@ namespace ReportPortal.SpecFlowPlugin
 
             if (currentFeature != null)
             {
+                CurrentScenarioDescription = string.Empty;
+
                 var request = new StartTestItemRequest
                 {
                     Name = this.ScenarioContext.ScenarioInfo.Title,
                     StartTime = DateTime.UtcNow,
                     Type = TestItemType.Step,
-                    Tags = new List<string>(this.ScenarioContext.ScenarioInfo.Tags)
+                    Tags = new List<string>(this.ScenarioContext.ScenarioInfo.Tags),
+                    Description = CurrentScenarioDescription
                 };
 
                 var eventArg = new TestItemStartedEventArgs(Bridge.Service, request);
@@ -172,6 +189,12 @@ namespace ReportPortal.SpecFlowPlugin
 
             if (currentScenario != null)
             {
+                var updateRequest = new UpdateTestItemRequest
+                {
+                    Description = CurrentScenarioDescription
+                };
+                currentScenario.Update(updateRequest);
+
                 Issue issue = null;
                 var status = Status.Passed;
 
@@ -192,7 +215,7 @@ namespace ReportPortal.SpecFlowPlugin
                             Time = DateTime.UtcNow,
                             Text = this.ScenarioContext.TestError?.ToString()
                         });
-                        
+
                         break;
                     case ScenarioExecutionStatus.BindingError:
                         status = Status.Failed;
@@ -267,6 +290,8 @@ namespace ReportPortal.SpecFlowPlugin
 
             if (currentScenario != null)
             {
+                CurrentScenarioDescription += Environment.NewLine + this.StepContext.StepInfo.GetFullText();
+
                 var stepInfoRequest = new AddLogItemRequest
                 {
                     Level = LogLevel.Info,
@@ -284,7 +309,7 @@ namespace ReportPortal.SpecFlowPlugin
                 }
             }
         }
-        
+
         [AfterStep(Order = 20000)]
         public void AfterStep()
         {
