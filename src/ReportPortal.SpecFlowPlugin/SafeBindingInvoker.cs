@@ -50,6 +50,10 @@ namespace ReportPortal.SpecFlowPlugin
                     testTracer.TraceError(ex);
                     SetTestError(contextManager.ScenarioContext, ex);
                 }
+                else
+                {
+                    throw;
+                }
             }
             finally
             {
