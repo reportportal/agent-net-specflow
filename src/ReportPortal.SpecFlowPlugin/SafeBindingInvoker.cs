@@ -25,34 +25,30 @@ namespace ReportPortal.SpecFlowPlugin
 
             try
             {
-                return base.InvokeBinding(binding, contextManager, arguments,
-                    testTracer, out duration);
+                return base.InvokeBinding(binding, contextManager, arguments, testTracer, out duration);
             }
             catch (Exception ex)
             {
                 PreserveStackTrace(ex);
 
-                if (binding is IHookBinding == false)
+                var hookBinding = binding as IHookBinding;
+
+                if (hookBinding == null)
                 {
                     throw;
                 }
-
-                var hookBinding = binding as IHookBinding;
-
-                if (hookBinding.HookType == HookType.BeforeScenario
+                else {
+                    if (hookBinding.HookType == HookType.BeforeScenario
                     || hookBinding.HookType == HookType.BeforeScenarioBlock
                     || hookBinding.HookType == HookType.BeforeScenario
                     || hookBinding.HookType == HookType.BeforeStep
                     || hookBinding.HookType == HookType.AfterStep
                     || hookBinding.HookType == HookType.AfterScenario
                     || hookBinding.HookType == HookType.AfterScenarioBlock)
-                {
-                    testTracer.TraceError(ex);
-                    SetTestError(contextManager.ScenarioContext, ex);
-                }
-                else
-                {
-                    throw;
+                    {
+                        testTracer.TraceError(ex);
+                        SetTestError(contextManager.ScenarioContext, ex);
+                    }
                 }
             }
             finally
