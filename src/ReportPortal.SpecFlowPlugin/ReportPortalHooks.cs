@@ -147,6 +147,7 @@ namespace ReportPortal.SpecFlowPlugin
                 var request = new StartTestItemRequest
                 {
                     Name = this.ScenarioContext.ScenarioInfo.Title,
+                    Description = this.ScenarioContext.ScenarioInfo.Description,
                     StartTime = DateTime.UtcNow,
                     Type = TestItemType.Step,
                     Tags = new List<string>(this.ScenarioContext.ScenarioInfo.Tags)
