@@ -187,13 +187,6 @@ namespace ReportPortal.SpecFlowPlugin
                             Comment = this.ScenarioContext.TestError?.Message
                         };
 
-                        currentScenario.Log(new AddLogItemRequest
-                        {
-                            Level = LogLevel.Error,
-                            Time = DateTime.UtcNow,
-                            Text = this.ScenarioContext.TestError?.ToString()
-                        });
-                        
                         break;
                     case ScenarioExecutionStatus.BindingError:
                         status = Status.Failed;
@@ -204,13 +197,6 @@ namespace ReportPortal.SpecFlowPlugin
                             Comment = this.ScenarioContext.TestError?.Message
                         };
 
-                        currentScenario.Log(new AddLogItemRequest
-                        {
-                            Level = LogLevel.Error,
-                            Time = DateTime.UtcNow,
-                            Text = this.ScenarioContext.TestError?.Message
-                        });
-
                         break;
                     case ScenarioExecutionStatus.UndefinedStep:
                         status = Status.Failed;
@@ -220,13 +206,6 @@ namespace ReportPortal.SpecFlowPlugin
                             Type = WellKnownIssueType.AutomationBug,
                             Comment = new MissingStepDefinitionException().Message
                         };
-
-                        currentScenario.Log(new AddLogItemRequest
-                        {
-                            Level = LogLevel.Error,
-                            Time = DateTime.UtcNow,
-                            Text = new MissingStepDefinitionException().Message
-                        });
 
                         break;
                     case ScenarioExecutionStatus.StepDefinitionPending:
@@ -253,8 +232,33 @@ namespace ReportPortal.SpecFlowPlugin
 
                 if (!eventArg.Canceled)
                 {
+                    if(this.ScenarioContext.ScenarioExecutionStatus == ScenarioExecutionStatus.TestError)
+                    {
+                        currentScenario.Log(new AddLogItemRequest
+                        {
+                            Level = LogLevel.Error,
+                            Time = DateTime.UtcNow,
+                            Text = this.ScenarioContext.TestError?.ToString()
+                        });
+                    } else if (this.ScenarioContext.ScenarioExecutionStatus == ScenarioExecutionStatus.BindingError)
+                    {
+                        currentScenario.Log(new AddLogItemRequest
+                        {
+                            Level = LogLevel.Error,
+                            Time = DateTime.UtcNow,
+                            Text = this.ScenarioContext.TestError?.Message
+                        });
+                    } else if (this.ScenarioContext.ScenarioExecutionStatus == ScenarioExecutionStatus.UndefinedStep)
+                    {
+                        currentScenario.Log(new AddLogItemRequest
+                        {
+                            Level = LogLevel.Error,
+                            Time = DateTime.UtcNow,
+                            Text = new MissingStepDefinitionException().Message
+                        });
+                    }
+
                     currentScenario.Finish(request);
-                    currentScenario.FinishTask.Wait();
 
                     ReportPortalAddin.OnAfterScenarioFinished(this, new TestItemFinishedEventArgs(Bridge.Service, request, currentScenario));
                 }
