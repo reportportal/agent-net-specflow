@@ -1,0 +1,16 @@
+﻿
+install:
+  - ps: gitversion /l console /output buildserver
+
+dotnet_csproj:
+  patch: true
+  version: '$(GitVersion_NuGetVersion)'
+
+build_script:
+  - cmd: dotnet build
+  - cmd: dotnet pack
+
+test: off
+
+artifacts:
+  - path: '**\*.nupkg'
