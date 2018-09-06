@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>ReportPortal.SpecFlow</id>
+    <version>$version$</version>
+    <title>ReportPortal SpecFlow</title>
+    <authors>Nikolay Borisenko</authors>
+    <owners>Nikolay Borisenko</owners>
+    <licenseUrl>https://raw.githubusercontent.com/reportportal/agent-net-specflow/master/LICENSE</licenseUrl>
+    <projectUrl>https://github.com/reportportal/agent-net-specflow</projectUrl>
+    <iconUrl>https://reportportal.github.io/img/rp_logo.png</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Report Portal SpecFlow agent</description>
+    <copyright>Copyright 2017</copyright>
+    <tags>reportportal testing</tags>
+
+    <dependencies>
+      <group>
+        <dependency id="ReportPortal.Shared" version="[2.0.3,)"/>
+        <dependency id="SpecFlow.CustomPlugin" version="[2.4.0,)"/>
+      </group>
+    </dependencies>
+
+    <frameworkAssemblies>
+      <frameworkAssembly assemblyName="System.Configuration" />
+    </frameworkAssemblies>
+
+  </metadata>
+  <files>
+    <file src="..\..\tools\" target="tools" />
+    <file src="..\..\content\" target="content" />
+    <file src="ReportPortal.SpecFlowPlugin.dll" target="lib" />
+
+  </files>
+
+</package>
