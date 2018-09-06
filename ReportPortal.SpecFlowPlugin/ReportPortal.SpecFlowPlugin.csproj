@@ -1,0 +1,35 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net45</TargetFramework>
+    <PackageId>ReportPortal.SpecFlow</PackageId>
+    <Version>1.0.0</Version>
+    <Description>SpecFlow plugin for reporting test results into ReportPortal</Description>
+    <Authors>Nikolay Borisenko, Report Portal Community</Authors>
+    <PackageTags>specflow plugin reportportal testing</PackageTags>
+    <PackageLicenseUrl>https://raw.githubusercontent.com/reportportal/agent-net-specflow/master/LICENSE</PackageLicenseUrl>
+    <PackageIconUrl>https://raw.githubusercontent.com/reportportal/agent-net-specflow/master/Logo.png</PackageIconUrl>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="App.config.transform" />
+    <Content Include="ReportPortal.SpecFlowPlugin.dll.config.install.xdt" />
+    <Content Include="ReportPortal.SpecFlowPlugin.dll.config.transform" />
+
+    <None Update="tools/*">
+      <PackagePath>.</PackagePath>
+      <Pack>true</Pack>
+    </None>
+
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="ReportPortal.Shared" Version="2.0.3" />
+    <PackageReference Include="SpecFlow.CustomPlugin" Version="2.4.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="System.Configuration" />
+  </ItemGroup>
+
+</Project>
