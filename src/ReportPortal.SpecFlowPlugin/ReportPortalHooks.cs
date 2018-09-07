@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using ReportPortal.Client.Models;
 using ReportPortal.Client.Requests;
 using ReportPortal.Shared;
@@ -38,7 +39,6 @@ namespace ReportPortal.SpecFlowPlugin
                     Bridge.Context.LaunchReporter = new LaunchReporter(Bridge.Service);
 
                     Bridge.Context.LaunchReporter.Start(request);
-                    Bridge.Context.LaunchReporter.StartTask.Wait();
 
                     ReportPortalAddin.OnAfterRunStarted(null, new RunStartedEventArgs(Bridge.Service, request, Bridge.Context.LaunchReporter));
                 }
@@ -61,7 +61,14 @@ namespace ReportPortal.SpecFlowPlugin
                 if (!eventArg.Canceled)
                 {
                     Bridge.Context.LaunchReporter.Finish(request);
-                    Bridge.Context.LaunchReporter.FinishTask.Wait();
+                    try
+                    {
+                        Bridge.Context.LaunchReporter.FinishTask.Wait();
+                    }
+                    catch(Exception exp)
+                    {
+                        File.AppendAllText("ReportPortal.Errors.log", exp.ToString());
+                    }
 
                     ReportPortalAddin.OnAfterRunFinished(null, new RunFinishedEventArgs(Bridge.Service, request, Bridge.Context.LaunchReporter));
                 }
@@ -129,7 +136,6 @@ namespace ReportPortal.SpecFlowPlugin
                     if (!eventArg.Canceled)
                     {
                         currentFeature.Finish(request);
-                        currentFeature.FinishTask.Wait();
 
                         ReportPortalAddin.OnAfterFeatureFinished(null, new TestItemFinishedEventArgs(Bridge.Service, request, currentFeature));
                     }
