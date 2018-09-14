@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using ReportPortal.Client.Models;
 using ReportPortal.Client.Requests;
 using ReportPortal.Shared;
@@ -60,7 +61,15 @@ namespace ReportPortal.SpecFlowPlugin
                 if (!eventArg.Canceled)
                 {
                     Bridge.Context.LaunchReporter.Finish(request);
-                    Bridge.Context.LaunchReporter.FinishTask.Wait();
+
+                    try
+                    {
+                        Bridge.Context.LaunchReporter.FinishTask.Wait();
+                    }
+                    catch (Exception exp)
+                    {
+                        File.AppendAllText("ReportPortal.Errors.log", exp.ToString());
+                    }
 
                     ReportPortalAddin.OnAfterRunFinished(null, new RunFinishedEventArgs(Bridge.Service, request, Bridge.Context.LaunchReporter));
                 }
