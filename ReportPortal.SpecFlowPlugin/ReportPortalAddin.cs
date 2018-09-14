@@ -28,20 +28,20 @@ namespace ReportPortal.SpecFlowPlugin
 
         static ReportPortalAddin()
         {
-            var uri = new Uri(Configuration.ReportPortal.Server.Url);
-            var project = Configuration.ReportPortal.Server.Project;
-            var password = Configuration.ReportPortal.Server.Authentication.Password;
+            var uri = Plugin.Config.Server.Url;
+            var project = Plugin.Config.Server.Project;
+            var uuid = Plugin.Config.Server.Authentication.Uuid;
 
             IWebProxy proxy = null;
 
-            if (Configuration.ReportPortal.Server.Proxy.ElementInformation.IsPresent)
+            if (Plugin.Config.Server.Proxy != null)
             {
-                proxy = new WebProxy(Configuration.ReportPortal.Server.Proxy.Server);
+                proxy = new WebProxy(Plugin.Config.Server.Proxy);
             }
 
             Bridge.Service = proxy == null
-                ? new Service(uri, project, password)
-                : new Service(uri, project, password, proxy);
+                ? new Service(uri, project, uuid)
+                : new Service(uri, project, uuid, proxy);
         }
 
         public static TestReporter GetFeatureTestReporter(FeatureContext context)
