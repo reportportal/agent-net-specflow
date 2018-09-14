@@ -16,20 +16,20 @@ namespace ReportPortal.SpecFlowPlugin
         [BeforeTestRun(Order = -20000)]
         public static void BeforeTestRun()
         {
-            if (Configuration.ReportPortal.Enabled)
+            if (Plugin.Config.IsEnabled)
             {
                 var request = new StartLaunchRequest
                 {
-                    Name = Configuration.ReportPortal.Launch.Name,
+                    Name = Plugin.Config.Launch.Name,
                     StartTime = DateTime.UtcNow
                 };
 
-                if (Configuration.ReportPortal.Launch.DebugMode)
+                if (Plugin.Config.Launch.IsDebugMode)
                 {
                     request.Mode = LaunchMode.Debug;
                 }
 
-                request.Tags = new List<string>(Configuration.ReportPortal.Launch.Tags.Split(','));
+                request.Tags = Plugin.Config.Launch.Tags;
 
                 var eventArg = new RunStartedEventArgs(Bridge.Service, request);
                 ReportPortalAddin.OnBeforeRunStarted(null, eventArg);

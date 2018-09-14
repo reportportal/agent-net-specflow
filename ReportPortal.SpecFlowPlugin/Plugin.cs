@@ -1,4 +1,7 @@
 ﻿using ReportPortal.SpecFlowPlugin;
+using ReportPortal.SpecFlowPlugin.Configuration;
+using System;
+using System.IO;
 using TechTalk.SpecFlow.Bindings;
 using TechTalk.SpecFlow.Plugins;
 
@@ -10,9 +13,14 @@ namespace ReportPortal.SpecFlowPlugin
     /// </summary>
     internal class Plugin: IRuntimePlugin
     {
+        public static Config Config { get; set; }
+
         public void Initialize(RuntimePluginEvents runtimePluginEvents, RuntimePluginParameters runtimePluginParameters)
         {
-            if (Configuration.ReportPortal.Enabled)
+            var configPath = Path.GetDirectoryName(new Uri(typeof(Config).Assembly.CodeBase).LocalPath) + "/ReportPortal.config.json";
+            Config = Client.Converters.ModelSerializer.Deserialize<Config>(File.ReadAllText(configPath));
+
+            if (Config.IsEnabled)
             {
                 runtimePluginEvents.CustomizeGlobalDependencies += (sender, e) =>
                 {
