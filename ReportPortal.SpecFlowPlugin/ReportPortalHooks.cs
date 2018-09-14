@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using ReportPortal.Client.Models;
 using ReportPortal.Client.Requests;
@@ -62,13 +63,18 @@ namespace ReportPortal.SpecFlowPlugin
                 {
                     Bridge.Context.LaunchReporter.Finish(request);
 
+                    string lofFile = "ReportPortal.log";
                     try
                     {
+                        var sw = Stopwatch.StartNew();
+
+                        File.AppendAllText(lofFile, $"Finishing to send results to ReportPortal...{Environment.NewLine}");
                         Bridge.Context.LaunchReporter.FinishTask.Wait();
+                        File.AppendAllText(lofFile, $"Elapsed: {sw.Elapsed}{Environment.NewLine}");
                     }
                     catch (Exception exp)
                     {
-                        File.AppendAllText("ReportPortal.Errors.log", exp.ToString());
+                        File.AppendAllText(lofFile, $"{exp}{Environment.NewLine}");
                     }
 
                     ReportPortalAddin.OnAfterRunFinished(null, new RunFinishedEventArgs(Bridge.Service, request, Bridge.Context.LaunchReporter));
