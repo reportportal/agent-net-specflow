@@ -12,9 +12,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="App.config.transform" />
-    <Content Include="ReportPortal.SpecFlowPlugin.dll.config.install.xdt" />
-    <Content Include="ReportPortal.SpecFlowPlugin.dll.config.transform" />
 
     <None Update="tools/*">
       <PackagePath>.</PackagePath>

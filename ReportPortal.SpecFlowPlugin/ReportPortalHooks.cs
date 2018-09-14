@@ -38,7 +38,6 @@ namespace ReportPortal.SpecFlowPlugin
                     Bridge.Context.LaunchReporter = new LaunchReporter(Bridge.Service);
 
                     Bridge.Context.LaunchReporter.Start(request);
-                    Bridge.Context.LaunchReporter.StartTask.Wait();
 
                     ReportPortalAddin.OnAfterRunStarted(null, new RunStartedEventArgs(Bridge.Service, request, Bridge.Context.LaunchReporter));
                 }
@@ -129,7 +128,6 @@ namespace ReportPortal.SpecFlowPlugin
                     if (!eventArg.Canceled)
                     {
                         currentFeature.Finish(request);
-                        currentFeature.FinishTask.Wait();
 
                         ReportPortalAddin.OnAfterFeatureFinished(null, new TestItemFinishedEventArgs(Bridge.Service, request, currentFeature));
                     }
