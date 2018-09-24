@@ -207,3 +207,6 @@ public void GivenIHaveEnteredSomethingIntoTheCalculator(int number)
     var scenarioTestReporter = ReportPortalAddin.GetScenarioTestReporter(this.ScenarioContext);
 }
 ```
+
+# Throubleshooting
+All http error messages goes to `ReportPortal.log` file.
