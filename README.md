@@ -7,7 +7,7 @@ Install **ReportPortal.SpecFlow** NuGet package into your project with scenarios
 
 > PS> Install-Package ReportPortal.SpecFlow
 
-After installing NuGet package your App.config is modified. Report Portal plugin and step assembly will be registered in the specFlow section.
+Connect plugin via your `App.config` file.
 ```xml
 <specFlow>
   ...
@@ -23,37 +23,28 @@ After installing NuGet package your App.config is modified. Report Portal plugin
 ```
 
 # Configuration
-All settings are stored in *ReportPortal.SpecFlowPlugin.dll.config* file which was added into your project by nuget installation.
-
-| Property                  | Description                                                                                                             |
-| ------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
-| enabled                   | Enable/Disable reporting to Report Portal server                                                                        |
-| server - url              | The base URI to Report Portal REST web service                                                                          |
-| server - project          | Name of the project                                                                                                     |
-| authentication - username | Name of the user                                                                                                        |
-| authentication - password | Password of the user. UID can be used instead of opened password. You can find it on user's profile page                |
-| launch - debugMode        | Turn on/off debugging of your tests. Only you have access for test results if test execution is proceeded in debug mode |
-| launch - name             | Name of test execution                                                                                                  |
-| launch - tags             | Comma separated tags for test execution                                                                                 |
+Add `ReportPortal.config.json` file into tests project with `Copy to Output Directory = Copy if newer` property.
 
 Example of config file:
-```xml
-<configuration>
-  <configSections>
-    <section name="reportPortal" type="ReportPortal.SpecFlowPlugin.ReportPortalSection, ReportPortal.SpecFlowPlugin, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
-  </configSections>
-  <reportPortal enabled="true">
-    <server url="https://{SERVER}:{PORT}/api/v1/" project="default_project">
-      <authentication username="default" password="aa19555c-c9ce-42eb-bb11-87757225d535" />
-    </server>
-    <launch name="SpecFlow Demo Launch" debugMode="true" tags="t1,t2" />
-  </reportPortal>
-</configuration>
+```json
+{
+  "$schema": "https://raw.githubusercontent.com/reportportal/agent-net-specflow/master/ReportPortal.SpecFlowPlugin/ReportPortal.config.schema",
+  "enabled": true,
+  "server": {
+    "url": "https://rp.epam.com/api/v1/",
+    "project": "default_project",
+    "authentication": {
+      "uuid": "7853c7a9-7f27-43ea-835a-cab01355fd17"
+    }
+  },
+  "launch": {
+    "name": "SpecFlow Demo Launch",
+    "description": "this is description",
+    "debugMode": true,
+    "tags": [ "t1", "t2" ]
+  }
+}
 ```
-
-Alternatively,you could configure the plugin via app.config of your application, instead of *ReportPortal.SpecFlowPlugin.dll.config*.Just add above mentioned config 
-options to app.config and remove *ReportPortal.SpecFlowPlugin.dll.config*.
-
 
 ## Combine several execution in one launch
 
