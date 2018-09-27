@@ -63,18 +63,18 @@ namespace ReportPortal.SpecFlowPlugin
                 {
                     Bridge.Context.LaunchReporter.Finish(request);
 
-                    string lofFile = "ReportPortal.log";
+                    var logFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "ReportPortal.log");
                     try
                     {
                         var sw = Stopwatch.StartNew();
 
-                        File.AppendAllText(lofFile, $"Finishing to send results to ReportPortal...{Environment.NewLine}");
+                        File.AppendAllText(logFile, $"Finishing to send results to ReportPortal...{Environment.NewLine}");
                         Bridge.Context.LaunchReporter.FinishTask.Wait();
-                        File.AppendAllText(lofFile, $"Elapsed: {sw.Elapsed}{Environment.NewLine}");
+                        File.AppendAllText(logFile, $"Elapsed: {sw.Elapsed}{Environment.NewLine}");
                     }
                     catch (Exception exp)
                     {
-                        File.AppendAllText(lofFile, $"{exp}{Environment.NewLine}");
+                        File.AppendAllText(logFile, $"{exp}{Environment.NewLine}");
                     }
 
                     ReportPortalAddin.OnAfterRunFinished(null, new RunFinishedEventArgs(Bridge.Service, request, Bridge.Context.LaunchReporter));
