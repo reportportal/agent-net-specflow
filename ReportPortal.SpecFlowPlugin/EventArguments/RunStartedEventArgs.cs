@@ -23,7 +23,7 @@ namespace ReportPortal.SpecFlowPlugin.EventArguments
 
         public StartLaunchRequest Launch { get; }
 
-        public LaunchReporter LaunchReporter { get; }
+        public LaunchReporter LaunchReporter { get; set; }
 
         public bool Canceled { get; set; }
     }
