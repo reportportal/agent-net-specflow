@@ -20,6 +20,17 @@
         true
       ]
     },
+    "httpHandlerType": {
+      "$id": "#/properties/httpHandlerType",
+      "type": "string",
+      "title": "Type of a HTTP handler to use for sending all requests from the client. The type should inherit from HttpMessageHandler.",
+      "default": "",
+      "examples": [
+        "System.Net.Http.HttpMessageHandler, System.Net.Http, Version=4.3.3.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
+        "System.Net.Http.HttpMessageHandler, System.Net.Http"
+      ],
+      "pattern": "^([^,]+), ([^,]+)(?:, (Version|PublicKey|PublicKeyToken|Culture|Custom)=([^,]+))*$"
+    },
     "server": {
       "$id": "#/properties/server",
       "type": "object",
