@@ -35,9 +35,14 @@ namespace ReportPortal.SpecFlowPlugin
                 var eventArg = new RunStartedEventArgs(Bridge.Service, request);
                 ReportPortalAddin.OnBeforeRunStarted(null, eventArg);
 
+                if (eventArg.LaunchReporter != null)
+                {
+                    Bridge.Context.LaunchReporter = eventArg.LaunchReporter;
+                }
+
                 if (!eventArg.Canceled)
                 {
-                    Bridge.Context.LaunchReporter = new LaunchReporter(Bridge.Service);
+                    Bridge.Context.LaunchReporter = Bridge.Context.LaunchReporter ?? new LaunchReporter(Bridge.Service);
 
                     Bridge.Context.LaunchReporter.Start(request);
 
