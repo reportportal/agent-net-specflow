@@ -7,16 +7,16 @@ namespace ReportPortal.SpecFlowPlugin.Extensions
     {
         public static string GetFullText(this StepInfo stepInfo)
         {
-            var fullText = stepInfo.StepDefinitionType + " " + stepInfo.Text;
+            var fullText = stepInfo.StepInstance.StepDefinitionKeyword + " " + stepInfo.StepInstance.Text;
 
-            if (stepInfo.MultilineText != null)
+            if (stepInfo.StepInstance.MultilineTextArgument != null)
             {
-                fullText += Environment.NewLine + stepInfo.MultilineText;
+                fullText += Environment.NewLine + stepInfo.StepInstance.MultilineTextArgument;
             }
 
-            if (stepInfo.Table != null)
+            if (stepInfo.StepInstance.TableArgument != null)
             {
-                fullText += Environment.NewLine + stepInfo.Table;
+                fullText += Environment.NewLine + stepInfo.StepInstance.TableArgument;
             }
 
             return fullText;
