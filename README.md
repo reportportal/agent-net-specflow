@@ -85,6 +85,29 @@ public static void ReportPortalAddin_BeforeRunFinished(object sender, RunFinishe
 ```
 4. When all tests run, CI server closes the RP launch.
 
+## Custom handler for all requests to Report Portal
+
+By default, the Report Portal client uses `RetryHttpClientHandler` defined in [/ReportPortal.Client/Service.cs](https://github.com/reportportal/client-net/blob/master/ReportPortal.Client/Service.cs) that will retry any failing request a few times before finally giving up.
+
+The behavior to handle requests to Report Portal can be further customized by implementing your own `HttpMessageHandler`, subscribing to `Initializing` event and providing `Service` to the SpecFlow agent.
+
+`RetryHttpClientHandler` from `ReportPortal.Client` library can be used as an example of how to implement `HttpMessageHandler`.
+
+The following code defines a handler for `Initializing` event that provides `Service`:
+
+```c#
+  private static void ReportPortalAddin_Initializing(object sender, InitializingEventArgs e)
+  {
+    e.Service = new Service(e.Server.Url, e.Server.Project, e.Server.Authentication.Uuid, new CustomHttpClientHandler());
+  }
+```
+
+And to subscribe to `Initializing` event, add the following code in the place where you bootstrap the framework:
+
+```c#
+  ReportPortalAddin.Initializing += ReportPortalAddin_Initializing;
+```
+
 # Parallel Execution Support
 
 Parallel Execution can be crucial if you have to run many tests in a short period of time. That is why `ReportPortal.SpecFlow` is going to support it out-of-box starting version `1.2.2-beta-12`.
@@ -208,5 +231,5 @@ public void GivenIHaveEnteredSomethingIntoTheCalculator(int number)
 }
 ```
 
-# Throubleshooting
+# Troubleshooting
 All http error messages goes to `ReportPortal.log` file.

@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Linq;
-using System.Net;
-using ReportPortal.Client;
 using ReportPortal.Shared;
 using ReportPortal.SpecFlowPlugin.EventArguments;
 using TechTalk.SpecFlow;
@@ -25,24 +23,6 @@ namespace ReportPortal.SpecFlowPlugin
 
         [Obsolete]
         public static string CurrentScenarioDescription { get; } = string.Empty;
-
-        static ReportPortalAddin()
-        {
-            var uri = Plugin.Config.Server.Url;
-            var project = Plugin.Config.Server.Project;
-            var uuid = Plugin.Config.Server.Authentication.Uuid;
-
-            IWebProxy proxy = null;
-
-            if (Plugin.Config.Server.Proxy != null)
-            {
-                proxy = new WebProxy(Plugin.Config.Server.Proxy);
-            }
-
-            Bridge.Service = proxy == null
-                ? new Service(uri, project, uuid)
-                : new Service(uri, project, uuid, proxy);
-        }
 
         public static TestReporter GetFeatureTestReporter(FeatureContext context)
         {
@@ -75,6 +55,15 @@ namespace ReportPortal.SpecFlowPlugin
         internal static void SetScenarioTestReporter(ScenarioContext context, TestReporter reporter)
         {
             ScenarioTestReporters[context.ScenarioInfo] = reporter;
+        }
+
+        public delegate void InitializingHandler(object sender, InitializingEventArgs e);
+
+        public static event InitializingHandler Initializing;
+
+        internal static void OnInitializing(object sender, InitializingEventArgs eventArg)
+        {
+            Initializing?.Invoke(sender, eventArg);
         }
 
         public delegate void RunStartedHandler(object sender, RunStartedEventArgs e);

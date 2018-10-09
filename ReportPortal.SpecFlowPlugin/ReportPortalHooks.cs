@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Net;
+using ReportPortal.Client;
 using ReportPortal.Client.Models;
 using ReportPortal.Client.Requests;
 using ReportPortal.Shared;
@@ -19,6 +21,8 @@ namespace ReportPortal.SpecFlowPlugin
         {
             if (Plugin.Config.IsEnabled)
             {
+                InitializeService();
+
                 var request = new StartLaunchRequest
                 {
                     Name = Plugin.Config.Launch.Name,
@@ -48,6 +52,32 @@ namespace ReportPortal.SpecFlowPlugin
 
                     ReportPortalAddin.OnAfterRunStarted(null, new RunStartedEventArgs(Bridge.Service, request, Bridge.Context.LaunchReporter));
                 }
+            }
+        }
+
+        private static void InitializeService()
+        {
+            var args = new InitializingEventArgs(Plugin.Config.Server);
+
+            ReportPortalAddin.OnInitializing(null, args);
+
+            var uri = args.Server.Url;
+            var project = args.Server.Project;
+            var uuid = args.Server.Authentication.Uuid;
+
+            if (args.Service != null)
+            {
+                Bridge.Service = args.Service;
+            }
+            else if (args.Server.Proxy != null)
+            {
+                var proxy = new WebProxy(args.Server.Proxy);
+
+                Bridge.Service = new Service(uri, project, uuid, proxy);
+            }
+            else
+            {
+                Bridge.Service = new Service(uri, project, uuid);
             }
         }
 
@@ -107,7 +137,7 @@ namespace ReportPortal.SpecFlowPlugin
                             Tags = new List<string>(featureContext.FeatureInfo.Tags)
                         };
 
-                        var eventArg = new TestItemStartedEventArgs(Bridge.Service, request);
+                        var eventArg = new TestItemStartedEventArgs(Bridge.Service, request, null, featureContext, null);
                         ReportPortalAddin.OnBeforeFeatureStarted(null, eventArg);
 
                         if (!eventArg.Canceled)
@@ -115,7 +145,7 @@ namespace ReportPortal.SpecFlowPlugin
                             currentFeature = Bridge.Context.LaunchReporter.StartNewTestNode(request);
                             ReportPortalAddin.SetFeatureTestReporter(featureContext, currentFeature);
 
-                            ReportPortalAddin.OnAfterFeatureStarted(null, new TestItemStartedEventArgs(Bridge.Service, request, currentFeature));
+                            ReportPortalAddin.OnAfterFeatureStarted(null, new TestItemStartedEventArgs(Bridge.Service, request, currentFeature, featureContext, null));
                         }
                     }
                     else
@@ -142,14 +172,14 @@ namespace ReportPortal.SpecFlowPlugin
                         Status = Status.Skipped
                     };
 
-                    var eventArg = new TestItemFinishedEventArgs(Bridge.Service, request, currentFeature);
+                    var eventArg = new TestItemFinishedEventArgs(Bridge.Service, request, currentFeature, featureContext, null);
                     ReportPortalAddin.OnBeforeFeatureFinished(null, eventArg);
 
                     if (!eventArg.Canceled)
                     {
                         currentFeature.Finish(request);
 
-                        ReportPortalAddin.OnAfterFeatureFinished(null, new TestItemFinishedEventArgs(Bridge.Service, request, currentFeature));
+                        ReportPortalAddin.OnAfterFeatureFinished(null, new TestItemFinishedEventArgs(Bridge.Service, request, currentFeature, featureContext, null));
                     }
                 }
             }
@@ -167,11 +197,11 @@ namespace ReportPortal.SpecFlowPlugin
                     Name = this.ScenarioContext.ScenarioInfo.Title,
                     Description = this.ScenarioContext.ScenarioInfo.Description,
                     StartTime = DateTime.UtcNow,
-                    Type = TestItemType.Step,
+                    Type = TestItemType.Test,
                     Tags = new List<string>(this.ScenarioContext.ScenarioInfo.Tags)
                 };
 
-                var eventArg = new TestItemStartedEventArgs(Bridge.Service, request);
+                var eventArg = new TestItemStartedEventArgs(Bridge.Service, request, currentFeature, this.FeatureContext, this.ScenarioContext);
                 ReportPortalAddin.OnBeforeScenarioStarted(this, eventArg);
 
                 if (!eventArg.Canceled)
@@ -179,7 +209,7 @@ namespace ReportPortal.SpecFlowPlugin
                     var currentScenario = currentFeature.StartNewTestNode(request);
                     ReportPortalAddin.SetScenarioTestReporter(this.ScenarioContext, currentScenario);
 
-                    ReportPortalAddin.OnAfterScenarioStarted(this, new TestItemStartedEventArgs(Bridge.Service, request, currentFeature));
+                    ReportPortalAddin.OnAfterScenarioStarted(this, new TestItemStartedEventArgs(Bridge.Service, request, currentFeature, this.FeatureContext, this.ScenarioContext));
                 }
             }
         }
@@ -245,7 +275,7 @@ namespace ReportPortal.SpecFlowPlugin
                     Issue = issue
                 };
 
-                var eventArg = new TestItemFinishedEventArgs(Bridge.Service, request, currentScenario);
+                var eventArg = new TestItemFinishedEventArgs(Bridge.Service, request, currentScenario, this.FeatureContext, this.ScenarioContext);
                 ReportPortalAddin.OnBeforeScenarioFinished(this, eventArg);
 
                 if (!eventArg.Canceled)
@@ -278,7 +308,7 @@ namespace ReportPortal.SpecFlowPlugin
 
                     currentScenario.Finish(request);
 
-                    ReportPortalAddin.OnAfterScenarioFinished(this, new TestItemFinishedEventArgs(Bridge.Service, request, currentScenario));
+                    ReportPortalAddin.OnAfterScenarioFinished(this, new TestItemFinishedEventArgs(Bridge.Service, request, currentScenario, this.FeatureContext, this.ScenarioContext));
                 }
             }
         }
@@ -297,7 +327,7 @@ namespace ReportPortal.SpecFlowPlugin
                     Text = this.StepContext.StepInfo.GetFullText()
                 };
 
-                var eventArg = new StepStartedEventArgs(Bridge.Service, stepInfoRequest, null);
+                var eventArg = new StepStartedEventArgs(Bridge.Service, stepInfoRequest, currentScenario, this.FeatureContext, this.ScenarioContext, this.StepContext);
                 ReportPortalAddin.OnBeforeStepStarted(this, eventArg);
 
                 if (!eventArg.Canceled)
@@ -315,7 +345,7 @@ namespace ReportPortal.SpecFlowPlugin
 
             if (currentScenario != null)
             {
-                var eventArg = new StepFinishedEventArgs(Bridge.Service, null, null);
+                var eventArg = new StepFinishedEventArgs(Bridge.Service, null, currentScenario, this.FeatureContext, this.ScenarioContext, this.StepContext);
                 ReportPortalAddin.OnBeforeStepFinished(this, eventArg);
 
                 if (!eventArg.Canceled)
