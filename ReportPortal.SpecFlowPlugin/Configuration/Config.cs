@@ -8,9 +8,6 @@ namespace ReportPortal.SpecFlowPlugin.Configuration
         [DataMember(Name = "enabled")]
         public bool IsEnabled { get; set; }
 
-        [DataMember(Name = "httpHandlerType")]
-        public string HttpHandlerType { get; set; }
-
         [DataMember(Name = "server")]
         public Server Server { get; set; }
 

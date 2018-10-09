@@ -85,26 +85,6 @@ public static void ReportPortalAddin_BeforeRunFinished(object sender, RunFinishe
 ```
 4. When all tests run, CI server closes the RP launch.
 
-## Custom HTTP handler
-
-By default, the agent uses `RetryHttpClientHandler` that can be found in [/ReportPortal.Client/Service.cs](https://github.com/reportportal/client-net/blob/master/ReportPortal.Client/Service.cs).
-
-If the default implementation doesn't work for you, the behavior can be customized by adding your own HTTP handler that inherits from `HttpMessageHandler`. Set property `httpHandlerType` in `ReportPortal.config.json` to let the agent know that you want to use a custom HTTP handler:
-
-```json
-{
-  "$schema": "https://raw.githubusercontent.com/reportportal/agent-net-specflow/master/ReportPortal.SpecFlowPlugin/ReportPortal.config.schema",
-  "httpHandlerType": "MyAssembly.MyNamespace.MyClass, MyAssembly",
-  "enabled": true,
-  "server": {
-    ...
-  },
-  "launch": {
-    ...
-  }
-}
-```
-
 # Parallel Execution Support
 
 Parallel Execution can be crucial if you have to run many tests in a short period of time. That is why `ReportPortal.SpecFlow` is going to support it out-of-box starting version `1.2.2-beta-12`.

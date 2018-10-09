@@ -2,7 +2,6 @@
 using System.Collections.Concurrent;
 using System.Linq;
 using System.Net;
-using System.Net.Http;
 using ReportPortal.Client;
 using ReportPortal.Shared;
 using ReportPortal.SpecFlowPlugin.EventArguments;
@@ -40,36 +39,9 @@ namespace ReportPortal.SpecFlowPlugin
                 proxy = new WebProxy(Plugin.Config.Server.Proxy);
             }
 
-            Service service;
-
-            if (string.IsNullOrEmpty(Plugin.Config.HttpHandlerType) == false)
-            {
-                var messageHandlerType = Type.GetType(Plugin.Config.HttpHandlerType);
-
-                if (messageHandlerType == null)
-                {
-                    throw new TypeLoadException($"The HTTP handler '{Plugin.Config.HttpHandlerType}' was not loaded.");
-                }
-
-                var messageHandler = Activator.CreateInstance(messageHandlerType);
-
-                if (messageHandler is HttpMessageHandler == false)
-                {
-                    throw new InvalidCastException($"Unable to cast object of type {messageHandler.GetType().FullName} to {typeof(HttpMessageHandler).FullName}.");
-                }
-
-                service = new Service(uri, project, uuid, (HttpMessageHandler)messageHandler);
-            }
-            else if (proxy != null)
-            {
-                service = new Service(uri, project, uuid, proxy);
-            }
-            else
-            {
-                service = new Service(uri, project, uuid);
-            }
-
-            Bridge.Service = service;
+            Bridge.Service = proxy == null
+                ? new Service(uri, project, uuid)
+                : new Service(uri, project, uuid, proxy);
         }
 
         public static TestReporter GetFeatureTestReporter(FeatureContext context)
