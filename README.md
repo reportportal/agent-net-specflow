@@ -98,7 +98,7 @@ The following code defines a handler for `Initializing` event that provides `Ser
 ```c#
   private static void ReportPortalAddin_Initializing(object sender, InitializingEventArgs e)
   {
-    e.Service = new Service(e.Server.Url, e.Server.Project, e.Server.Authentication.Uuid, new CustomHttpClientHandler());
+    e.Service = new Service(e.Config.Server.Url, e.Config.Server.Project, e.Config.Server.Authentication.Uuid, new CustomHttpClientHandler());
   }
 ```
 

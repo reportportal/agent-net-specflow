@@ -5,12 +5,12 @@ namespace ReportPortal.SpecFlowPlugin.EventArguments
 {
     public class InitializingEventArgs
     {
-        public InitializingEventArgs(Server server)
+        public InitializingEventArgs(Config config)
         {
-            Server = server;
+            Config = config;
         }
 
-        public Server Server { get; set; }
+        public Config Config { get; set; }
 
         public Service Service { get; set; }
     }

@@ -7,6 +7,7 @@ using ReportPortal.Client;
 using ReportPortal.Client.Models;
 using ReportPortal.Client.Requests;
 using ReportPortal.Shared;
+using ReportPortal.SpecFlowPlugin.Configuration;
 using ReportPortal.SpecFlowPlugin.EventArguments;
 using ReportPortal.SpecFlowPlugin.Extensions;
 using TechTalk.SpecFlow;
@@ -19,22 +20,22 @@ namespace ReportPortal.SpecFlowPlugin
         [BeforeTestRun(Order = -20000)]
         public static void BeforeTestRun()
         {
-            if (Plugin.Config.IsEnabled)
-            {
-                InitializeService();
+            var config = Initialize();
 
+            if (config.IsEnabled)
+            {
                 var request = new StartLaunchRequest
                 {
-                    Name = Plugin.Config.Launch.Name,
+                    Name = config.Launch.Name,
                     StartTime = DateTime.UtcNow
                 };
 
-                if (Plugin.Config.Launch.IsDebugMode)
+                if (config.Launch.IsDebugMode)
                 {
                     request.Mode = LaunchMode.Debug;
                 }
 
-                request.Tags = Plugin.Config.Launch.Tags;
+                request.Tags = config.Launch.Tags;
 
                 var eventArg = new RunStartedEventArgs(Bridge.Service, request);
                 ReportPortalAddin.OnBeforeRunStarted(null, eventArg);
@@ -55,30 +56,35 @@ namespace ReportPortal.SpecFlowPlugin
             }
         }
 
-        private static void InitializeService()
+        private static Config Initialize()
         {
-            var args = new InitializingEventArgs(Plugin.Config.Server);
+            var args = new InitializingEventArgs(Plugin.Config);
 
             ReportPortalAddin.OnInitializing(null, args);
 
-            var uri = args.Server.Url;
-            var project = args.Server.Project;
-            var uuid = args.Server.Authentication.Uuid;
+            if (args.Config.IsEnabled)
+            {
+                var uri = args.Config.Server.Url;
+                var project = args.Config.Server.Project;
+                var uuid = args.Config.Server.Authentication.Uuid;
 
-            if (args.Service != null)
-            {
-                Bridge.Service = args.Service;
-            }
-            else if (args.Server.Proxy != null)
-            {
-                var proxy = new WebProxy(args.Server.Proxy);
+                if (args.Service != null)
+                {
+                    Bridge.Service = args.Service;
+                }
+                else if (args.Config.Server.Proxy != null)
+                {
+                    var proxy = new WebProxy(args.Config.Server.Proxy);
 
-                Bridge.Service = new Service(uri, project, uuid, proxy);
+                    Bridge.Service = new Service(uri, project, uuid, proxy);
+                }
+                else
+                {
+                    Bridge.Service = new Service(uri, project, uuid);
+                }
             }
-            else
-            {
-                Bridge.Service = new Service(uri, project, uuid);
-            }
+
+            return args.Config;
         }
 
         [AfterTestRun(Order = 20000)]
@@ -197,7 +203,7 @@ namespace ReportPortal.SpecFlowPlugin
                     Name = this.ScenarioContext.ScenarioInfo.Title,
                     Description = this.ScenarioContext.ScenarioInfo.Description,
                     StartTime = DateTime.UtcNow,
-                    Type = TestItemType.Test,
+                    Type = TestItemType.Step,
                     Tags = new List<string>(this.ScenarioContext.ScenarioInfo.Tags)
                 };
 
