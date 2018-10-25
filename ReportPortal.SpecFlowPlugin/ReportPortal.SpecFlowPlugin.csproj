@@ -9,6 +9,9 @@
     <PackageTags>specflow plugin reportportal testing</PackageTags>
     <PackageLicenseUrl>https://raw.githubusercontent.com/reportportal/agent-net-specflow/master/LICENSE</PackageLicenseUrl>
     <PackageIconUrl>https://raw.githubusercontent.com/reportportal/agent-net-specflow/master/Logo.png</PackageIconUrl>
+
+    <RepositoryType>GitHub</RepositoryType>
+    <RepositoryUrl>https://github.com/reportportal/agent-net-specflow</RepositoryUrl>
   </PropertyGroup>
 
   <ItemGroup>
