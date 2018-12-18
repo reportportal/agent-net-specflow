@@ -31,6 +31,9 @@ Example of config file:
 }
 ```
 
+
+# How To
+
 ## Combine several execution in one launch
 
 How it can be done:
