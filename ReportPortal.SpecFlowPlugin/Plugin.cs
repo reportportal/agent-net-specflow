@@ -26,6 +26,7 @@ namespace ReportPortal.SpecFlowPlugin
                 runtimePluginEvents.CustomizeGlobalDependencies += (sender, e) =>
                 {
                     e.ObjectContainer.RegisterTypeAs<SafeBindingInvoker, IBindingInvoker>();
+                    e.SpecFlowConfiguration.AdditionalStepAssemblies.Add("ReportPortal.SpecFlowPlugin");
                 };
             }
         }
