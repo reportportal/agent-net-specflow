@@ -1,0 +1,11 @@
+﻿<Project ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <PropertyGroup>
+
+    <_ReportPortal_SpecFlow_Runtime Condition=" '$(TargetFrameworkIdentifier)' == '.NETCoreApp' ">netstandard2.0</_ReportPortal_SpecFlow_Runtime>
+    <_ReportPortal_SpecFlow_Runtime Condition=" '$(TargetFrameworkIdentifier)' == '.NETFramework' ">net45</_ReportPortal_SpecFlow_Runtime>
+    <_ReportPortal_SpecFlow_Runtime_Path>$(MSBuildThisFileDirectory)\..\lib\$(_ReportPortal_SpecFlow_Runtime)\ReportPortal.SpecFlowPlugin.dll</_ReportPortal_SpecFlow_Runtime_Path>
+
+  </PropertyGroup>
+
+</Project>
