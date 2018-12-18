@@ -1,25 +1,28 @@
 [![Build status](https://ci.appveyor.com/api/projects/status/k9gnrmlt3yo5gl4g?svg=true)](https://ci.appveyor.com/project/nvborisenko/agent-net-specflow)
 
 # Installation
-Install **ReportPortal.SpecFlow** NuGet package into your project with scenarios.
+Install **ReportPortal.SpecFlow** NuGet package into your project with scenarios. This package depends on SpecFlow v3.
 
 [![NuGet version](https://badge.fury.io/nu/reportportal.specflow.svg)](https://badge.fury.io/nu/reportportal.specflow)
 
 > PS> Install-Package ReportPortal.SpecFlow
 
-Connect plugin via your `App.config` file.
-```xml
-<specFlow>
-  ...
-  <plugins>
-    <add name="ReportPortal" type="Runtime" />
-  </plugins>
-  ...
-  <stepAssemblies>
-    <stepAssembly assembly="ReportPortal.SpecFlowPlugin" />
-  </stepAssemblies>
-  ...
-</specFlow>
+Connect plugin via your `specflow.json` file.
+```json
+{
+  "plugins": [
+    {
+      "name": "ReportPortal",
+      "type": "Runtime"
+    }
+  ],
+  "stepAssemblies": [
+    {
+      "assembly": "ReportPortal.SpecFlowPlugin"
+    }
+  ]
+}
+
 ```
 
 # Configuration
