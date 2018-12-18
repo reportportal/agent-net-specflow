@@ -7,24 +7,6 @@ Install **ReportPortal.SpecFlow** NuGet package into your project with scenarios
 
 > PS> Install-Package ReportPortal.SpecFlow
 
-Connect plugin via your `specflow.json` file.
-```json
-{
-  "plugins": [
-    {
-      "name": "ReportPortal",
-      "type": "Runtime"
-    }
-  ],
-  "stepAssemblies": [
-    {
-      "assembly": "ReportPortal.SpecFlowPlugin"
-    }
-  ]
-}
-
-```
-
 # Configuration
 Add `ReportPortal.config.json` file into tests project with `Copy to Output Directory = Copy if newer` property.
 
