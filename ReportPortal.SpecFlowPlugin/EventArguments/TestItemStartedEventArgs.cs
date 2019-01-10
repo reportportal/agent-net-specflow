@@ -1,7 +1,7 @@
 ﻿using System;
 using ReportPortal.Client;
 using ReportPortal.Client.Requests;
-using ReportPortal.Shared;
+using ReportPortal.Shared.Reporter;
 using TechTalk.SpecFlow;
 
 namespace ReportPortal.SpecFlowPlugin.EventArguments
@@ -11,16 +11,16 @@ namespace ReportPortal.SpecFlowPlugin.EventArguments
         public TestItemStartedEventArgs(Service service, StartTestItemRequest request)
         {
             Service = service;
-            TestItem = request;
+            StartTestItemRequest = request;
         }
 
-        public TestItemStartedEventArgs(Service service, StartTestItemRequest request, TestReporter testReporter)
+        public TestItemStartedEventArgs(Service service, StartTestItemRequest request, ITestReporter testReporter)
             : this(service, request)
         {
             TestReporter = testReporter;
         }
 
-        public TestItemStartedEventArgs(Service service, StartTestItemRequest request, TestReporter testReporter, FeatureContext featureContext, ScenarioContext scenarioContext)
+        public TestItemStartedEventArgs(Service service, StartTestItemRequest request, ITestReporter testReporter, FeatureContext featureContext, ScenarioContext scenarioContext)
             : this(service, request, testReporter)
         {
             this.FeatureContext = featureContext;
@@ -29,9 +29,9 @@ namespace ReportPortal.SpecFlowPlugin.EventArguments
 
         public Service Service { get; }
 
-        public StartTestItemRequest TestItem { get; }
+        public StartTestItemRequest StartTestItemRequest { get; }
 
-        public TestReporter TestReporter { get; }
+        public ITestReporter TestReporter { get; }
 
         public FeatureContext FeatureContext { get; }
 
