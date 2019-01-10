@@ -49,41 +49,9 @@ Example of config file:
 ## Combine several execution in one launch
 
 How it can be done:
-1. CI server creates a RP launch and saves the launch id to `app.config` of test binaries.
-2. Test binaries are copied to VMs and run there.
-3. The tests start and see that there is launch id in `app.config` and don't create a new launch - they re-use the existing one. Also they don't close it once they are done.
-
-```c#
-[BeforeTestRun(Order = -30000)]
-public static void BeforeTestRunPart()
-{
-	ReportPortalAddin.BeforeRunStarted += ReportPortalAddin_BeforeRunStarted;
-	ReportPortalAddin.BeforeRunFinished += ReportPortalAddin_BeforeRunFinished;
-}
-
-public static void ReportPortalAddin_BeforeRunStarted(object sender, RunStartedEventArgs e)
-{
-	var launchId = System.Configuration.ConfigurationManager.AppSettings["ReportPortalLaunchId"];
-	if (launchId.IsNullOrEmpty() == false)
-	{
-		e.Canceled = true;
-		Bridge.Context.LaunchReporter = new LaunchReporter(Bridge.Service);
-		Bridge.Context.LaunchReporter.StartTask = Task.Run(() => { Bridge.Context.LaunchReporter.LaunchId = launchId; });
-	}
-}
-
-public static void ReportPortalAddin_BeforeRunFinished(object sender, RunFinishedEventArgs e)
-{
-	var launchId = System.Configuration.ConfigurationManager.AppSettings["ReportPortalLaunchId"];
-	if (launchId.IsNullOrEmpty() == false)
-	{
-		e.Canceled = true;
-		Bridge.Context.LaunchReporter.FinishTask = Task.Run(() => { Bridge.Context.LaunchReporter.StartTask.Wait(); Bridge.Context.LaunchReporter.TestNodes.ForEach(tn => tn.FinishTask.Wait()); });
-		Bridge.Context.LaunchReporter.FinishTask.Wait();
-	}
-}
-```
-4. When all tests run, CI server closes the RP launch.
+1. CI server creates a RP launch and set `REPORTPORTAL_LAUNCH_ID` environment variable.
+2. Execute tests as usual.
+3. When all tests run, CI server finishes the RP launch.
 
 ## Custom handler for all requests to Report Portal
 
