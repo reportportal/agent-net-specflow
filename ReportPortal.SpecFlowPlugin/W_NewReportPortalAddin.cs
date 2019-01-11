@@ -15,11 +15,11 @@ using TechTalk.SpecFlow.UnitTestProvider;
 
 namespace ReportPortal.SpecFlowPlugin
 {
-    public class W_NewReportPortalAddin : ITestExecutionEngine
+    public class W_NewTestExecutionEngine : ITestExecutionEngine
     {
         private TestExecutionEngine _engine;
 
-        public W_NewReportPortalAddin(
+        public W_NewTestExecutionEngine(
             IStepFormatter stepFormatter,
             ITestTracer testTracer,
             IErrorProvider errorProvider,
@@ -89,11 +89,13 @@ namespace ReportPortal.SpecFlowPlugin
 
         public void OnTestRunEnd()
         {
+            System.Threading.Thread.Sleep(3000);
             _engine.OnTestRunEnd();
         }
 
         public void OnTestRunStart()
         {
+            System.Threading.Thread.Sleep(3000);
             _engine.OnTestRunStart();
         }
 

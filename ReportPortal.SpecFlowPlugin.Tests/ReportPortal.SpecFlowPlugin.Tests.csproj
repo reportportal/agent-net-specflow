@@ -1,7 +1,7 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <TargetFramework>net471</TargetFramework>
 
     <IsPackable>false</IsPackable>
   </PropertyGroup>
@@ -17,6 +17,12 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ReportPortal.SpecFlowPlugin\ReportPortal.SpecFlowPlugin.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="ReportPortal.config.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

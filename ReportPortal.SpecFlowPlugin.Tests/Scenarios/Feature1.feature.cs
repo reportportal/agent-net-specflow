@@ -81,10 +81,12 @@ namespace ReportPortal.SpecFlowPlugin.Tests.Scenarios
         [Xunit.TraitAttribute("FeatureTitle", "Feature1")]
         [Xunit.TraitAttribute("Description", "Add two numbers")]
         [Xunit.TraitAttribute("Category", "mytag")]
+        [Xunit.TraitAttribute("Category", "666")]
         public virtual void AddTwoNumbers()
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Add two numbers", null, new string[] {
-                        "mytag"});
+                        "mytag",
+                        "666"});
 #line 7
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();

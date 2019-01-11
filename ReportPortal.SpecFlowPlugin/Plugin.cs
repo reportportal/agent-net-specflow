@@ -46,8 +46,8 @@ namespace ReportPortal.SpecFlowPlugin
         private void RuntimePluginEvents_CustomizeTestThreadDependencies(object sender, CustomizeTestThreadDependenciesEventArgs e)
         {
             e.ObjectContainer.RegisterTypeAs<W_NewTestRunner, ITestRunner>();
-            e.ObjectContainer.RegisterTypeAs<W_NewReportPortalAddin, ITestExecutionEngine>();
-            e.ObjectContainer.RegisterTypeAs<W_NewTraceListener, ITraceListener>();
+            e.ObjectContainer.RegisterTypeAs<W_NewTestExecutionEngine, ITestExecutionEngine>();
+            //e.ObjectContainer.RegisterTypeAs<W_NewTraceListener, ITraceListener>();
         }
     }
 }

@@ -77,6 +77,7 @@ namespace ReportPortal.SpecFlowPlugin
 
         public void OnTestRunEnd()
         {
+            //System.Threading.Thread.Sleep(3000);
             _runner.OnTestRunEnd();
         }
 
