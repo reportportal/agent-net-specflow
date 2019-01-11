@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.Linq;
 using ReportPortal.Shared;
+using ReportPortal.Shared.Reporter;
 using ReportPortal.SpecFlowPlugin.EventArguments;
 using TechTalk.SpecFlow;
 
@@ -9,27 +10,27 @@ namespace ReportPortal.SpecFlowPlugin
 {
     public class ReportPortalAddin
     {
-        private static readonly ConcurrentDictionary<FeatureInfo, TestReporter> FeatureTestReporters = new ConcurrentDictionary<FeatureInfo, TestReporter>(new FeatureInfoEqualityComparer());
+        private static readonly ConcurrentDictionary<FeatureInfo, ITestReporter> FeatureTestReporters = new ConcurrentDictionary<FeatureInfo, ITestReporter>(new FeatureInfoEqualityComparer());
 
         private static readonly ConcurrentDictionary<FeatureInfo, int> FeatureThreadCount = new ConcurrentDictionary<FeatureInfo, int>(new FeatureInfoEqualityComparer());
 
-        private static readonly ConcurrentDictionary<ScenarioInfo, TestReporter> ScenarioTestReporters = new ConcurrentDictionary<ScenarioInfo, TestReporter>();
+        private static readonly ConcurrentDictionary<ScenarioInfo, ITestReporter> ScenarioTestReporters = new ConcurrentDictionary<ScenarioInfo, ITestReporter>();
 
         [Obsolete("Use thread-safe method GetFeatureTestReporter to get the current feature TestReporter.")]
-        public static TestReporter CurrentFeature => FeatureTestReporters.Select(kv => kv.Value).LastOrDefault(reporter => reporter.FinishTask == null);
+        public static ITestReporter CurrentFeature => FeatureTestReporters.Select(kv => kv.Value).LastOrDefault(reporter => reporter.FinishTask == null);
 
         [Obsolete("Use thread-safe method GetScenarioTestReporter to get the current scenario TestReporter.")]
-        public static TestReporter CurrentScenario => ScenarioTestReporters.Select(kv => kv.Value).LastOrDefault(reporter => reporter.FinishTask == null);
+        public static ITestReporter CurrentScenario => ScenarioTestReporters.Select(kv => kv.Value).LastOrDefault(reporter => reporter.FinishTask == null);
 
         [Obsolete]
         public static string CurrentScenarioDescription { get; } = string.Empty;
 
-        public static TestReporter GetFeatureTestReporter(FeatureContext context)
+        public static ITestReporter GetFeatureTestReporter(FeatureContext context)
         {
             return FeatureTestReporters.ContainsKey(context.FeatureInfo) ? FeatureTestReporters[context.FeatureInfo] : null;
         }
 
-        internal static void SetFeatureTestReporter(FeatureContext context, TestReporter reporter)
+        internal static void SetFeatureTestReporter(FeatureContext context, ITestReporter reporter)
         {
             FeatureTestReporters[context.FeatureInfo] = reporter;
             FeatureThreadCount[context.FeatureInfo] = 1;
@@ -47,12 +48,12 @@ namespace ReportPortal.SpecFlowPlugin
                 = FeatureThreadCount.ContainsKey(context.FeatureInfo) ? FeatureThreadCount[context.FeatureInfo] - 1 : 0;
         }
 
-        public static TestReporter GetScenarioTestReporter(ScenarioContext context)
+        public static ITestReporter GetScenarioTestReporter(ScenarioContext context)
         {
             return ScenarioTestReporters.ContainsKey(context.ScenarioInfo) ? ScenarioTestReporters[context.ScenarioInfo] : null;
         }
 
-        internal static void SetScenarioTestReporter(ScenarioContext context, TestReporter reporter)
+        internal static void SetScenarioTestReporter(ScenarioContext context, ITestReporter reporter)
         {
             ScenarioTestReporters[context.ScenarioInfo] = reporter;
         }

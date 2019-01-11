@@ -1,7 +1,7 @@
 ﻿using System;
 using ReportPortal.Client;
 using ReportPortal.Client.Requests;
-using ReportPortal.Shared;
+using ReportPortal.Shared.Reporter;
 
 namespace ReportPortal.SpecFlowPlugin.EventArguments
 {
@@ -10,10 +10,10 @@ namespace ReportPortal.SpecFlowPlugin.EventArguments
         public RunStartedEventArgs(Service service, StartLaunchRequest request)
         {
             Service = service;
-            Launch = request;
+            StartLaunchRequest = request;
         }
 
-        public RunStartedEventArgs(Service service, StartLaunchRequest request, LaunchReporter launchReporter)
+        public RunStartedEventArgs(Service service, StartLaunchRequest request, ILaunchReporter launchReporter)
             : this(service, request)
         {
             LaunchReporter = launchReporter;
@@ -21,9 +21,9 @@ namespace ReportPortal.SpecFlowPlugin.EventArguments
 
         public Service Service { get; }
 
-        public StartLaunchRequest Launch { get; }
+        public StartLaunchRequest StartLaunchRequest { get; }
 
-        public LaunchReporter LaunchReporter { get; set; }
+        public ILaunchReporter LaunchReporter { get; set; }
 
         public bool Canceled { get; set; }
     }

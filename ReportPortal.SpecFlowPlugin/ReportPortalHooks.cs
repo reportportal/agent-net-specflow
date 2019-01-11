@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Net;
+using System.Linq;
 using ReportPortal.Client;
 using ReportPortal.Client.Models;
 using ReportPortal.Client.Requests;
 using ReportPortal.Shared;
-using ReportPortal.SpecFlowPlugin.Configuration;
+using ReportPortal.Shared.Configuration;
+using ReportPortal.Shared.Reporter;
 using ReportPortal.SpecFlowPlugin.EventArguments;
 using ReportPortal.SpecFlowPlugin.Extensions;
 using TechTalk.SpecFlow;
@@ -20,22 +21,22 @@ namespace ReportPortal.SpecFlowPlugin
         [BeforeTestRun(Order = -20000)]
         public static void BeforeTestRun()
         {
-            var config = Initialize();
-
-            if (config.IsEnabled)
+            try
             {
+                var config = Initialize();
+
                 var request = new StartLaunchRequest
                 {
-                    Name = config.Launch.Name,
+                    Name = config.GetValue(ConfigurationPath.LaunchName, "SpecFlow Launch"),
                     StartTime = DateTime.UtcNow
                 };
 
-                if (config.Launch.IsDebugMode)
+                if (config.GetValue(ConfigurationPath.LaunchDebugMode, false))
                 {
                     request.Mode = LaunchMode.Debug;
                 }
-
-                request.Tags = config.Launch.Tags;
+                
+                request.Tags = config.GetValues(ConfigurationPath.LaunchTags, new List<string>()).ToList();
 
                 var eventArg = new RunStartedEventArgs(Bridge.Service, request);
                 ReportPortalAddin.OnBeforeRunStarted(null, eventArg);
@@ -47,41 +48,48 @@ namespace ReportPortal.SpecFlowPlugin
 
                 if (!eventArg.Canceled)
                 {
-                    Bridge.Context.LaunchReporter = Bridge.Context.LaunchReporter ?? new LaunchReporter(Bridge.Service);
+                    var launchId = config.GetValue<string>("Launch:Id", "");
+
+                    if (string.IsNullOrEmpty(launchId))
+                    {
+                        Bridge.Context.LaunchReporter = Bridge.Context.LaunchReporter ?? new LaunchReporter(Bridge.Service);
+                    }
+                    else
+                    {
+                        Bridge.Context.LaunchReporter = Bridge.Context.LaunchReporter ?? new LaunchReporter(Bridge.Service, launchId);
+                    }
 
                     Bridge.Context.LaunchReporter.Start(request);
 
                     ReportPortalAddin.OnAfterRunStarted(null, new RunStartedEventArgs(Bridge.Service, request, Bridge.Context.LaunchReporter));
+
                 }
+            }
+            catch(Exception exp)
+            {
+                var logFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "ReportPortal.log");
+
+                File.AppendAllText(logFile, exp.ToString());
             }
         }
 
-        private static Config Initialize()
+        private static IConfiguration Initialize()
         {
             var args = new InitializingEventArgs(Plugin.Config);
 
-            ReportPortalAddin.OnInitializing(null, args);
+            ReportPortalAddin.OnInitializing(typeof(ReportPortalHooks), args);
 
-            if (args.Config.IsEnabled)
+            var uri = Plugin.Config.GetValue<string>(ConfigurationPath.ServerUrl);
+            var project = Plugin.Config.GetValue<string>(ConfigurationPath.ServerProject); ;
+            var uuid = Plugin.Config.GetValue<string>(ConfigurationPath.ServerAuthenticationUuid); ;
+
+            if (args.Service != null)
             {
-                var uri = args.Config.Server.Url;
-                var project = args.Config.Server.Project;
-                var uuid = args.Config.Server.Authentication.Uuid;
-
-                if (args.Service != null)
-                {
-                    Bridge.Service = args.Service;
-                }
-                else if (args.Config.Server.Proxy != null)
-                {
-                    var proxy = new WebProxy(args.Config.Server.Proxy);
-
-                    Bridge.Service = new Service(uri, project, uuid, proxy);
-                }
-                else
-                {
-                    Bridge.Service = new Service(uri, project, uuid);
-                }
+                Bridge.Service = args.Service;
+            }
+            else
+            {
+                Bridge.Service = new Service(new Uri(uri), project, uuid);
             }
 
             return args.Config;
@@ -148,7 +156,7 @@ namespace ReportPortal.SpecFlowPlugin
 
                         if (!eventArg.Canceled)
                         {
-                            currentFeature = Bridge.Context.LaunchReporter.StartNewTestNode(request);
+                            currentFeature = Bridge.Context.LaunchReporter.StartChildTestReporter(request);
                             ReportPortalAddin.SetFeatureTestReporter(featureContext, currentFeature);
 
                             ReportPortalAddin.OnAfterFeatureStarted(null, new TestItemStartedEventArgs(Bridge.Service, request, currentFeature, featureContext, null));
@@ -212,7 +220,7 @@ namespace ReportPortal.SpecFlowPlugin
 
                 if (!eventArg.Canceled)
                 {
-                    var currentScenario = currentFeature.StartNewTestNode(request);
+                    var currentScenario = currentFeature.StartChildTestReporter(request);
                     ReportPortalAddin.SetScenarioTestReporter(this.ScenarioContext, currentScenario);
 
                     ReportPortalAddin.OnAfterScenarioStarted(this, new TestItemStartedEventArgs(Bridge.Service, request, currentFeature, this.FeatureContext, this.ScenarioContext));
@@ -286,7 +294,7 @@ namespace ReportPortal.SpecFlowPlugin
 
                 if (!eventArg.Canceled)
                 {
-                    if(this.ScenarioContext.ScenarioExecutionStatus == ScenarioExecutionStatus.TestError)
+                    if (this.ScenarioContext.ScenarioExecutionStatus == ScenarioExecutionStatus.TestError)
                     {
                         currentScenario.Log(new AddLogItemRequest
                         {
@@ -294,7 +302,8 @@ namespace ReportPortal.SpecFlowPlugin
                             Time = DateTime.UtcNow,
                             Text = this.ScenarioContext.TestError?.ToString()
                         });
-                    } else if (this.ScenarioContext.ScenarioExecutionStatus == ScenarioExecutionStatus.BindingError)
+                    }
+                    else if (this.ScenarioContext.ScenarioExecutionStatus == ScenarioExecutionStatus.BindingError)
                     {
                         currentScenario.Log(new AddLogItemRequest
                         {
@@ -302,7 +311,8 @@ namespace ReportPortal.SpecFlowPlugin
                             Time = DateTime.UtcNow,
                             Text = this.ScenarioContext.TestError?.Message
                         });
-                    } else if (this.ScenarioContext.ScenarioExecutionStatus == ScenarioExecutionStatus.UndefinedStep)
+                    }
+                    else if (this.ScenarioContext.ScenarioExecutionStatus == ScenarioExecutionStatus.UndefinedStep)
                     {
                         currentScenario.Log(new AddLogItemRequest
                         {
@@ -343,7 +353,7 @@ namespace ReportPortal.SpecFlowPlugin
                 }
             }
         }
-        
+
         [AfterStep(Order = 20000)]
         public void AfterStep()
         {

@@ -1,5 +1,6 @@
-﻿using ReportPortal.SpecFlowPlugin;
-using ReportPortal.SpecFlowPlugin.Configuration;
+﻿using ReportPortal.Shared.Configuration;
+using ReportPortal.Shared.Configuration.Providers;
+using ReportPortal.SpecFlowPlugin;
 using System;
 using System.IO;
 using TechTalk.SpecFlow.Bindings;
@@ -14,14 +15,17 @@ namespace ReportPortal.SpecFlowPlugin
     /// </summary>
     internal class Plugin: IRuntimePlugin
     {
-        public static Config Config { get; set; }
+        public static IConfiguration Config { get; set; }
 
         public void Initialize(RuntimePluginEvents runtimePluginEvents, RuntimePluginParameters runtimePluginParameters, UnitTestProviderConfiguration unitTestProviderConfiguration)
         {
-            var configPath = Path.GetDirectoryName(new Uri(typeof(Config).Assembly.CodeBase).LocalPath) + "/ReportPortal.config.json";
-            Config = Client.Converters.ModelSerializer.Deserialize<Config>(File.ReadAllText(configPath));
+            var jsonPath = Path.GetDirectoryName(new Uri(typeof(Plugin).Assembly.CodeBase).LocalPath) + "/ReportPortal.config.json";
 
-            if (Config.IsEnabled)
+            Config = new ConfigurationBuilder().AddJsonFile(jsonPath).AddEnvironmentVariables().Build();
+
+            var isEnabled = Config.GetValue("Enabled", true);
+
+            if (isEnabled)
             {
                 runtimePluginEvents.CustomizeGlobalDependencies += (sender, e) =>
                 {

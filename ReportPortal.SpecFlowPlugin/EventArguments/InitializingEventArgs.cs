@@ -1,16 +1,16 @@
 ﻿using ReportPortal.Client;
-using ReportPortal.SpecFlowPlugin.Configuration;
+using ReportPortal.Shared.Configuration;
 
 namespace ReportPortal.SpecFlowPlugin.EventArguments
 {
     public class InitializingEventArgs
     {
-        public InitializingEventArgs(Config config)
+        public InitializingEventArgs(IConfiguration config)
         {
             Config = config;
         }
 
-        public Config Config { get; set; }
+        public IConfiguration Config { get; set; }
 
         public Service Service { get; set; }
     }
