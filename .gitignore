@@ -7,6 +7,9 @@
 *.userosscache
 *.sln.docstates
 
+# SpecFlow generated files
+*.feature.cs
+
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
 

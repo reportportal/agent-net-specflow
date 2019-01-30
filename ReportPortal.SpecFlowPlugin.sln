@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.271
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReportPortal.SpecFlowPlugin", "ReportPortal.SpecFlowPlugin\ReportPortal.SpecFlowPlugin.csproj", "{D57CE2F8-4BEC-4894-887F-4855530A3D4E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReportPortal.SpecFlowPlugin", "ReportPortal.SpecFlowPlugin\ReportPortal.SpecFlowPlugin.csproj", "{D57CE2F8-4BEC-4894-887F-4855530A3D4E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReportPortal.SpecFlowPlugin.Tests", "ReportPortal.SpecFlowPlugin.Tests\ReportPortal.SpecFlowPlugin.Tests.csproj", "{AD263195-51FA-46C6-B419-3417F4C52BE6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,8 +17,15 @@ Global
 		{D57CE2F8-4BEC-4894-887F-4855530A3D4E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D57CE2F8-4BEC-4894-887F-4855530A3D4E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D57CE2F8-4BEC-4894-887F-4855530A3D4E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AD263195-51FA-46C6-B419-3417F4C52BE6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AD263195-51FA-46C6-B419-3417F4C52BE6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AD263195-51FA-46C6-B419-3417F4C52BE6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AD263195-51FA-46C6-B419-3417F4C52BE6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {3A990764-002D-4829-8EA7-ECD653DFCC5D}
 	EndGlobalSection
 EndGlobal
