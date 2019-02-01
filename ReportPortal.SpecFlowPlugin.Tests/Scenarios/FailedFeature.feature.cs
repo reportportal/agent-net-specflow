@@ -18,20 +18,20 @@ namespace ReportPortal.SpecFlowPlugin.IntegrationTests.Scenarios
     [System.CodeDom.Compiler.GeneratedCodeAttribute("TechTalk.SpecFlow", "2.4.0.0")]
     [System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     [NUnit.Framework.TestFixtureAttribute()]
-    [NUnit.Framework.DescriptionAttribute("Feature3")]
-    public partial class Feature3Feature
+    [NUnit.Framework.DescriptionAttribute("Failed")]
+    public partial class FailedFeature
     {
         
         private TechTalk.SpecFlow.ITestRunner testRunner;
         
-#line 1 "Feature3.feature"
+#line 1 "FailedFeature.feature"
 #line hidden
         
         [NUnit.Framework.OneTimeSetUpAttribute()]
         public virtual void FeatureSetup()
         {
             testRunner = TechTalk.SpecFlow.TestRunnerManager.GetTestRunner();
-            TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "Feature3", null, ProgrammingLanguage.CSharp, ((string[])(null)));
+            TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "Failed", "\tScenarios should be failed", ProgrammingLanguage.CSharp, ((string[])(null)));
             testRunner.OnFeatureStart(featureInfo);
         }
         
@@ -70,38 +70,21 @@ namespace ReportPortal.SpecFlowPlugin.IntegrationTests.Scenarios
         }
         
         [NUnit.Framework.TestAttribute()]
-        [NUnit.Framework.DescriptionAttribute("System Error")]
-        public virtual void SystemError()
+        [NUnit.Framework.DescriptionAttribute("Failed test")]
+        public virtual void FailedTest()
         {
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("System Error", null, ((string[])(null)));
-#line 3
-this.ScenarioInitialize(scenarioInfo);
-            this.ScenarioStart();
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Failed test", null, ((string[])(null)));
 #line 4
- testRunner.Then("I execute failed test", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line hidden
-            this.ScenarioCleanup();
-        }
-        
-        [NUnit.Framework.TestAttribute()]
-        [NUnit.Framework.DescriptionAttribute("Parametrized scenario")]
-        [NUnit.Framework.TestCaseAttribute("1", "2", "3", null)]
-        [NUnit.Framework.TestCaseAttribute("2", "2", "4", null)]
-        [NUnit.Framework.TestCaseAttribute("3", "3", "666", null)]
-        public virtual void ParametrizedScenario(string a, string b, string c, string[] exampleTags)
-        {
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Parametrized scenario", null, exampleTags);
-#line 6
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
+#line 5
+ testRunner.Given("I have entered 50 into the calculator", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line 6
+ testRunner.And("I have entered 70 into the calculator", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 7
- testRunner.Given(string.Format("I have entered {0} into the calculator", a), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
-#line 8
- testRunner.And(string.Format("I have entered {0} into the calculator", b), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 9
  testRunner.When("I press add", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 10
- testRunner.Then(string.Format("the result should be {0} on the screen", c), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 8
+ testRunner.Then("the result should be 0 on the screen", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
         }

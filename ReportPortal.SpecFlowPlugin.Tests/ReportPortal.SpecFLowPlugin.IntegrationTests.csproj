@@ -18,20 +18,30 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Scenarios\Feature1.feature.cs">
+    <Compile Update="Scenarios\AfterFeatureFails.feature.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
-      <DependentUpon>Feature1.feature</DependentUpon>
+      <DependentUpon>AfterFeatureFails.feature</DependentUpon>
     </Compile>
-    <Compile Update="Scenarios\Feature2.feature.cs">
+    <Compile Update="Scenarios\BeforeFeatureFails.feature.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
-      <DependentUpon>Feature2.feature</DependentUpon>
+      <DependentUpon>BeforeFeatureFails.feature</DependentUpon>
     </Compile>
-    <Compile Update="Scenarios\Feature3.feature.cs">
+    <Compile Update="Scenarios\FailedFeature.feature.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
-      <DependentUpon>Feature3.feature</DependentUpon>
+      <DependentUpon>FailedFeature.feature</DependentUpon>
+    </Compile>
+    <Compile Update="Scenarios\PassFeature.feature.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>PassFeature.feature</DependentUpon>
+    </Compile>
+    <Compile Update="Scenarios\ScenarioLevelHooks.feature.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>ScenarioLevelHooks.feature</DependentUpon>
     </Compile>
   </ItemGroup>
 
@@ -39,17 +49,26 @@
     <None Update="ReportPortal.config.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Scenarios\Feature1.feature">
+    <None Update="Scenarios\AfterFeatureFails.feature">
       <Generator>SpecFlowSingleFileGenerator</Generator>
-      <LastGenOutput>Feature1.feature.cs</LastGenOutput>
+      <LastGenOutput>AfterFeatureFails.feature.cs</LastGenOutput>
     </None>
-    <None Update="Scenarios\Feature2.feature">
+    
+    <None Update="Scenarios\BeforeFeatureFails.feature">
       <Generator>SpecFlowSingleFileGenerator</Generator>
-      <LastGenOutput>Feature2.feature.cs</LastGenOutput>
+      <LastGenOutput>BeforeFeatureFails.feature.cs</LastGenOutput>
     </None>
-    <None Update="Scenarios\Feature3.feature">
+    <None Update="Scenarios\PassFeature.feature">
       <Generator>SpecFlowSingleFileGenerator</Generator>
-      <LastGenOutput>Feature3.feature.cs</LastGenOutput>
+      <LastGenOutput>PassFeature.feature.cs</LastGenOutput>
+    </None>
+    <None Update="Scenarios\FailedFeature.feature">
+      <Generator>SpecFlowSingleFileGenerator</Generator>
+      <LastGenOutput>FailedFeature.feature.cs</LastGenOutput>
+    </None>
+    <None Update="Scenarios\ScenarioLevelHooks.feature">
+      <Generator>SpecFlowSingleFileGenerator</Generator>
+      <LastGenOutput>ScenarioLevelHooks.feature.cs</LastGenOutput>
     </None>
   </ItemGroup>
 
