@@ -1,0 +1,56 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net471</TargetFramework>
+
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.9.0" />
+    <PackageReference Include="NUnit" Version="3.11.0" />
+    <PackageReference Include="NUnit3TestAdapter" Version="3.12.0" />
+    <PackageReference Include="SpecFlow" Version="2.4.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ReportPortal.SpecFlowPlugin\ReportPortal.SpecFlowPlugin.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Scenarios\Feature1.feature.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Feature1.feature</DependentUpon>
+    </Compile>
+    <Compile Update="Scenarios\Feature2.feature.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Feature2.feature</DependentUpon>
+    </Compile>
+    <Compile Update="Scenarios\Feature3.feature.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Feature3.feature</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="ReportPortal.config.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Scenarios\Feature1.feature">
+      <Generator>SpecFlowSingleFileGenerator</Generator>
+      <LastGenOutput>Feature1.feature.cs</LastGenOutput>
+    </None>
+    <None Update="Scenarios\Feature2.feature">
+      <Generator>SpecFlowSingleFileGenerator</Generator>
+      <LastGenOutput>Feature2.feature.cs</LastGenOutput>
+    </None>
+    <None Update="Scenarios\Feature3.feature">
+      <Generator>SpecFlowSingleFileGenerator</Generator>
+      <LastGenOutput>Feature3.feature.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+
+</Project>
