@@ -1,6 +1,5 @@
-﻿@should_fail_after
+﻿@feature_should_fail_after
 Feature: After Fails
 	
-
-Scenario: Add two numbers
+Scenario: This scenario should pass because of feature fails after
 	Given I have entered 50 into the calculator

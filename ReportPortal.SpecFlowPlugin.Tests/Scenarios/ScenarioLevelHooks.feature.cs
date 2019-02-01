@@ -71,11 +71,11 @@ namespace ReportPortal.SpecFlowPlugin.IntegrationTests.Scenarios
         
         [NUnit.Framework.TestAttribute()]
         [NUnit.Framework.DescriptionAttribute("Should Fail In ScenarioBefore hook")]
-        [NUnit.Framework.CategoryAttribute("should_fail_before")]
+        [NUnit.Framework.CategoryAttribute("scenario_should_fail_before")]
         public virtual void ShouldFailInScenarioBeforeHook()
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Should Fail In ScenarioBefore hook", null, new string[] {
-                        "should_fail_before"});
+                        "scenario_should_fail_before"});
 #line 5
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
@@ -87,11 +87,11 @@ this.ScenarioInitialize(scenarioInfo);
         
         [NUnit.Framework.TestAttribute()]
         [NUnit.Framework.DescriptionAttribute("Should Fail In ScenarioAfter hook")]
-        [NUnit.Framework.CategoryAttribute("should_fail_after")]
+        [NUnit.Framework.CategoryAttribute("scenario_should_fail_after")]
         public virtual void ShouldFailInScenarioAfterHook()
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Should Fail In ScenarioAfter hook", null, new string[] {
-                        "should_fail_after"});
+                        "scenario_should_fail_after"});
 #line 9
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
@@ -116,15 +116,51 @@ this.ScenarioInitialize(scenarioInfo);
         }
         
         [NUnit.Framework.TestAttribute()]
-        [NUnit.Framework.DescriptionAttribute("Should Fail")]
-        public virtual void ShouldFail()
+        [NUnit.Framework.DescriptionAttribute("Should fail in step")]
+        public virtual void ShouldFailInStep()
         {
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Should Fail", null, ((string[])(null)));
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Should fail in step", null, ((string[])(null)));
 #line 15
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line 16
  testRunner.Then("I execute failed step", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+            this.ScenarioCleanup();
+        }
+        
+        [NUnit.Framework.TestAttribute()]
+        [NUnit.Framework.DescriptionAttribute("Should fail because of step fails before")]
+        [NUnit.Framework.CategoryAttribute("step_should_fail_before")]
+        public virtual void ShouldFailBecauseOfStepFailsBefore()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Should fail because of step fails before", null, new string[] {
+                        "step_should_fail_before"});
+#line 19
+this.ScenarioInitialize(scenarioInfo);
+            this.ScenarioStart();
+#line 20
+ testRunner.Given("I have entered 50 into the calculator", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line 21
+ testRunner.When("I press add", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line hidden
+            this.ScenarioCleanup();
+        }
+        
+        [NUnit.Framework.TestAttribute()]
+        [NUnit.Framework.DescriptionAttribute("Should fail because of step fails after")]
+        [NUnit.Framework.CategoryAttribute("step_should_fail_after")]
+        public virtual void ShouldFailBecauseOfStepFailsAfter()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Should fail because of step fails after", null, new string[] {
+                        "step_should_fail_after"});
+#line 24
+this.ScenarioInitialize(scenarioInfo);
+            this.ScenarioStart();
+#line 25
+ testRunner.Given("I have entered 50 into the calculator", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line 26
+ testRunner.When("I press add", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
             this.ScenarioCleanup();
         }

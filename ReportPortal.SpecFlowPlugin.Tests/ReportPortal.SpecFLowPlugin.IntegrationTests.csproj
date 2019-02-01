@@ -28,11 +28,6 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>BeforeFeatureFails.feature</DependentUpon>
     </Compile>
-    <Compile Update="Scenarios\FailedFeature.feature.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>FailedFeature.feature</DependentUpon>
-    </Compile>
     <Compile Update="Scenarios\PassFeature.feature.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
@@ -61,10 +56,6 @@
     <None Update="Scenarios\PassFeature.feature">
       <Generator>SpecFlowSingleFileGenerator</Generator>
       <LastGenOutput>PassFeature.feature.cs</LastGenOutput>
-    </None>
-    <None Update="Scenarios\FailedFeature.feature">
-      <Generator>SpecFlowSingleFileGenerator</Generator>
-      <LastGenOutput>FailedFeature.feature.cs</LastGenOutput>
     </None>
     <None Update="Scenarios\ScenarioLevelHooks.feature">
       <Generator>SpecFlowSingleFileGenerator</Generator>

@@ -19,7 +19,7 @@ namespace ReportPortal.SpecFlowPlugin.IntegrationTests.Scenarios
     [System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     [NUnit.Framework.TestFixtureAttribute()]
     [NUnit.Framework.DescriptionAttribute("Before Fails")]
-    [NUnit.Framework.CategoryAttribute("should_fail_before")]
+    [NUnit.Framework.CategoryAttribute("feature_should_fail_before")]
     public partial class BeforeFailsFeature
     {
         
@@ -33,7 +33,7 @@ namespace ReportPortal.SpecFlowPlugin.IntegrationTests.Scenarios
         {
             testRunner = TechTalk.SpecFlow.TestRunnerManager.GetTestRunner();
             TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "Before Fails", "\tBefore Feature hook fails", ProgrammingLanguage.CSharp, new string[] {
-                        "should_fail_before"});
+                        "feature_should_fail_before"});
             testRunner.OnFeatureStart(featureInfo);
         }
         
@@ -72,10 +72,10 @@ namespace ReportPortal.SpecFlowPlugin.IntegrationTests.Scenarios
         }
         
         [NUnit.Framework.TestAttribute()]
-        [NUnit.Framework.DescriptionAttribute("Add two numbers")]
-        public virtual void AddTwoNumbers()
+        [NUnit.Framework.DescriptionAttribute("This scenario should fail because of feature fails before")]
+        public virtual void ThisScenarioShouldFailBecauseOfFeatureFailsBefore()
         {
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Add two numbers", null, ((string[])(null)));
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("This scenario should fail because of feature fails before", null, ((string[])(null)));
 #line 5
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();

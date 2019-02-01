@@ -19,7 +19,7 @@ namespace ReportPortal.SpecFlowPlugin.IntegrationTests.Scenarios
     [System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     [NUnit.Framework.TestFixtureAttribute()]
     [NUnit.Framework.DescriptionAttribute("After Fails")]
-    [NUnit.Framework.CategoryAttribute("should_fail_after")]
+    [NUnit.Framework.CategoryAttribute("feature_should_fail_after")]
     public partial class AfterFailsFeature
     {
         
@@ -33,7 +33,7 @@ namespace ReportPortal.SpecFlowPlugin.IntegrationTests.Scenarios
         {
             testRunner = TechTalk.SpecFlow.TestRunnerManager.GetTestRunner();
             TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "After Fails", null, ProgrammingLanguage.CSharp, new string[] {
-                        "should_fail_after"});
+                        "feature_should_fail_after"});
             testRunner.OnFeatureStart(featureInfo);
         }
         
@@ -72,14 +72,14 @@ namespace ReportPortal.SpecFlowPlugin.IntegrationTests.Scenarios
         }
         
         [NUnit.Framework.TestAttribute()]
-        [NUnit.Framework.DescriptionAttribute("Add two numbers")]
-        public virtual void AddTwoNumbers()
+        [NUnit.Framework.DescriptionAttribute("This scenario should pass because of feature fails after")]
+        public virtual void ThisScenarioShouldPassBecauseOfFeatureFailsAfter()
         {
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Add two numbers", null, ((string[])(null)));
-#line 5
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("This scenario should pass because of feature fails after", null, ((string[])(null)));
+#line 4
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
-#line 6
+#line 5
  testRunner.Given("I have entered 50 into the calculator", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line hidden
             this.ScenarioCleanup();
