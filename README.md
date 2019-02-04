@@ -14,11 +14,6 @@ Connect plugin via your `App.config` file.
   <plugins>
     <add name="ReportPortal" type="Runtime" />
   </plugins>
-  ...
-  <stepAssemblies>
-    <stepAssembly assembly="ReportPortal.SpecFlowPlugin" />
-  </stepAssemblies>
-  ...
 </specFlow>
 ```
 
