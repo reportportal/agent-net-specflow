@@ -12,7 +12,7 @@ namespace ReportPortal.SpecFlowPlugin
     /// <summary>
     /// Registered SpecFlow plugin from configuration file.
     /// </summary>
-    internal class Plugin: IRuntimePlugin
+    internal class Plugin : IRuntimePlugin
     {
         public static IConfiguration Config { get; set; }
 
@@ -28,9 +28,12 @@ namespace ReportPortal.SpecFlowPlugin
             {
                 runtimePluginEvents.CustomizeGlobalDependencies += (sender, e) =>
                 {
-                    e.ObjectContainer.RegisterTypeAs<SafeBindingInvoker, IBindingInvoker>();
-
                     e.SpecFlowConfiguration.AdditionalStepAssemblies.Add("ReportPortal.SpecFlowPlugin");
+                };
+
+                runtimePluginEvents.CustomizeGlobalDependencies += (sender, e) =>
+                {
+                    e.ObjectContainer.RegisterTypeAs<SafeBindingInvoker, IBindingInvoker>();
                 };
             }
         }
