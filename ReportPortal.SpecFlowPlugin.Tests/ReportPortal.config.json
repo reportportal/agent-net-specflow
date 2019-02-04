@@ -1,6 +1,6 @@
 ﻿{
   "$schema": "ReportPortal.config.schema",
-  "enabled": false,
+  "enabled": true,
   "server": {
     "url": "https://rp.epam.com/api/v1/",
     "project": "default_project",
