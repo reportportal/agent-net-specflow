@@ -39,6 +39,7 @@ namespace ReportPortal.SpecFlowPlugin
         internal static void RemoveFeatureTestReporter(FeatureContext context, ITestReporter reporter)
         {
             FeatureTestReporters.TryRemove(context.FeatureInfo, out reporter);
+            FeatureThreadCount[context.FeatureInfo] -= 1;
         }
 
         internal static int IncrementFeatureThreadCount(FeatureContext context)
