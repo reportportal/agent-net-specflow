@@ -6,7 +6,7 @@
     <Version>1.0.0</Version>
     <Description>SpecFlow plugin for reporting test results into ReportPortal</Description>
     <Authors>Nikolay Borisenko, Report Portal Community</Authors>
-    <PackageTags>specflow plugin reportportal testing</PackageTags>
+    <PackageTags>report specflow plugin reportportal testing</PackageTags>
     <PackageLicenseUrl>https://raw.githubusercontent.com/reportportal/agent-net-specflow/master/LICENSE</PackageLicenseUrl>
     <PackageIconUrl>https://raw.githubusercontent.com/reportportal/agent-net-specflow/master/Logo.png</PackageIconUrl>
     <PackageProjectUrl>http://reportportal.io</PackageProjectUrl>
@@ -16,21 +16,15 @@
   </PropertyGroup>
 
   <ItemGroup>
-
     <None Update="tools/*">
       <PackagePath>.</PackagePath>
       <Pack>true</Pack>
     </None>
-
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="ReportPortal.Shared" Version="2.1.4" />
-    <PackageReference Include="SpecFlow.CustomPlugin" Version="2.4.1" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="System.Configuration" />
+    <PackageReference Include="SpecFlow" Version="2.4.1" />
   </ItemGroup>
 
 </Project>
