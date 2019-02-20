@@ -4,7 +4,7 @@
     <TargetFramework>net45</TargetFramework>
     <PackageId>ReportPortal.SpecFlow</PackageId>
     <Version>1.0.0</Version>
-    <Description>SpecFlow plugin for reporting test results into ReportPortal</Description>
+    <Description>SpecFlow plugin for reporting test results to http://reportportal.io</Description>
     <Authors>Nikolay Borisenko, Report Portal Community</Authors>
     <PackageTags>report specflow plugin reportportal testing</PackageTags>
     <PackageLicenseUrl>https://raw.githubusercontent.com/reportportal/agent-net-specflow/master/LICENSE</PackageLicenseUrl>
