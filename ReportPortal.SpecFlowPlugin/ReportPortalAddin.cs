@@ -36,6 +36,12 @@ namespace ReportPortal.SpecFlowPlugin
             FeatureThreadCount[context.FeatureInfo] = 1;
         }
 
+        internal static void RemoveFeatureTestReporter(FeatureContext context, ITestReporter reporter)
+        {
+            FeatureTestReporters.TryRemove(context.FeatureInfo, out reporter);
+            FeatureThreadCount.TryRemove(context.FeatureInfo, out int count);
+        }
+
         internal static int IncrementFeatureThreadCount(FeatureContext context)
         {
             return FeatureThreadCount[context.FeatureInfo]
@@ -56,6 +62,11 @@ namespace ReportPortal.SpecFlowPlugin
         internal static void SetScenarioTestReporter(ScenarioContext context, ITestReporter reporter)
         {
             ScenarioTestReporters[context.ScenarioInfo] = reporter;
+        }
+
+        internal static void RemoveScenarioTestReporter(ScenarioContext context, ITestReporter reporter)
+        {
+            ScenarioTestReporters.TryRemove(context.ScenarioInfo, out reporter);
         }
 
         public delegate void InitializingHandler(object sender, InitializingEventArgs e);
