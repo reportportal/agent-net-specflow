@@ -11,6 +11,7 @@
     <PackageReference Include="NUnit" Version="3.11.0" />
     <PackageReference Include="NUnit3TestAdapter" Version="3.12.0" />
     <PackageReference Include="SpecFlow" Version="3.0.177-beta" />
+    <PackageReference Include="SpecFlow.Tools.MsBuild.Generation" Version="3.0.177-beta" />
   </ItemGroup>
 
   <ItemGroup>
@@ -18,48 +19,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Scenarios\AfterFeatureFails.feature.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>AfterFeatureFails.feature</DependentUpon>
-    </Compile>
-    <Compile Update="Scenarios\BeforeFeatureFails.feature.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>BeforeFeatureFails.feature</DependentUpon>
-    </Compile>
-    <Compile Update="Scenarios\PassFeature.feature.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>PassFeature.feature</DependentUpon>
-    </Compile>
-    <Compile Update="Scenarios\ScenarioLevelHooks.feature.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>ScenarioLevelHooks.feature</DependentUpon>
-    </Compile>
-  </ItemGroup>
-
-  <ItemGroup>
     <None Update="ReportPortal.config.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Scenarios\AfterFeatureFails.feature">
-      <Generator>SpecFlowSingleFileGenerator</Generator>
-      <LastGenOutput>AfterFeatureFails.feature.cs</LastGenOutput>
-    </None>
-    
-    <None Update="Scenarios\BeforeFeatureFails.feature">
-      <Generator>SpecFlowSingleFileGenerator</Generator>
-      <LastGenOutput>BeforeFeatureFails.feature.cs</LastGenOutput>
-    </None>
-    <None Update="Scenarios\PassFeature.feature">
-      <Generator>SpecFlowSingleFileGenerator</Generator>
-      <LastGenOutput>PassFeature.feature.cs</LastGenOutput>
-    </None>
-    <None Update="Scenarios\ScenarioLevelHooks.feature">
-      <Generator>SpecFlowSingleFileGenerator</Generator>
-      <LastGenOutput>ScenarioLevelHooks.feature.cs</LastGenOutput>
     </None>
   </ItemGroup>
 
