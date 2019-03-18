@@ -196,6 +196,8 @@ namespace ReportPortal.SpecFlowPlugin
                         ReportPortalAddin.OnAfterFeatureFinished(null, new TestItemFinishedEventArgs(Bridge.Service, request, currentFeature, featureContext, null));
                     }
                 }
+
+                ReportPortalAddin.RemoveFeatureTestReporter(featureContext, currentFeature);
             }
         }
 
@@ -325,6 +327,8 @@ namespace ReportPortal.SpecFlowPlugin
                     currentScenario.Finish(request);
 
                     ReportPortalAddin.OnAfterScenarioFinished(this, new TestItemFinishedEventArgs(Bridge.Service, request, currentScenario, this.FeatureContext, this.ScenarioContext));
+
+                    ReportPortalAddin.RemoveScenarioTestReporter(this.ScenarioContext, currentScenario);
                 }
             }
         }
