@@ -16,22 +16,17 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Update="tools/*">
-      <PackagePath>.</PackagePath>
-      <Pack>true</Pack>
-    </None>
-
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="ReportPortal.Shared" Version="2.1.1">
+    <PackageReference Include="ReportPortal.Shared" Version="2.1.4">
       <PrivateAssets>contentfiles;analyzers;</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="SpecFlow.CustomPlugin" Version="3.0.161-beta" />
+    <PackageReference Include="SpecFlow.CustomPlugin" Version="3.0.177-beta">
+      <PrivateAssets>all;</PrivateAssets>
+    </PackageReference>
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="Build\**" Pack="true" PackagePath="build\" />
+    <None Include="..\*.props" Pack="true" PackagePath="build\" Visible="false"/>
+    <None Include="..\*.targets" Pack="true" PackagePath="build\" Visible="false"/>
   </ItemGroup>
 
 </Project>
