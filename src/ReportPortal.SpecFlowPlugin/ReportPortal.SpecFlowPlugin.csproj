@@ -19,7 +19,7 @@
     <PackageReference Include="ReportPortal.Shared" Version="2.1.4">
       <PrivateAssets>contentfiles;analyzers;</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="SpecFlow" Version="3.0.177-beta" />
+    <PackageReference Include="SpecFlow" Version="3.0.188" />
   </ItemGroup>
 
   <ItemGroup>
