@@ -5,6 +5,7 @@ using System;
 using System.IO;
 using TechTalk.SpecFlow.Bindings;
 using TechTalk.SpecFlow.Plugins;
+using TechTalk.SpecFlow.UnitTestProvider;
 
 [assembly: RuntimePlugin(typeof(Plugin))]
 namespace ReportPortal.SpecFlowPlugin
@@ -16,7 +17,7 @@ namespace ReportPortal.SpecFlowPlugin
     {
         public static IConfiguration Config { get; set; }
 
-        public void Initialize(RuntimePluginEvents runtimePluginEvents, RuntimePluginParameters runtimePluginParameters)
+        public void Initialize(RuntimePluginEvents runtimePluginEvents, RuntimePluginParameters runtimePluginParameters, UnitTestProviderConfiguration unitTestProviderConfiguration)
         {
             var jsonPath = Path.GetDirectoryName(new Uri(typeof(Plugin).Assembly.CodeBase).LocalPath) + "/ReportPortal.config.json";
 
@@ -34,6 +35,7 @@ namespace ReportPortal.SpecFlowPlugin
                 runtimePluginEvents.CustomizeGlobalDependencies += (sender, e) =>
                 {
                     e.ObjectContainer.RegisterTypeAs<SafeBindingInvoker, IBindingInvoker>();
+                    e.SpecFlowConfiguration.AdditionalStepAssemblies.Add("ReportPortal.SpecFlowPlugin");
                 };
             }
         }

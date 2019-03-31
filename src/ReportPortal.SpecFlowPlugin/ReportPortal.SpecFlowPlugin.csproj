@@ -1,13 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net45</TargetFramework>
+    <TargetFrameworks>net45;netstandard2.0;</TargetFrameworks>
     <PackageId>ReportPortal.SpecFlow</PackageId>
     <Version>1.0.0</Version>
     <Description>SpecFlow plugin for reporting test results to http://reportportal.io</Description>
     <Authors>Nikolay Borisenko, Report Portal Community</Authors>
     <PackageTags>report specflow plugin reportportal testing</PackageTags>
-    <PackageLicenseUrl>https://raw.githubusercontent.com/reportportal/agent-net-specflow/master/LICENSE</PackageLicenseUrl>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <PackageIconUrl>https://raw.githubusercontent.com/reportportal/agent-net-specflow/master/Logo.png</PackageIconUrl>
     <PackageProjectUrl>http://reportportal.io</PackageProjectUrl>
 
@@ -16,15 +16,15 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Update="tools/*">
-      <PackagePath>.</PackagePath>
-      <Pack>true</Pack>
-    </None>
+    <PackageReference Include="ReportPortal.Shared" Version="2.1.4">
+      <PrivateAssets>contentfiles;analyzers;</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="SpecFlow" Version="3.0.188" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="ReportPortal.Shared" Version="2.1.4" />
-    <PackageReference Include="SpecFlow" Version="2.4.1" />
+    <None Include="..\*.props" Pack="true" PackagePath="build\" Visible="false" />
+    <None Include="..\*.targets" Pack="true" PackagePath="build\" Visible="false" />
   </ItemGroup>
 
 </Project>

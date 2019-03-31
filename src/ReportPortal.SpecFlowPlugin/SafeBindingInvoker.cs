@@ -12,8 +12,8 @@ namespace ReportPortal.SpecFlowPlugin
 {
     internal class SafeBindingInvoker : BindingInvoker
     {
-        public SafeBindingInvoker(SpecFlowConfiguration specFlowConfiguration, IErrorProvider errorProvider)
-            : base(specFlowConfiguration, errorProvider)
+        public SafeBindingInvoker(SpecFlowConfiguration specFlowConfiguration, IErrorProvider errorProvider, ISynchronousBindingDelegateInvoker synchronousBindingDelegateInvoker)
+            : base(specFlowConfiguration, errorProvider, synchronousBindingDelegateInvoker)
         {
         }
 
