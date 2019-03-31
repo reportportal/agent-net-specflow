@@ -4,7 +4,7 @@
   <PropertyGroup>
 
     <_ReportPortal_SpecFlow_Runtime Condition=" '$(TargetFrameworkIdentifier)' == '.NETCoreApp' ">netstandard2.0</_ReportPortal_SpecFlow_Runtime>
-    <_ReportPortal_SpecFlow_Runtime Condition=" '$(TargetFrameworkIdentifier)' == '.NETFramework' ">net461</_ReportPortal_SpecFlow_Runtime>
+    <_ReportPortal_SpecFlow_Runtime Condition=" '$(TargetFrameworkIdentifier)' == '.NETFramework' ">net5</_ReportPortal_SpecFlow_Runtime>
     <_ReportPortal_SpecFlow_Runtime_Path>$(MSBuildThisFileDirectory)\..\lib\$(_ReportPortal_SpecFlow_Runtime)\ReportPortal.SpecFlowPlugin.dll</_ReportPortal_SpecFlow_Runtime_Path>
 
   </PropertyGroup>
