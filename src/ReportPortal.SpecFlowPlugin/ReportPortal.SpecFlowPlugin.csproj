@@ -7,7 +7,7 @@
     <Description>SpecFlow plugin for reporting test results to http://reportportal.io</Description>
     <Authors>Nikolay Borisenko, Report Portal Community</Authors>
     <PackageTags>report specflow plugin reportportal testing</PackageTags>
-    <PackageLicenseUrl>https://raw.githubusercontent.com/reportportal/agent-net-specflow/master/LICENSE</PackageLicenseUrl>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <PackageIconUrl>https://raw.githubusercontent.com/reportportal/agent-net-specflow/master/Logo.png</PackageIconUrl>
     <PackageProjectUrl>http://reportportal.io</PackageProjectUrl>
 
