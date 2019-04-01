@@ -8,6 +8,12 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Visible>False</Visible>
     </None>
+
+    <None Include="$(_ReportPortal_SpecFlow_Runtime_Pdb_Path)" >
+      <Link>%(Filename)%(Extension)</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Visible>False</Visible>
+    </None>
     
   </ItemGroup>
 
