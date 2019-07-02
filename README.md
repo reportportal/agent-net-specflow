@@ -193,3 +193,12 @@ public void GivenIHaveEnteredSomethingIntoTheCalculator(int number)
 
 # Troubleshooting
 All http error messages goes to `ReportPortal.log` file.
+
+# Integrate logger framework
+- [NLog](https://github.com/reportportal/logger-net-nlog)
+- [log4net](https://github.com/reportportal/logger-net-log4net)
+- [Serilog](https://github.com/reportportal/logger-net-serilog)
+- [System.Diagnostics.TraceListener](https://github.com/reportportal/logger-net-tracelistener)
+
+# Useful extensions
+- [SourceBack](https://github.com/nvborisenko/reportportal-extensions-sourceback)
