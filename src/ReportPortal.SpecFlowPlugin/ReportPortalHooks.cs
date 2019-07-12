@@ -35,7 +35,7 @@ namespace ReportPortal.SpecFlowPlugin
                 {
                     request.Mode = LaunchMode.Debug;
                 }
-                
+
                 request.Tags = config.GetValues(ConfigurationPath.LaunchTags, new List<string>()).ToList();
 
                 var eventArg = new RunStartedEventArgs(Bridge.Service, request);
@@ -65,7 +65,7 @@ namespace ReportPortal.SpecFlowPlugin
 
                 }
             }
-            catch(Exception exp)
+            catch (Exception exp)
             {
                 var logFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "ReportPortal.log");
 
@@ -237,58 +237,40 @@ namespace ReportPortal.SpecFlowPlugin
 
             if (currentScenario != null)
             {
-                Issue issue = null;
-                var status = Status.Passed;
-
-                switch (this.ScenarioContext.ScenarioExecutionStatus)
+                if (this.ScenarioContext.ScenarioExecutionStatus == ScenarioExecutionStatus.TestError)
                 {
-                    case ScenarioExecutionStatus.TestError:
-                        status = Status.Failed;
-
-                        issue = new Issue
-                        {
-                            Type = WellKnownIssueType.ToInvestigate,
-                            Comment = this.ScenarioContext.TestError?.Message
-                        };
-
-                        break;
-                    case ScenarioExecutionStatus.BindingError:
-                        status = Status.Failed;
-
-                        issue = new Issue
-                        {
-                            Type = WellKnownIssueType.AutomationBug,
-                            Comment = this.ScenarioContext.TestError?.Message
-                        };
-
-                        break;
-                    case ScenarioExecutionStatus.UndefinedStep:
-                        status = Status.Failed;
-
-                        issue = new Issue
-                        {
-                            Type = WellKnownIssueType.AutomationBug,
-                            Comment = new MissingStepDefinitionException().Message
-                        };
-
-                        break;
-                    case ScenarioExecutionStatus.StepDefinitionPending:
-                        status = Status.Failed;
-
-                        issue = new Issue
-                        {
-                            Type = WellKnownIssueType.ToInvestigate,
-                            Comment = "Pending"
-                        };
-
-                        break;
+                    currentScenario.Log(new AddLogItemRequest
+                    {
+                        Level = LogLevel.Error,
+                        Time = DateTime.UtcNow,
+                        Text = this.ScenarioContext.TestError?.ToString()
+                    });
                 }
+                else if (this.ScenarioContext.ScenarioExecutionStatus == ScenarioExecutionStatus.BindingError)
+                {
+                    currentScenario.Log(new AddLogItemRequest
+                    {
+                        Level = LogLevel.Error,
+                        Time = DateTime.UtcNow,
+                        Text = this.ScenarioContext.TestError?.Message
+                    });
+                }
+                else if (this.ScenarioContext.ScenarioExecutionStatus == ScenarioExecutionStatus.UndefinedStep)
+                {
+                    currentScenario.Log(new AddLogItemRequest
+                    {
+                        Level = LogLevel.Error,
+                        Time = DateTime.UtcNow,
+                        Text = new MissingStepDefinitionException().Message
+                    });
+                }
+
+                var status = this.ScenarioContext.ScenarioExecutionStatus == ScenarioExecutionStatus.OK ? Status.Passed : Status.Failed;
 
                 var request = new FinishTestItemRequest
                 {
-                    EndTime = DateTime.UtcNow.AddMilliseconds(1),
-                    Status = status,
-                    Issue = issue
+                    EndTime = DateTime.UtcNow,
+                    Status = status
                 };
 
                 var eventArg = new TestItemFinishedEventArgs(Bridge.Service, request, currentScenario, this.FeatureContext, this.ScenarioContext);
@@ -296,34 +278,6 @@ namespace ReportPortal.SpecFlowPlugin
 
                 if (!eventArg.Canceled)
                 {
-                    if (this.ScenarioContext.ScenarioExecutionStatus == ScenarioExecutionStatus.TestError)
-                    {
-                        currentScenario.Log(new AddLogItemRequest
-                        {
-                            Level = LogLevel.Error,
-                            Time = DateTime.UtcNow,
-                            Text = this.ScenarioContext.TestError?.ToString()
-                        });
-                    }
-                    else if (this.ScenarioContext.ScenarioExecutionStatus == ScenarioExecutionStatus.BindingError)
-                    {
-                        currentScenario.Log(new AddLogItemRequest
-                        {
-                            Level = LogLevel.Error,
-                            Time = DateTime.UtcNow,
-                            Text = this.ScenarioContext.TestError?.Message
-                        });
-                    }
-                    else if (this.ScenarioContext.ScenarioExecutionStatus == ScenarioExecutionStatus.UndefinedStep)
-                    {
-                        currentScenario.Log(new AddLogItemRequest
-                        {
-                            Level = LogLevel.Error,
-                            Time = DateTime.UtcNow,
-                            Text = new MissingStepDefinitionException().Message
-                        });
-                    }
-
                     currentScenario.Finish(request);
 
                     ReportPortalAddin.OnAfterScenarioFinished(this, new TestItemFinishedEventArgs(Bridge.Service, request, currentScenario, this.FeatureContext, this.ScenarioContext));
