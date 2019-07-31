@@ -3,19 +3,19 @@
 
   <ItemGroup>
 
-    <None Include="$(_ReportPortal_SpecFlow_Runtime_Path)" >
+    <None Condition=" $(_ReportPortal_SpecFlow_Runtime_Path) != '' " Include="$(_ReportPortal_SpecFlow_Runtime_Path)" >
       <Link>%(Filename)%(Extension)</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Visible>False</Visible>
     </None>
 
-    <None Include="$(_ReportPortal_SpecFlow_Runtime_Pdb_Path)" >
+    <None Condition=" $(_ReportPortal_SpecFlow_Runtime_Pdb_Path) != '' " Include="$(_ReportPortal_SpecFlow_Runtime_Pdb_Path)" >
       <Link>%(Filename)%(Extension)</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Visible>False</Visible>
     </None>
 
-    <None Include="$(_ReportPortal_Shared_Runtime_Path)" >
+    <None Condition=" $(_ReportPortal_Shared_Runtime_Path) != '' " Include="$(_ReportPortal_Shared_Runtime_Path)" >
       <Link>%(Filename)%(Extension)</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Visible>False</Visible>
