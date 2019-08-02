@@ -37,6 +37,7 @@ namespace ReportPortal.SpecFlowPlugin
                 }
 
                 request.Tags = config.GetValues(ConfigurationPath.LaunchTags, new List<string>()).ToList();
+                request.Description = config.GetValue(ConfigurationPath.LaunchDescription, string.Empty);
 
                 var eventArg = new RunStartedEventArgs(Bridge.Service, request);
                 ReportPortalAddin.OnBeforeRunStarted(null, eventArg);
