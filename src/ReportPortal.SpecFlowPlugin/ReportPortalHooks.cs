@@ -196,9 +196,9 @@ namespace ReportPortal.SpecFlowPlugin
 
                         ReportPortalAddin.OnAfterFeatureFinished(null, new TestItemFinishedEventArgs(Bridge.Service, request, currentFeature, featureContext, null));
                     }
-                }
 
-                ReportPortalAddin.RemoveFeatureTestReporter(featureContext, currentFeature);
+                    ReportPortalAddin.RemoveFeatureTestReporter(featureContext, currentFeature);
+                }
             }
         }
 
