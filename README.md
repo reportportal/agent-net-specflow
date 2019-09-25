@@ -68,6 +68,15 @@ And to subscribe to `Initializing` event, add the following code in the place wh
   ReportPortalAddin.Initializing += ReportPortalAddin_Initializing;
 ```
 
+## Override config via Environment Variables
+
+```cmd
+set reportportal_launch_name="My new launch name"
+# execute tests
+```
+
+`reportportal_` prefix is used for naming variables, and `_` is used as delimeter. For example to override `Server.Authentication.Uuid` parameter, we need specify `ReportPortal_Server_Authentication_Uuid` in environment variables. To override launch tags we need specify `ReportPortal_Launch_Tags` with `tag1;tag2` value (`;` used as separator for list of values).
+
 # Parallel Execution Support
 
 Parallel Execution can be crucial if you have to run many tests in a short period of time. That is why `ReportPortal.SpecFlow` is going to support it out-of-box starting version `1.2.2-beta-12`.
