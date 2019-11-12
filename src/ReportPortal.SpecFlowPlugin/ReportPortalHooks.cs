@@ -8,6 +8,7 @@ using ReportPortal.Client.Models;
 using ReportPortal.Client.Requests;
 using ReportPortal.Shared;
 using ReportPortal.Shared.Configuration;
+using ReportPortal.Shared.Internal.Logging;
 using ReportPortal.Shared.Reporter;
 using ReportPortal.SpecFlowPlugin.EventArguments;
 using ReportPortal.SpecFlowPlugin.Extensions;
@@ -18,6 +19,8 @@ namespace ReportPortal.SpecFlowPlugin
     [Binding]
     internal class ReportPortalHooks : Steps
     {
+        private static readonly ITraceLogger Logger = TraceLogManager.GetLogger<ReportPortalHooks>();
+
         [BeforeTestRun(Order = -20000)]
         public static void BeforeTestRun()
         {
@@ -68,9 +71,7 @@ namespace ReportPortal.SpecFlowPlugin
             }
             catch (Exception exp)
             {
-                var logFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "ReportPortal.log");
-
-                File.AppendAllText(logFile, exp.ToString());
+                Logger.Error(exp.ToString());
             }
         }
 
@@ -99,234 +100,275 @@ namespace ReportPortal.SpecFlowPlugin
         [AfterTestRun(Order = 20000)]
         public static void AfterTestRun()
         {
-            if (Bridge.Context.LaunchReporter != null)
+            try
             {
-                var request = new FinishLaunchRequest
+                if (Bridge.Context.LaunchReporter != null)
                 {
-                    EndTime = DateTime.UtcNow
-                };
-
-                var eventArg = new RunFinishedEventArgs(Bridge.Service, request, Bridge.Context.LaunchReporter);
-                ReportPortalAddin.OnBeforeRunFinished(null, eventArg);
-
-                if (!eventArg.Canceled)
-                {
-                    Bridge.Context.LaunchReporter.Finish(request);
-
-                    var logFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "ReportPortal.log");
-                    try
+                    var request = new FinishLaunchRequest
                     {
+                        EndTime = DateTime.UtcNow
+                    };
+
+                    var eventArg = new RunFinishedEventArgs(Bridge.Service, request, Bridge.Context.LaunchReporter);
+                    ReportPortalAddin.OnBeforeRunFinished(null, eventArg);
+
+                    if (!eventArg.Canceled)
+                    {
+                        Bridge.Context.LaunchReporter.Finish(request);
+
                         var sw = Stopwatch.StartNew();
 
-                        File.AppendAllText(logFile, $"Finishing to send results to ReportPortal...{Environment.NewLine}");
-                        Bridge.Context.LaunchReporter.FinishTask.Wait();
-                        File.AppendAllText(logFile, $"Elapsed: {sw.Elapsed}{Environment.NewLine}");
-                    }
-                    catch (Exception exp)
-                    {
-                        File.AppendAllText(logFile, $"{exp}{Environment.NewLine}");
-                    }
+                        Logger.Info($"Finishing to send results to ReportPortal...");
+                        Bridge.Context.LaunchReporter.Sync();
+                        Logger.Info($"Elapsed: {sw.Elapsed}{Environment.NewLine}");
 
-                    ReportPortalAddin.OnAfterRunFinished(null, new RunFinishedEventArgs(Bridge.Service, request, Bridge.Context.LaunchReporter));
+                        ReportPortalAddin.OnAfterRunFinished(null, new RunFinishedEventArgs(Bridge.Service, request, Bridge.Context.LaunchReporter));
+                    }
                 }
+            }
+            catch (Exception exp)
+            {
+                Logger.Error(exp.ToString());
             }
         }
 
         [BeforeFeature(Order = -20000)]
         public static void BeforeFeature(FeatureContext featureContext)
         {
-            if (Bridge.Context.LaunchReporter != null)
+            try
             {
-                lock (LockHelper.GetLock(FeatureInfoEqualityComparer.GetFeatureInfoHashCode(featureContext.FeatureInfo)))
+                if (Bridge.Context.LaunchReporter != null)
                 {
-                    var currentFeature = ReportPortalAddin.GetFeatureTestReporter(featureContext);
-
-                    if (currentFeature == null || currentFeature.FinishTask != null)
+                    lock (LockHelper.GetLock(FeatureInfoEqualityComparer.GetFeatureInfoHashCode(featureContext.FeatureInfo)))
                     {
-                        var request = new StartTestItemRequest
+                        var currentFeature = ReportPortalAddin.GetFeatureTestReporter(featureContext);
+
+                        if (currentFeature == null || currentFeature.FinishTask != null)
                         {
-                            Name = featureContext.FeatureInfo.Title,
-                            Description = featureContext.FeatureInfo.Description,
-                            StartTime = DateTime.UtcNow,
-                            Type = TestItemType.Suite,
-                            Tags = new List<string>(featureContext.FeatureInfo.Tags)
-                        };
+                            var request = new StartTestItemRequest
+                            {
+                                Name = featureContext.FeatureInfo.Title,
+                                Description = featureContext.FeatureInfo.Description,
+                                StartTime = DateTime.UtcNow,
+                                Type = TestItemType.Suite,
+                                Tags = new List<string>(featureContext.FeatureInfo.Tags)
+                            };
 
-                        var eventArg = new TestItemStartedEventArgs(Bridge.Service, request, null, featureContext, null);
-                        ReportPortalAddin.OnBeforeFeatureStarted(null, eventArg);
+                            var eventArg = new TestItemStartedEventArgs(Bridge.Service, request, null, featureContext, null);
+                            ReportPortalAddin.OnBeforeFeatureStarted(null, eventArg);
 
-                        if (!eventArg.Canceled)
+                            if (!eventArg.Canceled)
+                            {
+                                currentFeature = Bridge.Context.LaunchReporter.StartChildTestReporter(request);
+                                ReportPortalAddin.SetFeatureTestReporter(featureContext, currentFeature);
+
+                                ReportPortalAddin.OnAfterFeatureStarted(null, new TestItemStartedEventArgs(Bridge.Service, request, currentFeature, featureContext, null));
+                            }
+                        }
+                        else
                         {
-                            currentFeature = Bridge.Context.LaunchReporter.StartChildTestReporter(request);
-                            ReportPortalAddin.SetFeatureTestReporter(featureContext, currentFeature);
-
-                            ReportPortalAddin.OnAfterFeatureStarted(null, new TestItemStartedEventArgs(Bridge.Service, request, currentFeature, featureContext, null));
+                            ReportPortalAddin.IncrementFeatureThreadCount(featureContext);
                         }
                     }
-                    else
-                    {
-                        ReportPortalAddin.IncrementFeatureThreadCount(featureContext);
-                    }
                 }
+            }
+            catch (Exception exp)
+            {
+                Logger.Error(exp.ToString());
             }
         }
 
         [AfterFeature(Order = 20000)]
         public static void AfterFeature(FeatureContext featureContext)
         {
-            lock (LockHelper.GetLock(FeatureInfoEqualityComparer.GetFeatureInfoHashCode(featureContext.FeatureInfo)))
+            try
             {
-                var currentFeature = ReportPortalAddin.GetFeatureTestReporter(featureContext);
-                var remainingThreadCount = ReportPortalAddin.DecrementFeatureThreadCount(featureContext);
-
-                if (currentFeature != null && currentFeature.FinishTask == null && remainingThreadCount == 0)
+                lock (LockHelper.GetLock(FeatureInfoEqualityComparer.GetFeatureInfoHashCode(featureContext.FeatureInfo)))
                 {
-                    var request = new FinishTestItemRequest
+                    var currentFeature = ReportPortalAddin.GetFeatureTestReporter(featureContext);
+                    var remainingThreadCount = ReportPortalAddin.DecrementFeatureThreadCount(featureContext);
+
+                    if (currentFeature != null && currentFeature.FinishTask == null && remainingThreadCount == 0)
                     {
-                        EndTime = DateTime.UtcNow,
-                        Status = Status.Skipped
-                    };
+                        var request = new FinishTestItemRequest
+                        {
+                            EndTime = DateTime.UtcNow,
+                            Status = Status.Skipped
+                        };
 
-                    var eventArg = new TestItemFinishedEventArgs(Bridge.Service, request, currentFeature, featureContext, null);
-                    ReportPortalAddin.OnBeforeFeatureFinished(null, eventArg);
+                        var eventArg = new TestItemFinishedEventArgs(Bridge.Service, request, currentFeature, featureContext, null);
+                        ReportPortalAddin.OnBeforeFeatureFinished(null, eventArg);
 
-                    if (!eventArg.Canceled)
-                    {
-                        currentFeature.Finish(request);
+                        if (!eventArg.Canceled)
+                        {
+                            currentFeature.Finish(request);
 
-                        ReportPortalAddin.OnAfterFeatureFinished(null, new TestItemFinishedEventArgs(Bridge.Service, request, currentFeature, featureContext, null));
+                            ReportPortalAddin.OnAfterFeatureFinished(null, new TestItemFinishedEventArgs(Bridge.Service, request, currentFeature, featureContext, null));
+                        }
+
+                        ReportPortalAddin.RemoveFeatureTestReporter(featureContext, currentFeature);
                     }
-
-                    ReportPortalAddin.RemoveFeatureTestReporter(featureContext, currentFeature);
                 }
+            }
+            catch (Exception exp)
+            {
+                Logger.Error(exp.ToString());
             }
         }
 
         [BeforeScenario(Order = -20000)]
         public void BeforeScenario()
         {
-            var currentFeature = ReportPortalAddin.GetFeatureTestReporter(this.FeatureContext);
-
-            if (currentFeature != null)
+            try
             {
-                var request = new StartTestItemRequest
+                var currentFeature = ReportPortalAddin.GetFeatureTestReporter(this.FeatureContext);
+
+                if (currentFeature != null)
                 {
-                    Name = this.ScenarioContext.ScenarioInfo.Title,
-                    Description = this.ScenarioContext.ScenarioInfo.Description,
-                    StartTime = DateTime.UtcNow,
-                    Type = TestItemType.Step,
-                    Tags = new List<string>(this.ScenarioContext.ScenarioInfo.Tags)
-                };
+                    var request = new StartTestItemRequest
+                    {
+                        Name = this.ScenarioContext.ScenarioInfo.Title,
+                        Description = this.ScenarioContext.ScenarioInfo.Description,
+                        StartTime = DateTime.UtcNow,
+                        Type = TestItemType.Step,
+                        Tags = new List<string>(this.ScenarioContext.ScenarioInfo.Tags)
+                    };
 
-                var eventArg = new TestItemStartedEventArgs(Bridge.Service, request, currentFeature, this.FeatureContext, this.ScenarioContext);
-                ReportPortalAddin.OnBeforeScenarioStarted(this, eventArg);
+                    var eventArg = new TestItemStartedEventArgs(Bridge.Service, request, currentFeature, this.FeatureContext, this.ScenarioContext);
+                    ReportPortalAddin.OnBeforeScenarioStarted(this, eventArg);
 
-                if (!eventArg.Canceled)
-                {
-                    var currentScenario = currentFeature.StartChildTestReporter(request);
-                    ReportPortalAddin.SetScenarioTestReporter(this.ScenarioContext, currentScenario);
+                    if (!eventArg.Canceled)
+                    {
+                        var currentScenario = currentFeature.StartChildTestReporter(request);
+                        ReportPortalAddin.SetScenarioTestReporter(this.ScenarioContext, currentScenario);
 
-                    ReportPortalAddin.OnAfterScenarioStarted(this, new TestItemStartedEventArgs(Bridge.Service, request, currentFeature, this.FeatureContext, this.ScenarioContext));
+                        ReportPortalAddin.OnAfterScenarioStarted(this, new TestItemStartedEventArgs(Bridge.Service, request, currentFeature, this.FeatureContext, this.ScenarioContext));
+                    }
                 }
+            }
+            catch (Exception exp)
+            {
+                Logger.Error(exp.ToString());
             }
         }
 
         [AfterScenario(Order = 20000)]
         public void AfterScenario()
         {
-            var currentScenario = ReportPortalAddin.GetScenarioTestReporter(this.ScenarioContext);
-
-            if (currentScenario != null)
+            try
             {
-                if (this.ScenarioContext.ScenarioExecutionStatus == ScenarioExecutionStatus.TestError)
+                var currentScenario = ReportPortalAddin.GetScenarioTestReporter(this.ScenarioContext);
+
+                if (currentScenario != null)
                 {
-                    currentScenario.Log(new AddLogItemRequest
+                    if (this.ScenarioContext.ScenarioExecutionStatus == ScenarioExecutionStatus.TestError)
                     {
-                        Level = LogLevel.Error,
-                        Time = DateTime.UtcNow,
-                        Text = this.ScenarioContext.TestError?.ToString()
-                    });
-                }
-                else if (this.ScenarioContext.ScenarioExecutionStatus == ScenarioExecutionStatus.BindingError)
-                {
-                    currentScenario.Log(new AddLogItemRequest
+                        currentScenario.Log(new AddLogItemRequest
+                        {
+                            Level = LogLevel.Error,
+                            Time = DateTime.UtcNow,
+                            Text = this.ScenarioContext.TestError?.ToString()
+                        });
+                    }
+                    else if (this.ScenarioContext.ScenarioExecutionStatus == ScenarioExecutionStatus.BindingError)
                     {
-                        Level = LogLevel.Error,
-                        Time = DateTime.UtcNow,
-                        Text = this.ScenarioContext.TestError?.Message
-                    });
-                }
-                else if (this.ScenarioContext.ScenarioExecutionStatus == ScenarioExecutionStatus.UndefinedStep)
-                {
-                    currentScenario.Log(new AddLogItemRequest
+                        currentScenario.Log(new AddLogItemRequest
+                        {
+                            Level = LogLevel.Error,
+                            Time = DateTime.UtcNow,
+                            Text = this.ScenarioContext.TestError?.Message
+                        });
+                    }
+                    else if (this.ScenarioContext.ScenarioExecutionStatus == ScenarioExecutionStatus.UndefinedStep)
                     {
-                        Level = LogLevel.Error,
-                        Time = DateTime.UtcNow,
-                        Text = new MissingStepDefinitionException().Message
-                    });
+                        currentScenario.Log(new AddLogItemRequest
+                        {
+                            Level = LogLevel.Error,
+                            Time = DateTime.UtcNow,
+                            Text = new MissingStepDefinitionException().Message
+                        });
+                    }
+
+                    var status = this.ScenarioContext.ScenarioExecutionStatus == ScenarioExecutionStatus.OK ? Status.Passed : Status.Failed;
+
+                    var request = new FinishTestItemRequest
+                    {
+                        EndTime = DateTime.UtcNow,
+                        Status = status
+                    };
+
+                    var eventArg = new TestItemFinishedEventArgs(Bridge.Service, request, currentScenario, this.FeatureContext, this.ScenarioContext);
+                    ReportPortalAddin.OnBeforeScenarioFinished(this, eventArg);
+
+                    if (!eventArg.Canceled)
+                    {
+                        currentScenario.Finish(request);
+
+                        ReportPortalAddin.OnAfterScenarioFinished(this, new TestItemFinishedEventArgs(Bridge.Service, request, currentScenario, this.FeatureContext, this.ScenarioContext));
+
+                        ReportPortalAddin.RemoveScenarioTestReporter(this.ScenarioContext, currentScenario);
+                    }
                 }
-
-                var status = this.ScenarioContext.ScenarioExecutionStatus == ScenarioExecutionStatus.OK ? Status.Passed : Status.Failed;
-
-                var request = new FinishTestItemRequest
-                {
-                    EndTime = DateTime.UtcNow,
-                    Status = status
-                };
-
-                var eventArg = new TestItemFinishedEventArgs(Bridge.Service, request, currentScenario, this.FeatureContext, this.ScenarioContext);
-                ReportPortalAddin.OnBeforeScenarioFinished(this, eventArg);
-
-                if (!eventArg.Canceled)
-                {
-                    currentScenario.Finish(request);
-
-                    ReportPortalAddin.OnAfterScenarioFinished(this, new TestItemFinishedEventArgs(Bridge.Service, request, currentScenario, this.FeatureContext, this.ScenarioContext));
-
-                    ReportPortalAddin.RemoveScenarioTestReporter(this.ScenarioContext, currentScenario);
-                }
+            }
+            catch (Exception exp)
+            {
+                Logger.Error(exp.ToString());
             }
         }
 
         [BeforeStep(Order = -20000)]
         public void BeforeStep()
         {
-            var currentScenario = ReportPortalAddin.GetScenarioTestReporter(this.ScenarioContext);
-
-            if (currentScenario != null)
+            try
             {
-                var stepInfoRequest = new AddLogItemRequest
-                {
-                    Level = LogLevel.Info,
-                    Time = DateTime.UtcNow,
-                    Text = this.StepContext.StepInfo.GetFullText()
-                };
+                var currentScenario = ReportPortalAddin.GetScenarioTestReporter(this.ScenarioContext);
 
-                var eventArg = new StepStartedEventArgs(Bridge.Service, stepInfoRequest, currentScenario, this.FeatureContext, this.ScenarioContext, this.StepContext);
-                ReportPortalAddin.OnBeforeStepStarted(this, eventArg);
-
-                if (!eventArg.Canceled)
+                if (currentScenario != null)
                 {
-                    currentScenario.Log(stepInfoRequest);
-                    ReportPortalAddin.OnAfterStepStarted(this, eventArg);
+                    var stepInfoRequest = new AddLogItemRequest
+                    {
+                        Level = LogLevel.Info,
+                        Time = DateTime.UtcNow,
+                        Text = this.StepContext.StepInfo.GetFullText()
+                    };
+
+                    var eventArg = new StepStartedEventArgs(Bridge.Service, stepInfoRequest, currentScenario, this.FeatureContext, this.ScenarioContext, this.StepContext);
+                    ReportPortalAddin.OnBeforeStepStarted(this, eventArg);
+
+                    if (!eventArg.Canceled)
+                    {
+                        currentScenario.Log(stepInfoRequest);
+                        ReportPortalAddin.OnAfterStepStarted(this, eventArg);
+                    }
                 }
+            }
+            catch (Exception exp)
+            {
+                Logger.Error(exp.ToString());
             }
         }
 
         [AfterStep(Order = 20000)]
         public void AfterStep()
         {
-            var currentScenario = ReportPortalAddin.GetScenarioTestReporter(this.ScenarioContext);
-
-            if (currentScenario != null)
+            try
             {
-                var eventArg = new StepFinishedEventArgs(Bridge.Service, null, currentScenario, this.FeatureContext, this.ScenarioContext, this.StepContext);
-                ReportPortalAddin.OnBeforeStepFinished(this, eventArg);
+                var currentScenario = ReportPortalAddin.GetScenarioTestReporter(this.ScenarioContext);
 
-                if (!eventArg.Canceled)
+                if (currentScenario != null)
                 {
-                    ReportPortalAddin.OnAfterStepFinished(this, eventArg);
+                    var eventArg = new StepFinishedEventArgs(Bridge.Service, null, currentScenario, this.FeatureContext, this.ScenarioContext, this.StepContext);
+                    ReportPortalAddin.OnBeforeStepFinished(this, eventArg);
+
+                    if (!eventArg.Canceled)
+                    {
+                        ReportPortalAddin.OnAfterStepFinished(this, eventArg);
+                    }
                 }
+            }
+            catch (Exception exp)
+            {
+                Logger.Error(exp.ToString());
             }
         }
     }

@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.Linq;
 using ReportPortal.Shared;
+using ReportPortal.Shared.Internal.Logging;
 using ReportPortal.Shared.Reporter;
 using ReportPortal.SpecFlowPlugin.EventArguments;
 using TechTalk.SpecFlow;
@@ -10,6 +11,8 @@ namespace ReportPortal.SpecFlowPlugin
 {
     public class ReportPortalAddin
     {
+        private static readonly ITraceLogger Logger = TraceLogManager.GetLogger<ReportPortalAddin>();
+
         private static readonly ConcurrentDictionary<FeatureInfo, ITestReporter> FeatureTestReporters = new ConcurrentDictionary<FeatureInfo, ITestReporter>(new FeatureInfoEqualityComparer());
 
         private static readonly ConcurrentDictionary<FeatureInfo, int> FeatureThreadCount = new ConcurrentDictionary<FeatureInfo, int>(new FeatureInfoEqualityComparer());
@@ -50,7 +53,7 @@ namespace ReportPortal.SpecFlowPlugin
 
         internal static int DecrementFeatureThreadCount(FeatureContext context)
         {
-            return FeatureThreadCount[context.FeatureInfo] 
+            return FeatureThreadCount[context.FeatureInfo]
                 = FeatureThreadCount.ContainsKey(context.FeatureInfo) ? FeatureThreadCount[context.FeatureInfo] - 1 : 0;
         }
 
@@ -75,7 +78,14 @@ namespace ReportPortal.SpecFlowPlugin
 
         internal static void OnInitializing(object sender, InitializingEventArgs eventArg)
         {
-            Initializing?.Invoke(sender, eventArg);
+            try
+            {
+                Initializing?.Invoke(sender, eventArg);
+            }
+            catch (Exception exp)
+            {
+                Logger.Error($"Exception occured in {nameof(OnInitializing)} event handler: {exp}");
+            }
         }
 
         public delegate void RunStartedHandler(object sender, RunStartedEventArgs e);
@@ -85,12 +95,26 @@ namespace ReportPortal.SpecFlowPlugin
 
         internal static void OnBeforeRunStarted(object sender, RunStartedEventArgs eventArg)
         {
-            BeforeRunStarted?.Invoke(sender, eventArg);
+            try
+            {
+                BeforeRunStarted?.Invoke(sender, eventArg);
+            }
+            catch (Exception exp)
+            {
+                Logger.Error($"Exception occured in {nameof(OnBeforeRunStarted)} event handler: {exp}");
+            }
         }
 
         internal static void OnAfterRunStarted(object sender, RunStartedEventArgs eventArg)
         {
-            AfterRunStarted?.Invoke(sender, eventArg);
+            try
+            {
+                AfterRunStarted?.Invoke(sender, eventArg);
+            }
+            catch (Exception exp)
+            {
+                Logger.Error($"Exception occured in {nameof(OnAfterRunStarted)} event handler: {exp}");
+            }
         }
 
         public delegate void RunFinishedHandler(object sender, RunFinishedEventArgs e);
@@ -100,12 +124,26 @@ namespace ReportPortal.SpecFlowPlugin
 
         internal static void OnBeforeRunFinished(object sender, RunFinishedEventArgs eventArg)
         {
-            BeforeRunFinished?.Invoke(sender, eventArg);
+            try
+            {
+                BeforeRunFinished?.Invoke(sender, eventArg);
+            }
+            catch (Exception exp)
+            {
+                Logger.Error($"Exception occured in {nameof(OnBeforeRunFinished)} event handler: {exp}");
+            }
         }
 
         internal static void OnAfterRunFinished(object sender, RunFinishedEventArgs eventArg)
         {
-            AfterRunFinished?.Invoke(sender, eventArg);
+            try
+            {
+                AfterRunFinished?.Invoke(sender, eventArg);
+            }
+            catch (Exception exp)
+            {
+                Logger.Error($"Exception occured in {nameof(OnAfterRunFinished)} event handler: {exp}");
+            }
         }
 
         public delegate void FeatureStartedHandler(object sender, TestItemStartedEventArgs e);
@@ -115,12 +153,26 @@ namespace ReportPortal.SpecFlowPlugin
 
         internal static void OnBeforeFeatureStarted(object sender, TestItemStartedEventArgs eventArg)
         {
-            BeforeFeatureStarted?.Invoke(sender, eventArg);
+            try
+            {
+                BeforeFeatureStarted?.Invoke(sender, eventArg);
+            }
+            catch (Exception exp)
+            {
+                Logger.Error($"Exception occured in {nameof(OnBeforeFeatureStarted)} event handler: {exp}");
+            }
         }
 
         internal static void OnAfterFeatureStarted(object sender, TestItemStartedEventArgs eventArg)
         {
-            AfterFeatureStarted?.Invoke(sender, eventArg);
+            try
+            {
+                AfterFeatureStarted?.Invoke(sender, eventArg);
+            }
+            catch (Exception exp)
+            {
+                Logger.Error($"Exception occured in {nameof(OnAfterFeatureStarted)} event handler: {exp}");
+            }
         }
 
         public delegate void FeatureFinishedHandler(object sender, TestItemFinishedEventArgs e);
@@ -130,12 +182,26 @@ namespace ReportPortal.SpecFlowPlugin
 
         internal static void OnBeforeFeatureFinished(object sender, TestItemFinishedEventArgs eventArg)
         {
-            BeforeFeatureFinished?.Invoke(sender, eventArg);
+            try
+            {
+                BeforeFeatureFinished?.Invoke(sender, eventArg);
+            }
+            catch (Exception exp)
+            {
+                Logger.Error($"Exception occured in {nameof(OnBeforeFeatureFinished)} event handler: {exp}");
+            }
         }
 
         internal static void OnAfterFeatureFinished(object sender, TestItemFinishedEventArgs eventArg)
         {
-            AfterFeatureFinished?.Invoke(sender, eventArg);
+            try
+            {
+                AfterFeatureFinished?.Invoke(sender, eventArg);
+            }
+            catch (Exception exp)
+            {
+                Logger.Error($"Exception occured in {nameof(OnAfterFeatureFinished)} event handler: {exp}");
+            }
         }
 
         public delegate void ScenarioStartedHandler(object sender, TestItemStartedEventArgs e);
@@ -145,12 +211,26 @@ namespace ReportPortal.SpecFlowPlugin
 
         internal static void OnBeforeScenarioStarted(object sender, TestItemStartedEventArgs eventArg)
         {
-            BeforeScenarioStarted?.Invoke(sender, eventArg);
+            try
+            {
+                BeforeScenarioStarted?.Invoke(sender, eventArg);
+            }
+            catch (Exception exp)
+            {
+                Logger.Error($"Exception occured in {nameof(OnBeforeScenarioStarted)} event handler: {exp}");
+            }
         }
 
         internal static void OnAfterScenarioStarted(object sender, TestItemStartedEventArgs eventArg)
         {
-            AfterScenarioStarted?.Invoke(sender, eventArg);
+            try
+            {
+                AfterScenarioStarted?.Invoke(sender, eventArg);
+            }
+            catch (Exception exp)
+            {
+                Logger.Error($"Exception occured in {nameof(OnAfterScenarioStarted)} event handler: {exp}");
+            }
         }
 
         public delegate void ScenarioFinishedHandler(object sender, TestItemFinishedEventArgs e);
@@ -160,12 +240,26 @@ namespace ReportPortal.SpecFlowPlugin
 
         internal static void OnBeforeScenarioFinished(object sender, TestItemFinishedEventArgs eventArg)
         {
-            BeforeScenarioFinished?.Invoke(sender, eventArg);
+            try
+            {
+                BeforeScenarioFinished?.Invoke(sender, eventArg);
+            }
+            catch (Exception exp)
+            {
+                Logger.Error($"Exception occured in {nameof(OnBeforeScenarioFinished)} event handler: {exp}");
+            }
         }
 
         internal static void OnAfterScenarioFinished(object sender, TestItemFinishedEventArgs eventArg)
         {
-            AfterScenarioFinished?.Invoke(sender, eventArg);
+            try
+            {
+                AfterScenarioFinished?.Invoke(sender, eventArg);
+            }
+            catch (Exception exp)
+            {
+                Logger.Error($"Exception occured in {nameof(OnAfterScenarioFinished)} event handler: {exp}");
+            }
         }
 
         public delegate void StepStartedHandler(object sender, StepStartedEventArgs e);
@@ -175,12 +269,26 @@ namespace ReportPortal.SpecFlowPlugin
 
         internal static void OnBeforeStepStarted(object sender, StepStartedEventArgs eventArg)
         {
-            BeforeStepStarted?.Invoke(sender, eventArg);
+            try
+            {
+                BeforeStepStarted?.Invoke(sender, eventArg);
+            }
+            catch (Exception exp)
+            {
+                Logger.Error($"Exception occured in {nameof(OnBeforeStepStarted)} event handler: {exp}");
+            }
         }
 
         internal static void OnAfterStepStarted(object sender, StepStartedEventArgs eventArg)
         {
-            AfterStepStarted?.Invoke(sender, eventArg);
+            try
+            {
+                AfterStepStarted?.Invoke(sender, eventArg);
+            }
+            catch (Exception exp)
+            {
+                Logger.Error($"Exception occured in {nameof(OnAfterStepStarted)} event handler: {exp}");
+            }
         }
 
         public delegate void StepFinishedHandler(object sender, StepFinishedEventArgs e);
@@ -190,12 +298,26 @@ namespace ReportPortal.SpecFlowPlugin
 
         internal static void OnBeforeStepFinished(object sender, StepFinishedEventArgs eventArg)
         {
-            BeforeStepFinished?.Invoke(sender, eventArg);
+            try
+            {
+                BeforeStepFinished?.Invoke(sender, eventArg);
+            }
+            catch (Exception exp)
+            {
+                Logger.Error($"Exception occured in {nameof(OnBeforeStepFinished)} event handler: {exp}");
+            }
         }
 
         internal static void OnAfterStepFinished(object sender, StepFinishedEventArgs eventArg)
         {
-            AfterStepFinished?.Invoke(sender, eventArg);
+            try
+            {
+                AfterStepFinished?.Invoke(sender, eventArg);
+            }
+            catch (Exception exp)
+            {
+                Logger.Error($"Exception occured in {nameof(OnAfterStepFinished)} event handler: {exp}");
+            }
         }
     }
 }

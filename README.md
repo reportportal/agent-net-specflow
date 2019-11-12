@@ -201,7 +201,7 @@ public void GivenIHaveEnteredSomethingIntoTheCalculator(int number)
 ```
 
 # Troubleshooting
-All http error messages goes to `ReportPortal.log` file.
+All http error messages goes to `ReportPortal.*.log` file.
 
 # Integrate logger framework
 - [NLog](https://github.com/reportportal/logger-net-nlog)
