@@ -52,16 +52,7 @@ namespace ReportPortal.SpecFlowPlugin
 
                 if (!eventArg.Canceled)
                 {
-                    var launchId = config.GetValue<string>("Launch:Id", "");
-
-                    if (string.IsNullOrEmpty(launchId))
-                    {
-                        Bridge.Context.LaunchReporter = Bridge.Context.LaunchReporter ?? new LaunchReporter(Bridge.Service);
-                    }
-                    else
-                    {
-                        Bridge.Context.LaunchReporter = Bridge.Context.LaunchReporter ?? new LaunchReporter(Bridge.Service, launchId);
-                    }
+                    Bridge.Context.LaunchReporter = Bridge.Context.LaunchReporter ?? new LaunchReporter(Bridge.Service, config, null);
 
                     Bridge.Context.LaunchReporter.Start(request);
 
