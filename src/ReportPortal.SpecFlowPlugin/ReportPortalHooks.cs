@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using ReportPortal.Client;
-using ReportPortal.Client.Models;
-using ReportPortal.Client.Requests;
+using ReportPortal.Client.Abstractions.Requests;
+using ReportPortal.Client.Abstractions.Responses;
 using ReportPortal.Shared;
 using ReportPortal.Shared.Configuration;
 using ReportPortal.Shared.Internal.Logging;
@@ -78,7 +77,7 @@ namespace ReportPortal.SpecFlowPlugin
 
             if (args.Service != null)
             {
-                Bridge.Service = args.Service;
+                Bridge.Service = args.Service as Service;
             }
             else
             {
@@ -254,7 +253,7 @@ namespace ReportPortal.SpecFlowPlugin
                 {
                     if (this.ScenarioContext.ScenarioExecutionStatus == ScenarioExecutionStatus.TestError)
                     {
-                        currentScenario.Log(new AddLogItemRequest
+                        currentScenario.Log(new CreateLogItemRequest
                         {
                             Level = LogLevel.Error,
                             Time = DateTime.UtcNow,
@@ -263,7 +262,7 @@ namespace ReportPortal.SpecFlowPlugin
                     }
                     else if (this.ScenarioContext.ScenarioExecutionStatus == ScenarioExecutionStatus.BindingError)
                     {
-                        currentScenario.Log(new AddLogItemRequest
+                        currentScenario.Log(new CreateLogItemRequest
                         {
                             Level = LogLevel.Error,
                             Time = DateTime.UtcNow,
@@ -272,7 +271,7 @@ namespace ReportPortal.SpecFlowPlugin
                     }
                     else if (this.ScenarioContext.ScenarioExecutionStatus == ScenarioExecutionStatus.UndefinedStep)
                     {
-                        currentScenario.Log(new AddLogItemRequest
+                        currentScenario.Log(new CreateLogItemRequest
                         {
                             Level = LogLevel.Error,
                             Time = DateTime.UtcNow,
@@ -316,7 +315,7 @@ namespace ReportPortal.SpecFlowPlugin
 
                 if (currentScenario != null)
                 {
-                    var stepInfoRequest = new AddLogItemRequest
+                    var stepInfoRequest = new CreateLogItemRequest
                     {
                         Level = LogLevel.Info,
                         Time = DateTime.UtcNow,

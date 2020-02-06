@@ -1,7 +1,7 @@
 ﻿using System;
 using ReportPortal.Client;
-using ReportPortal.Client.Requests;
-using ReportPortal.Shared;
+using ReportPortal.Client.Abstractions;
+using ReportPortal.Client.Abstractions.Requests;
 using ReportPortal.Shared.Reporter;
 using TechTalk.SpecFlow;
 
@@ -9,19 +9,19 @@ namespace ReportPortal.SpecFlowPlugin.EventArguments
 {
     public class StepStartedEventArgs : EventArgs
     {
-        public StepStartedEventArgs(Service service, AddLogItemRequest request)
+        public StepStartedEventArgs(IClientService service, CreateLogItemRequest request)
         {
             Service = service;
             AddLogItemRequest = request;
         }
 
-        public StepStartedEventArgs(Service service, AddLogItemRequest request, ITestReporter testReporter)
+        public StepStartedEventArgs(IClientService service, CreateLogItemRequest request, ITestReporter testReporter)
             : this(service, request)
         {
             TestReporter = testReporter;
         }
 
-        public StepStartedEventArgs(Service service, AddLogItemRequest request, ITestReporter testReporter, FeatureContext featureContext, ScenarioContext scenarioContext, ScenarioStepContext stepContext)
+        public StepStartedEventArgs(IClientService service, CreateLogItemRequest request, ITestReporter testReporter, FeatureContext featureContext, ScenarioContext scenarioContext, ScenarioStepContext stepContext)
             : this(service, request, testReporter)
         {
             FeatureContext = featureContext;
@@ -29,9 +29,9 @@ namespace ReportPortal.SpecFlowPlugin.EventArguments
             StepContext = stepContext;
         }
 
-        public Service Service { get; }
+        public IClientService Service { get; }
 
-        public AddLogItemRequest AddLogItemRequest { get; }
+        public CreateLogItemRequest AddLogItemRequest { get; }
 
         public ITestReporter TestReporter { get; }
 

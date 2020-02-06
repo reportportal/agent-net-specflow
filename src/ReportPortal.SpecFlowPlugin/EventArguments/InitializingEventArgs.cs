@@ -1,4 +1,4 @@
-﻿using ReportPortal.Client;
+﻿using ReportPortal.Client.Abstractions;
 using ReportPortal.Shared.Configuration;
 
 namespace ReportPortal.SpecFlowPlugin.EventArguments
@@ -12,6 +12,6 @@ namespace ReportPortal.SpecFlowPlugin.EventArguments
 
         public IConfiguration Config { get; set; }
 
-        public Service Service { get; set; }
+        public IClientService Service { get; set; }
     }
 }

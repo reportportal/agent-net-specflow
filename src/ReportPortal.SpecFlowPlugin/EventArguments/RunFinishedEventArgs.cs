@@ -1,20 +1,20 @@
 ﻿using System;
-using ReportPortal.Client;
-using ReportPortal.Client.Requests;
+using ReportPortal.Client.Abstractions;
+using ReportPortal.Client.Abstractions.Requests;
 using ReportPortal.Shared.Reporter;
 
 namespace ReportPortal.SpecFlowPlugin.EventArguments
 {
     public class RunFinishedEventArgs : EventArgs
     {
-        public RunFinishedEventArgs(Service service, FinishLaunchRequest request, ILaunchReporter launchReporter)
+        public RunFinishedEventArgs(IClientService service, FinishLaunchRequest request, ILaunchReporter launchReporter)
         {
             Service = service;
             FinishLaunchRequest = request;
             LaunchReporter = launchReporter;
         }
 
-        public Service Service { get; }
+        public IClientService Service { get; }
 
         public FinishLaunchRequest FinishLaunchRequest { get; }
 

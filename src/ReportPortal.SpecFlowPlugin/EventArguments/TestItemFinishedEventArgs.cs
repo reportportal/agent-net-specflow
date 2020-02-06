@@ -1,6 +1,7 @@
 ﻿using System;
 using ReportPortal.Client;
-using ReportPortal.Client.Requests;
+using ReportPortal.Client.Abstractions;
+using ReportPortal.Client.Abstractions.Requests;
 using ReportPortal.Shared.Reporter;
 using TechTalk.SpecFlow;
 
@@ -8,21 +9,21 @@ namespace ReportPortal.SpecFlowPlugin.EventArguments
 {
     public class TestItemFinishedEventArgs: EventArgs
     {
-        public TestItemFinishedEventArgs(Service service, FinishTestItemRequest request, ITestReporter testReporter)
+        public TestItemFinishedEventArgs(IClientService service, FinishTestItemRequest request, ITestReporter testReporter)
         {
             Service = service;
             FinishTestItemRequest = request;
             TestReporter = testReporter;
         }
 
-        public TestItemFinishedEventArgs(Service service, FinishTestItemRequest request, ITestReporter testReporter, FeatureContext featureContext, ScenarioContext scenarioContext)
+        public TestItemFinishedEventArgs(IClientService service, FinishTestItemRequest request, ITestReporter testReporter, FeatureContext featureContext, ScenarioContext scenarioContext)
             : this(service, request, testReporter)
         {
             FeatureContext = featureContext;
             ScenarioContext = scenarioContext;
         }
 
-        public Service Service { get; }
+        public IClientService Service { get; }
 
         public FinishTestItemRequest FinishTestItemRequest { get; }
 
