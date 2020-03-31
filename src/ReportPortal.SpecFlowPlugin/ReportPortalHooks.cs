@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using ReportPortal.Client;
+using ReportPortal.Client.Abstractions.Models;
 using ReportPortal.Client.Abstractions.Requests;
-using ReportPortal.Client.Abstractions.Responses;
 using ReportPortal.Shared;
 using ReportPortal.Shared.Configuration;
 using ReportPortal.Shared.Internal.Logging;
@@ -18,7 +18,7 @@ namespace ReportPortal.SpecFlowPlugin
     [Binding]
     internal class ReportPortalHooks : Steps
     {
-        private static readonly ITraceLogger Logger = TraceLogManager.GetLogger<ReportPortalHooks>();
+        private static readonly ITraceLogger Logger = TraceLogManager.Instance.GetLogger<ReportPortalHooks>();
 
         [BeforeTestRun(Order = -20000)]
         public static void BeforeTestRun()
