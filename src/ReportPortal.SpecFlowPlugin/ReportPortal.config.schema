@@ -80,7 +80,7 @@
         "name",
         "description",
         "debugMode",
-        "tags"
+        "attributes"
       ],
       "properties": {
         "name": {
@@ -112,18 +112,19 @@
             true
           ]
         },
-        "tags": {
-          "$id": "#/properties/launch/properties/tags",
+        "attributes": {
+          "$id": "#/properties/launch/properties/attributes",
           "type": "array",
-          "title": "The Tags Schema",
+          "title": "The Attributes Schema",
           "items": {
-            "$id": "#/properties/launch/properties/tags/items",
+            "$id": "#/properties/launch/properties/attributes/items",
             "type": "string",
             "title": "The Items Schema",
             "default": "",
             "examples": [
               "t1",
-              "t2"
+              "t2",
+              "os:win10"
             ],
             "pattern": "^(.*)$"
           }

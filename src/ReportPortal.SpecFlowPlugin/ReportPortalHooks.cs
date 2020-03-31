@@ -38,7 +38,7 @@ namespace ReportPortal.SpecFlowPlugin
                     request.Mode = LaunchMode.Debug;
                 }
 
-                request.Tags = config.GetValues(ConfigurationPath.LaunchTags, new List<string>()).ToList();
+                request.Attributes = config.GetKeyValues("Launch:Attributes", new List<KeyValuePair<string, string>>()).Select(a => new ItemAttribute { Key = a.Key, Value = a.Value });
                 request.Description = config.GetValue(ConfigurationPath.LaunchDescription, string.Empty);
 
                 var eventArg = new RunStartedEventArgs(Bridge.Service, request);
@@ -141,7 +141,7 @@ namespace ReportPortal.SpecFlowPlugin
                                 Description = featureContext.FeatureInfo.Description,
                                 StartTime = DateTime.UtcNow,
                                 Type = TestItemType.Suite,
-                                Tags = new List<string>(featureContext.FeatureInfo.Tags)
+                                Attributes = featureContext.FeatureInfo.Tags?.Select(t => new ItemAttribute { Value = t })
                             };
 
                             var eventArg = new TestItemStartedEventArgs(Bridge.Service, request, null, featureContext, null);
@@ -221,7 +221,7 @@ namespace ReportPortal.SpecFlowPlugin
                         Description = this.ScenarioContext.ScenarioInfo.Description,
                         StartTime = DateTime.UtcNow,
                         Type = TestItemType.Step,
-                        Tags = new List<string>(this.ScenarioContext.ScenarioInfo.Tags)
+                        Attributes = this.ScenarioContext.ScenarioInfo.Tags?.Select(t => new ItemAttribute { Value = t })
                     };
 
                     var eventArg = new TestItemStartedEventArgs(Bridge.Service, request, currentFeature, this.FeatureContext, this.ScenarioContext);
