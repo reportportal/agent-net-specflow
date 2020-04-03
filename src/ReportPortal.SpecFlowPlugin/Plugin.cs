@@ -1,5 +1,5 @@
 ﻿using ReportPortal.Shared.Configuration;
-using ReportPortal.Shared.Configuration.Providers;
+using ReportPortal.Shared.Internal.Logging;
 using ReportPortal.SpecFlowPlugin;
 using System;
 using System.IO;
@@ -15,13 +15,17 @@ namespace ReportPortal.SpecFlowPlugin
     /// </summary>
     internal class Plugin : IRuntimePlugin
     {
+        private ITraceLogger _traceLogger;
+
         public static IConfiguration Config { get; set; }
 
         public void Initialize(RuntimePluginEvents runtimePluginEvents, RuntimePluginParameters runtimePluginParameters, UnitTestProviderConfiguration unitTestProviderConfiguration)
         {
-            var jsonPath = Path.GetDirectoryName(new Uri(typeof(Plugin).Assembly.CodeBase).LocalPath) + "/ReportPortal.config.json";
+            var currentDirectory = Path.GetDirectoryName(new Uri(typeof(Plugin).Assembly.CodeBase).LocalPath);
 
-            Config = new ConfigurationBuilder().AddJsonFile(jsonPath).AddEnvironmentVariables().Build();
+            _traceLogger = TraceLogManager.Instance.WithBaseDir(currentDirectory).GetLogger<Plugin>();
+
+            Config = new ConfigurationBuilder().AddDefaults(currentDirectory).Build();
 
             var isEnabled = Config.GetValue("Enabled", true);
 
