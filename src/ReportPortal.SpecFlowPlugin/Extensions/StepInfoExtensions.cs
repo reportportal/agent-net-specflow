@@ -1,22 +1,29 @@
 ﻿using System;
+using System.Linq;
 using TechTalk.SpecFlow;
 
 namespace ReportPortal.SpecFlowPlugin.Extensions
 {
     public static class StepInfoExtensions
     {
-        public static string GetFullText(this StepInfo stepInfo)
+        public static string GetFormattedParameters(this StepInfo stepInfo)
         {
             var fullText = "";
 
             if (stepInfo.StepInstance.MultilineTextArgument != null)
             {
-                fullText += Environment.NewLine + stepInfo.StepInstance.MultilineTextArgument;
+                fullText = stepInfo.StepInstance.MultilineTextArgument;
             }
-
-            if (stepInfo.StepInstance.TableArgument != null)
+            // format table
+            else if (stepInfo.StepInstance.TableArgument != null)
             {
-                fullText += Environment.NewLine + stepInfo.StepInstance.TableArgument;
+                fullText = "| **" + string.Join("** | **", stepInfo.StepInstance.TableArgument.Header) + "** |";
+                fullText += Environment.NewLine + "| " + string.Join(" | ", stepInfo.StepInstance.TableArgument.Header.Select(c => "---")) + " |";
+
+                foreach (var row in stepInfo.StepInstance.TableArgument.Rows)
+                {
+                    fullText += Environment.NewLine + "| " + string.Join(" | ", row.Values) + " |";
+                }
             }
 
             return fullText;

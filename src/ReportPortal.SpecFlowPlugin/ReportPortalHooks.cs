@@ -331,6 +331,19 @@ namespace ReportPortal.SpecFlowPlugin
                 {
                     var stepReporter = currentScenario.StartChildTestReporter(stepInfoRequest);
                     ReportPortalAddin.SetStepTestReporter(this.StepContext, stepReporter);
+
+                    // step parameters
+                    var formattedParameters = this.StepContext.StepInfo.GetFormattedParameters();
+                    if (!string.IsNullOrEmpty(formattedParameters))
+                    {
+                        stepReporter.Log(new CreateLogItemRequest
+                        {
+                            Text = formattedParameters,
+                            Level = LogLevel.Info,
+                            Time = DateTime.UtcNow
+                        });
+                    }
+
                     ReportPortalAddin.OnAfterStepStarted(this, eventArg);
                 }
             }
