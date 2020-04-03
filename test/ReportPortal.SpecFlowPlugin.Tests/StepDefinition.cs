@@ -17,6 +17,8 @@ namespace ReportPortal.SpecFlowPlugin.IntegrationTests
                 scope.Info("a");
                 Log.Info("b");
                 Log.RootScope.Info("root");
+
+                scope.Status = Shared.Logging.LogScopeStatus.Skipped;
             }
         }
 

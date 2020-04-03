@@ -1,8 +1,10 @@
-﻿using ReportPortal.Client.Abstractions.Requests;
+﻿using ReportPortal.Client.Abstractions.Models;
+using ReportPortal.Client.Abstractions.Requests;
 using ReportPortal.Shared.Extensibility;
 using ReportPortal.Shared.Internal.Logging;
 using ReportPortal.Shared.Logging;
 using ReportPortal.Shared.Reporter;
+using System.Collections.Generic;
 
 namespace ReportPortal.SpecFlowPlugin.LogHandler
 {
@@ -40,7 +42,8 @@ namespace ReportPortal.SpecFlowPlugin.LogHandler
         {
             var finishRequest = new FinishTestItemRequest
             {
-                EndTime = logScope.EndTime.Value
+                EndTime = logScope.EndTime.Value,
+                Status = _nestedStepStatusMap[logScope.Status]
             };
 
             ReportPortalAddin.LogScopes[logScope.Id].Finish(finishRequest);
@@ -90,5 +93,12 @@ namespace ReportPortal.SpecFlowPlugin.LogHandler
 
             return testReporter;
         }
+
+        private Dictionary<LogScopeStatus, Status> _nestedStepStatusMap = new Dictionary<Shared.Logging.LogScopeStatus, Status> {
+            { LogScopeStatus.InProgress, Status.InProgress },
+            { LogScopeStatus.Passed, Status.Passed },
+            { LogScopeStatus.Failed, Status.Failed },
+            { LogScopeStatus.Skipped,Status.Skipped }
+        };
     }
 }
