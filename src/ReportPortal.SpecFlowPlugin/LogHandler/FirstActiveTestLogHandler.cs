@@ -1,15 +1,14 @@
-﻿using System.Linq;
-using System.Threading;
-using ReportPortal.Client.Abstractions.Requests;
-using ReportPortal.Shared;
+﻿using ReportPortal.Client.Abstractions.Requests;
 using ReportPortal.Shared.Extensibility;
+using ReportPortal.Shared.Internal.Logging;
 using ReportPortal.Shared.Logging;
-using ReportPortal.Shared.Reporter;
 
 namespace ReportPortal.SpecFlowPlugin.LogHandler
 {
     public class FirstActiveTestLogHandler : ILogHandler
     {
+        private readonly ITraceLogger _traceLogger = TraceLogManager.Instance.GetLogger<FirstActiveTestLogHandler>();
+
         public int Order => int.MaxValue;
 
         public void BeginScope(ILogScope logScope)
@@ -24,42 +23,20 @@ namespace ReportPortal.SpecFlowPlugin.LogHandler
 
         public bool Handle(ILogScope logScope, CreateLogItemRequest logRequest)
         {
+            _traceLogger.Verbose("Identifying test context of log message...");
+
+            var scenarioReporter = ReportPortalAddin.GetScenarioTestReporter(TechTalk.SpecFlow.ScenarioContext.Current);
+
             var handled = false;
 
-            if ((Bridge.Context.LaunchReporter as LaunchReporter)?.LastTestNode != null)
+            if (scenarioReporter != null)
             {
-                var testNode = Bridge.Context.LaunchReporter.ChildTestReporters?
-                    .Select(t => FindNonFinishedTestReporter(t, Thread.CurrentThread.ManagedThreadId))
-                    .FirstOrDefault(t => t != null) ?? (Bridge.Context.LaunchReporter as LaunchReporter).LastTestNode;
+                scenarioReporter.Log(logRequest);
 
-                if (testNode != null)
-                {
-                    testNode.Log(logRequest);
-
-                    handled = true;
-                }
+                handled = true;
             }
 
             return handled;
-        }
-
-        private ITestReporter FindNonFinishedTestReporter(ITestReporter testReporter, int threadId)
-        {
-            if (testReporter.FinishTask == null && testReporter.ChildTestReporters == null && (testReporter as TestReporter).ThreadId == threadId)
-            {
-                return testReporter;
-            }
-
-            if (testReporter.ChildTestReporters != null)
-            {
-                return testReporter.ChildTestReporters
-                  .Select(testNode => FindNonFinishedTestReporter(testNode, threadId))
-                  .FirstOrDefault(t => t != null);
-            }
-            else
-            {
-                return null;
-            }
         }
     }
 }
