@@ -11,6 +11,13 @@ namespace ReportPortal.SpecFlowPlugin.IntegrationTests
         public void GivenIHaveEnteredSomethingIntoTheCalculator(int number)
         {
             Log.Debug($"Executing {nameof(GivenIHaveEnteredSomethingIntoTheCalculator)} step");
+
+            using (var scope = Log.BeginNewScope("qwe"))
+            {
+                scope.Info("a");
+                Log.Info("b");
+                Log.RootScope.Info("root");
+            }
         }
 
         [When("I press add")]

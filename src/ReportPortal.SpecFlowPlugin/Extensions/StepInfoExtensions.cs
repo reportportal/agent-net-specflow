@@ -7,7 +7,7 @@ namespace ReportPortal.SpecFlowPlugin.Extensions
     {
         public static string GetFullText(this StepInfo stepInfo)
         {
-            var fullText = stepInfo.StepInstance.StepDefinitionKeyword + " " + stepInfo.StepInstance.Text;
+            var fullText = "";
 
             if (stepInfo.StepInstance.MultilineTextArgument != null)
             {
@@ -20,6 +20,13 @@ namespace ReportPortal.SpecFlowPlugin.Extensions
             }
 
             return fullText;
+        }
+
+        public static string GetCaption(this StepInfo stepInfo)
+        {
+            var caption = stepInfo.StepInstance.StepDefinitionKeyword + " " + stepInfo.StepInstance.Text;
+
+            return caption;
         }
     }
 }

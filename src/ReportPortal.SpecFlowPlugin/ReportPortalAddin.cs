@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Linq;
 using ReportPortal.Shared.Internal.Logging;
 using ReportPortal.Shared.Reporter;
@@ -18,14 +19,10 @@ namespace ReportPortal.SpecFlowPlugin
 
         private static readonly ConcurrentDictionary<ScenarioInfo, ITestReporter> ScenarioTestReporters = new ConcurrentDictionary<ScenarioInfo, ITestReporter>();
 
-        [Obsolete("Use thread-safe method GetFeatureTestReporter to get the current feature TestReporter.")]
-        public static ITestReporter CurrentFeature => FeatureTestReporters.Select(kv => kv.Value).LastOrDefault(reporter => reporter.FinishTask == null);
+        private static readonly ConcurrentDictionary<StepInfo, ITestReporter> StepTestReporters = new ConcurrentDictionary<StepInfo, ITestReporter>();
 
-        [Obsolete("Use thread-safe method GetScenarioTestReporter to get the current scenario TestReporter.")]
-        public static ITestReporter CurrentScenario => ScenarioTestReporters.Select(kv => kv.Value).LastOrDefault(reporter => reporter.FinishTask == null);
-
-        [Obsolete]
-        public static string CurrentScenarioDescription { get; } = string.Empty;
+        // key: log scope ID, value: according test reporter
+        public static readonly Dictionary<string, ITestReporter> LogScopes = new Dictionary<string, ITestReporter>();
 
         public static ITestReporter GetFeatureTestReporter(FeatureContext context)
         {
@@ -69,6 +66,21 @@ namespace ReportPortal.SpecFlowPlugin
         internal static void RemoveScenarioTestReporter(ScenarioContext context, ITestReporter reporter)
         {
             ScenarioTestReporters.TryRemove(context.ScenarioInfo, out reporter);
+        }
+
+        public static ITestReporter GetStepTestReporter(ScenarioStepContext context)
+        {
+            return StepTestReporters.ContainsKey(context.StepInfo) ? StepTestReporters[context.StepInfo] : null;
+        }
+
+        internal static void SetStepTestReporter(ScenarioStepContext context, ITestReporter reporter)
+        {
+            StepTestReporters[context.StepInfo] = reporter;
+        }
+
+        internal static void RemoveStepTestReporter(ScenarioStepContext context, ITestReporter reporter)
+        {
+            StepTestReporters.TryRemove(context.StepInfo, out reporter);
         }
 
         public delegate void InitializingHandler(object sender, InitializingEventArgs e);

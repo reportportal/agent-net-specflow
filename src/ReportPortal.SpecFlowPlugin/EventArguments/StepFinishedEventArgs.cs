@@ -1,5 +1,4 @@
 ﻿using System;
-using ReportPortal.Client;
 using ReportPortal.Client.Abstractions;
 using ReportPortal.Client.Abstractions.Requests;
 using ReportPortal.Shared.Reporter;
@@ -9,14 +8,14 @@ namespace ReportPortal.SpecFlowPlugin.EventArguments
 {
     public class StepFinishedEventArgs : EventArgs
     {
-        public StepFinishedEventArgs(IClientService service, CreateLogItemRequest request, ITestReporter testReporter)
+        public StepFinishedEventArgs(IClientService service, FinishTestItemRequest request, ITestReporter testReporter)
         {
             Service = service;
-            CreateLogItemRequest = request;
+            FinishTestItemRequest = request;
             TestReporter = testReporter;
         }
 
-        public StepFinishedEventArgs(IClientService service, CreateLogItemRequest request, ITestReporter testReporter, FeatureContext featureContext, ScenarioContext scenarioContext, ScenarioStepContext stepContext)
+        public StepFinishedEventArgs(IClientService service, FinishTestItemRequest request, ITestReporter testReporter, FeatureContext featureContext, ScenarioContext scenarioContext, ScenarioStepContext stepContext)
             : this(service, request, testReporter)
         {
             FeatureContext = featureContext;
@@ -26,7 +25,7 @@ namespace ReportPortal.SpecFlowPlugin.EventArguments
 
         public IClientService Service { get; }
 
-        public CreateLogItemRequest CreateLogItemRequest { get; }
+        public FinishTestItemRequest FinishTestItemRequest { get; }
 
         public ITestReporter TestReporter { get; }
 

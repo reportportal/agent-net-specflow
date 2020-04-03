@@ -6,7 +6,6 @@ using ReportPortal.Client;
 using ReportPortal.Client.Abstractions;
 using ReportPortal.Client.Abstractions.Models;
 using ReportPortal.Client.Abstractions.Requests;
-using ReportPortal.Shared;
 using ReportPortal.Shared.Configuration;
 using ReportPortal.Shared.Internal.Logging;
 using ReportPortal.Shared.Reporter;
@@ -43,7 +42,7 @@ namespace ReportPortal.SpecFlowPlugin
                     request.Mode = LaunchMode.Debug;
                 }
 
-                request.Attributes = config.GetKeyValues("Launch:Attributes", new List<KeyValuePair<string, string>>()).Select(a => new ItemAttribute { Key = a.Key, Value = a.Value });
+                request.Attributes = config.GetKeyValues("Launch:Attributes", new List<KeyValuePair<string, string>>()).Select(a => new ItemAttribute { Key = a.Key, Value = a.Value }).ToList();
                 request.Description = config.GetValue(ConfigurationPath.LaunchDescription, string.Empty);
 
                 var eventArg = new RunStartedEventArgs(_service, request);
@@ -146,7 +145,7 @@ namespace ReportPortal.SpecFlowPlugin
                                 Description = featureContext.FeatureInfo.Description,
                                 StartTime = DateTime.UtcNow,
                                 Type = TestItemType.Suite,
-                                Attributes = featureContext.FeatureInfo.Tags?.Select(t => new ItemAttribute { Value = t })
+                                Attributes = featureContext.FeatureInfo.Tags?.Select(t => new ItemAttribute { Value = t }).ToList()
                             };
 
                             var eventArg = new TestItemStartedEventArgs(_service, request, null, featureContext, null);
@@ -226,7 +225,7 @@ namespace ReportPortal.SpecFlowPlugin
                         Description = this.ScenarioContext.ScenarioInfo.Description,
                         StartTime = DateTime.UtcNow,
                         Type = TestItemType.Step,
-                        Attributes = this.ScenarioContext.ScenarioInfo.Tags?.Select(t => new ItemAttribute { Value = t })
+                        Attributes = this.ScenarioContext.ScenarioInfo.Tags?.Select(t => new ItemAttribute { Value = t }).ToList()
                     };
 
                     var eventArg = new TestItemStartedEventArgs(_service, request, currentFeature, this.FeatureContext, this.ScenarioContext);
@@ -318,23 +317,21 @@ namespace ReportPortal.SpecFlowPlugin
             {
                 var currentScenario = ReportPortalAddin.GetScenarioTestReporter(this.ScenarioContext);
 
-                if (currentScenario != null)
+                var stepInfoRequest = new StartTestItemRequest
                 {
-                    var stepInfoRequest = new CreateLogItemRequest
-                    {
-                        Level = LogLevel.Info,
-                        Time = DateTime.UtcNow,
-                        Text = this.StepContext.StepInfo.GetFullText()
-                    };
+                    Name = this.StepContext.StepInfo.GetCaption(),
+                    StartTime = DateTime.UtcNow,
+                    HasStats = false
+                };
 
-                    var eventArg = new StepStartedEventArgs(_service, stepInfoRequest, currentScenario, this.FeatureContext, this.ScenarioContext, this.StepContext);
-                    ReportPortalAddin.OnBeforeStepStarted(this, eventArg);
+                var eventArg = new StepStartedEventArgs(_service, stepInfoRequest, currentScenario, this.FeatureContext, this.ScenarioContext, this.StepContext);
+                ReportPortalAddin.OnBeforeStepStarted(this, eventArg);
 
-                    if (!eventArg.Canceled)
-                    {
-                        currentScenario.Log(stepInfoRequest);
-                        ReportPortalAddin.OnAfterStepStarted(this, eventArg);
-                    }
+                if (!eventArg.Canceled)
+                {
+                    var stepReporter = currentScenario.StartChildTestReporter(stepInfoRequest);
+                    ReportPortalAddin.SetStepTestReporter(this.StepContext, stepReporter);
+                    ReportPortalAddin.OnAfterStepStarted(this, eventArg);
                 }
             }
             catch (Exception exp)
@@ -348,17 +345,21 @@ namespace ReportPortal.SpecFlowPlugin
         {
             try
             {
-                var currentScenario = ReportPortalAddin.GetScenarioTestReporter(this.ScenarioContext);
+                var currentStep = ReportPortalAddin.GetStepTestReporter(this.StepContext);
 
-                if (currentScenario != null)
+                var stepFinishRequest = new FinishTestItemRequest
                 {
-                    var eventArg = new StepFinishedEventArgs(_service, null, currentScenario, this.FeatureContext, this.ScenarioContext, this.StepContext);
-                    ReportPortalAddin.OnBeforeStepFinished(this, eventArg);
+                    EndTime = DateTime.UtcNow
+                };
 
-                    if (!eventArg.Canceled)
-                    {
-                        ReportPortalAddin.OnAfterStepFinished(this, eventArg);
-                    }
+                var eventArg = new StepFinishedEventArgs(_service, stepFinishRequest, currentStep, this.FeatureContext, this.ScenarioContext, this.StepContext);
+                ReportPortalAddin.OnBeforeStepFinished(this, eventArg);
+
+                if (!eventArg.Canceled)
+                {
+                    currentStep.Finish(stepFinishRequest);
+                    ReportPortalAddin.RemoveStepTestReporter(this.StepContext, currentStep);
+                    ReportPortalAddin.OnAfterStepFinished(this, eventArg);
                 }
             }
             catch (Exception exp)
