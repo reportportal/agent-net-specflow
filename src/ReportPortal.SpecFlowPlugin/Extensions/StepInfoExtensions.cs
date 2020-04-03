@@ -12,7 +12,7 @@ namespace ReportPortal.SpecFlowPlugin.Extensions
 
             if (stepInfo.StepInstance.MultilineTextArgument != null)
             {
-                fullText = stepInfo.StepInstance.MultilineTextArgument;
+                fullText = "```" + Environment.NewLine + stepInfo.StepInstance.MultilineTextArgument + Environment.NewLine + "```";
             }
             // format table
             else if (stepInfo.StepInstance.TableArgument != null)
