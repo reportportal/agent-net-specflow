@@ -8,7 +8,7 @@
     <Authors>Nikolay Borisenko, Report Portal Community</Authors>
     <PackageTags>report specflow plugin reportportal testing</PackageTags>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
-    <PackageIconUrl>https://raw.githubusercontent.com/reportportal/agent-net-specflow/master/Logo.png</PackageIconUrl>
+    <PackageIcon>Logo.png</PackageIcon>
     <PackageProjectUrl>http://reportportal.io</PackageProjectUrl>
 
     <RepositoryType>GitHub</RepositoryType>
@@ -27,6 +27,8 @@
   <ItemGroup>
     <None Include="Build\**\*.props" Pack="true" PackagePath="build\" />
     <None Include="Build\**\*.targets" Pack="true" PackagePath="build\" />
+
+    <None Include="..\..\Logo.png" Pack="true" PackagePath="\" Visible="false" />
   </ItemGroup>
 
 </Project>
