@@ -26,7 +26,7 @@ Example of config file:
     "name": "SpecFlow Demo Launch",
     "description": "this is description",
     "debugMode": true,
-    "tags": [ "t1", "t2" ]
+    "attributes": [ "t1", "os:win10" ]
   }
 }
 ```
@@ -75,20 +75,7 @@ set reportportal_launch_name="My new launch name"
 # execute tests
 ```
 
-`reportportal_` prefix is used for naming variables, and `_` is used as delimeter. For example to override `Server.Authentication.Uuid` parameter, we need specify `ReportPortal_Server_Authentication_Uuid` in environment variables. To override launch tags we need specify `ReportPortal_Launch_Tags` with `tag1;tag2` value (`;` used as separator for list of values).
-
-# Parallel Execution Support
-
-Parallel Execution can be crucial if you have to run many tests in a short period of time. That is why `ReportPortal.SpecFlow` is going to support it out-of-box starting version `1.2.2-beta-12`.
-
-It became possible after SpecFlow implemented support of Parallel Execution in version 2.0.0 and addressed the issue with `FeatureContext` injection in Before/After Feature hooks.
-Please refer to [Parallel Execution](http://specflow.org/documentation/Parallel-Execution/) for more information about parallel execution in SpecFlow.
-
-## Limitations
-
-**At the moment only feature-level parallelization is supported.** Scenario-level parallelization might also work but it's very likely that it will create several test items per feature on Report Portal.
-
-Some test runners (especially ones that are integrated into Visual Studio) may also create several test items per feature. The reason behind it is that these test runners execute tests individually triggering Before/After Feature hooks for each test.
+`reportportal_` prefix is used for naming variables, and `_` is used as delimeter. For example to override `Server.Authentication.Uuid` parameter, we need specify `ReportPortal_Server_Authentication_Uuid` in environment variables. To override launch tags we need specify `ReportPortal_Launch_Attributes` with `tag1;os:linux` value (`;` used as separator for list of values).
 
 ### Memory (AppDomain) Isolation
 
@@ -146,44 +133,6 @@ Refer to [SpecFlow+ Runner Profiles](http://specflow.org/plus/documentation/Spec
 At the moment MSTest V2 only supports assembly-level parallelization.
 
 Feature- and scenario-level parallelization were recently added in MSTest V2 v1.3.0 Beta2 (see [MSTest V2: in-assembly parallel test execution](https://blogs.msdn.microsoft.com/devops/2018/01/30/mstest-v2-in-assembly-parallel-test-execution/)).
-
-## Loggers
-
-Any .NET logger library for Report Portal should work as long as it references ReportPortal.Shared `2.0.0-beta3` and above.
-Just be sure to log messages from the main test thread. Logging messages from other threads (e.g. from code in `async` methods) may have unpredictable results.
-
-The following code may log messages under a wrong scenario or may not log them at all. 
-
-```c#
-[Binding]
-public class StepDefinitions : Steps
-{
-    private readonly ILog _log = LogManager.GetLogger(typeof(StepDefinitions));
-
-    private async Task DoSomethingAsync()
-    {
-        await DoSomethingElseAsync();
-
-        _log.Warn("Ad ornatus adipisci expetendis pro.");
-    }
-}
-```
-
-```c#
-[Binding]
-public class StepDefinitions : Steps
-{
-    private IEnumerable<string> DoSomething(List<string> names)
-    {
-        return names.AsParallel().Select(name =>
-        {
-            Bridge.LogMessage(LogLevel.Info, $"Lorem ipsum dolor sit amet {name}.");
-
-            return DoSomethingElse(name);
-        });
-    }
-}
-```
 
 ## Thread-safe TestReporter
 
