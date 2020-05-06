@@ -365,6 +365,11 @@ namespace ReportPortal.SpecFlowPlugin
                     EndTime = DateTime.UtcNow
                 };
 
+                if (this.ScenarioContext.ScenarioExecutionStatus == ScenarioExecutionStatus.TestError)
+                {
+                    stepFinishRequest.Status = Status.Failed;
+                }
+
                 var eventArg = new StepFinishedEventArgs(_service, stepFinishRequest, currentStep, this.FeatureContext, this.ScenarioContext, this.StepContext);
                 ReportPortalAddin.OnBeforeStepFinished(this, eventArg);
 
