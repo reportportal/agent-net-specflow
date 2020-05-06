@@ -12,7 +12,7 @@ namespace ReportPortal.SpecFlowPlugin.IntegrationTests
         {
             Log.Debug($"Executing {nameof(GivenIHaveEnteredSomethingIntoTheCalculator)} step");
 
-            using (var scope = Log.BeginNewScope("qwe"))
+            using (var scope = Log.BeginScope("qwe"))
             {
                 scope.Info("a");
                 Log.Info("b");
