@@ -4,6 +4,7 @@ using ReportPortal.SpecFlowPlugin;
 using System;
 using System.IO;
 using TechTalk.SpecFlow.Bindings;
+using TechTalk.SpecFlow.Infrastructure;
 using TechTalk.SpecFlow.Plugins;
 using TechTalk.SpecFlow.UnitTestProvider;
 
@@ -34,12 +35,12 @@ namespace ReportPortal.SpecFlowPlugin
                 runtimePluginEvents.CustomizeGlobalDependencies += (sender, e) =>
                 {
                     e.SpecFlowConfiguration.AdditionalStepAssemblies.Add("ReportPortal.SpecFlowPlugin");
+                    e.ObjectContainer.RegisterTypeAs<SafeBindingInvoker, IBindingInvoker>();
                 };
 
-                runtimePluginEvents.CustomizeGlobalDependencies += (sender, e) =>
+                runtimePluginEvents.CustomizeScenarioDependencies += (sender, e) =>
                 {
-                    e.ObjectContainer.RegisterTypeAs<SafeBindingInvoker, IBindingInvoker>();
-                    e.SpecFlowConfiguration.AdditionalStepAssemblies.Add("ReportPortal.SpecFlowPlugin");
+                    e.ObjectContainer.RegisterTypeAs<SkippedStepsHandler, ISkippedStepHandler>();
                 };
             }
         }
