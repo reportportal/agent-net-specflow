@@ -55,7 +55,7 @@ namespace ReportPortal.SpecFlowPlugin
 
                 if (!eventArg.Canceled)
                 {
-                    _launchReporter = _launchReporter ?? new LaunchReporter(_service, config, null);
+                    _launchReporter = _launchReporter ?? new LaunchReporter(_service, config, null, Shared.Extensibility.ExtensionManager.Instance);
 
                     _launchReporter.Start(request);
 
