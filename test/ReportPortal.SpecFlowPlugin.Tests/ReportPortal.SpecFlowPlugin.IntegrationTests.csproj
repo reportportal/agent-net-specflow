@@ -10,9 +10,9 @@
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.0.1" />
     <PackageReference Include="NUnit" Version="3.11.0" />
     <PackageReference Include="NUnit3TestAdapter" Version="3.13.0" />
-    <PackageReference Include="SpecFlow" Version="3.1.80" />
-    <PackageReference Include="SpecFlow.NUnit" Version="3.1.80" />
-    <PackageReference Include="SpecFlow.Tools.MsBuild.Generation" Version="3.1.80" />
+    <PackageReference Include="SpecFlow" Version="3.3.16-beta" />
+    <PackageReference Include="SpecFlow.NUnit" Version="3.3.16-beta" />
+    <PackageReference Include="SpecFlow.Tools.MsBuild.Generation" Version="3.3.16-beta" />
   </ItemGroup>
 
   <ItemGroup>
