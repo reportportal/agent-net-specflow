@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net45;netstandard2.0;</TargetFrameworks>
+    <TargetFrameworks>net461;netstandard2.0;</TargetFrameworks>
     <PackageId>ReportPortal.SpecFlow</PackageId>
     <Version>1.0.0</Version>
     <Description>SpecFlow plugin for reporting test results to http://reportportal.io</Description>
@@ -21,7 +21,7 @@
     <PackageReference Include="ReportPortal.Shared" Version="3.0.0-beta.2">
       <PrivateAssets>contentfiles;analyzers;</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="SpecFlow" Version="3.1.80" />
+    <PackageReference Include="SpecFlow" Version="3.3.22-beta" />
   </ItemGroup>
 
   <ItemGroup>
