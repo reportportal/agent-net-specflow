@@ -55,6 +55,8 @@ namespace ReportPortal.SpecFlowPlugin
 
                 if (!eventArg.Canceled)
                 {
+                    Shared.Extensibility.Analytics.AnalyticsReportEventsObserver.DefineConsumer("agent-dotnet-specflow");
+
                     _launchReporter = _launchReporter ?? new LaunchReporter(_service, config, null, Shared.Extensibility.ExtensionManager.Instance);
 
                     _launchReporter.Start(request);
@@ -145,7 +147,7 @@ namespace ReportPortal.SpecFlowPlugin
                                 Description = featureContext.FeatureInfo.Description,
                                 StartTime = DateTime.UtcNow,
                                 Type = TestItemType.Suite,
-                                Attributes = featureContext.FeatureInfo.Tags?.Select(t => new ItemAttribute { Value = t }).ToList()
+                                Attributes = featureContext.FeatureInfo.Tags?.Select(t => new ItemAttribute { Key = "Tag", Value = t }).ToList()
                             };
 
                             var eventArg = new TestItemStartedEventArgs(_service, request, null, featureContext, null);
@@ -225,7 +227,7 @@ namespace ReportPortal.SpecFlowPlugin
                         Description = this.ScenarioContext.ScenarioInfo.Description,
                         StartTime = DateTime.UtcNow,
                         Type = TestItemType.Step,
-                        Attributes = this.ScenarioContext.ScenarioInfo.Tags?.Select(t => new ItemAttribute { Value = t }).ToList()
+                        Attributes = this.ScenarioContext.ScenarioInfo.Tags?.Select(t => new ItemAttribute { Key = "Tag", Value = t }).ToList()
                     };
 
                     var eventArg = new TestItemStartedEventArgs(_service, request, currentFeature, this.FeatureContext, this.ScenarioContext);
