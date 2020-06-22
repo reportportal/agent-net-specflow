@@ -70,7 +70,7 @@ namespace ReportPortal.SpecFlowPlugin.LogHandler
 
             ITestReporter testReporter;
 
-            if (logScope != null)
+            if (logScope != null && ReportPortalAddin.LogScopes.ContainsKey(logScope.Id))
             {
                 testReporter = ReportPortalAddin.LogScopes[logScope.Id];
             }
