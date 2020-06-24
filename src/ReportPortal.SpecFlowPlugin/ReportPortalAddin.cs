@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Linq;
 using ReportPortal.Shared.Internal.Logging;
 using ReportPortal.Shared.Reporter;
 using ReportPortal.SpecFlowPlugin.EventArguments;
@@ -26,7 +25,14 @@ namespace ReportPortal.SpecFlowPlugin
 
         public static ITestReporter GetFeatureTestReporter(FeatureContext context)
         {
-            return FeatureTestReporters.ContainsKey(context.FeatureInfo) ? FeatureTestReporters[context.FeatureInfo] : null;
+            if (context != null && FeatureTestReporters.ContainsKey(context.FeatureInfo))
+            {
+                return FeatureTestReporters[context.FeatureInfo];
+            }
+            else
+            {
+                return null;
+            }
         }
 
         internal static void SetFeatureTestReporter(FeatureContext context, ITestReporter reporter)
@@ -55,7 +61,14 @@ namespace ReportPortal.SpecFlowPlugin
 
         public static ITestReporter GetScenarioTestReporter(ScenarioContext context)
         {
-            return ScenarioTestReporters.ContainsKey(context.ScenarioInfo) ? ScenarioTestReporters[context.ScenarioInfo] : null;
+            if (context != null && ScenarioTestReporters.ContainsKey(context.ScenarioInfo))
+            {
+                return ScenarioTestReporters[context.ScenarioInfo];
+            }
+            else
+            {
+                return null;
+            }
         }
 
         internal static void SetScenarioTestReporter(ScenarioContext context, ITestReporter reporter)
@@ -70,7 +83,14 @@ namespace ReportPortal.SpecFlowPlugin
 
         public static ITestReporter GetStepTestReporter(ScenarioStepContext context)
         {
-            return StepTestReporters.ContainsKey(context.StepInfo) ? StepTestReporters[context.StepInfo] : null;
+            if (context != null && StepTestReporters.ContainsKey(context.StepInfo))
+            {
+                return StepTestReporters[context.StepInfo];
+            }
+            else
+            {
+                return null;
+            }
         }
 
         internal static void SetStepTestReporter(ScenarioStepContext context, ITestReporter reporter)

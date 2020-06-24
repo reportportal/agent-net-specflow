@@ -34,8 +34,15 @@ namespace ReportPortal.SpecFlowPlugin.LogHandler
                 parentTestReporter = GetCurrentTestReporter();
             }
 
-            var nestedStep = parentTestReporter.StartChildTestReporter(startRequest);
-            ReportPortalAddin.LogScopes[logScope.Id] = nestedStep;
+            if (parentTestReporter != null)
+            {
+                var nestedStep = parentTestReporter.StartChildTestReporter(startRequest);
+                ReportPortalAddin.LogScopes[logScope.Id] = nestedStep;
+            }
+            else
+            {
+                _traceLogger.Warn("Unknown current step context to begin new log scope.");
+            }
         }
 
         public void EndScope(ILogScope logScope)
@@ -46,8 +53,15 @@ namespace ReportPortal.SpecFlowPlugin.LogHandler
                 Status = _nestedStepStatusMap[logScope.Status]
             };
 
-            ReportPortalAddin.LogScopes[logScope.Id].Finish(finishRequest);
-            ReportPortalAddin.LogScopes.Remove(logScope.Id);
+            if (ReportPortalAddin.LogScopes.ContainsKey(logScope.Id))
+            {
+                ReportPortalAddin.LogScopes[logScope.Id].Finish(finishRequest);
+                ReportPortalAddin.LogScopes.Remove(logScope.Id);
+            }
+            else
+            {
+                _traceLogger.Warn($"Unknown current step context to end log scope with `{logScope.Id}` ID.");
+            }
         }
 
         public bool Handle(ILogScope logScope, CreateLogItemRequest logRequest)
@@ -56,7 +70,7 @@ namespace ReportPortal.SpecFlowPlugin.LogHandler
 
             ITestReporter testReporter;
 
-            if (logScope != null)
+            if (logScope != null && ReportPortalAddin.LogScopes.ContainsKey(logScope.Id))
             {
                 testReporter = ReportPortalAddin.LogScopes[logScope.Id];
             }

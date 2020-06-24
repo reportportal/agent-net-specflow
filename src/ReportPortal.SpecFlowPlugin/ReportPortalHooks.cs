@@ -56,6 +56,8 @@ namespace ReportPortal.SpecFlowPlugin
 
                 if (!eventArg.Canceled)
                 {
+                    Shared.Extensibility.Analytics.AnalyticsReportEventsObserver.DefineConsumer("agent-dotnet-specflow");
+
                     _launchReporter = _launchReporter ?? new LaunchReporter(_service, config, null, Shared.Extensibility.ExtensionManager.Instance);
 
                     _launchReporter.Start(request);
