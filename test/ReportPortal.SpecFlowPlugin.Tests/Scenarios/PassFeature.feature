@@ -14,3 +14,12 @@ Scenario: Pass Scenario 2
 	And I have entered 7 into the calculator
 	When I press add
 	Then the result should be 10 on the screen
+
+Scenario Outline: Parametrized scenario 3
+	Given I have entered <a> into the calculator
+
+	Examples:
+	| a	|
+	| 1	|
+	| 2	|
+	| 3	|

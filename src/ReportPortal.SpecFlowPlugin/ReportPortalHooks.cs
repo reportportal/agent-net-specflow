@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -227,8 +228,24 @@ namespace ReportPortal.SpecFlowPlugin
                         Description = this.ScenarioContext.ScenarioInfo.Description,
                         StartTime = DateTime.UtcNow,
                         Type = TestItemType.Step,
-                        Attributes = this.ScenarioContext.ScenarioInfo.Tags?.Select(t => new ItemAttribute { Key = "Tag", Value = t }).ToList()
+                        Attributes = this.ScenarioContext.ScenarioInfo.Tags?.Select(t => new ItemAttribute { Key = "Tag", Value = t }).ToList(),
                     };
+
+                    // fetch scenario parameters (from Examples block)
+                    var arguments = this.ScenarioContext.ScenarioInfo.Arguments;
+                    if (arguments != null)
+                    {
+                        request.Parameters = new List<KeyValuePair<string, string>>();
+
+                        foreach (DictionaryEntry argument in arguments)
+                        {
+                            request.Parameters.Add(new KeyValuePair<string, string>
+                            (
+                                argument.Key.ToString(),
+                                argument.Value.ToString()
+                            ));
+                        }
+                    }
 
                     var eventArg = new TestItemStartedEventArgs(_service, request, currentFeature, this.FeatureContext, this.ScenarioContext);
                     ReportPortalAddin.OnBeforeScenarioStarted(this, eventArg);
