@@ -10,28 +10,28 @@ namespace ReportPortal.SpecFlowPlugin.IntegrationTests
         [Given("I have entered (.*) into the calculator")]
         public void GivenIHaveEnteredSomethingIntoTheCalculator(int number)
         {
-            Log.Debug($"Executing {nameof(GivenIHaveEnteredSomethingIntoTheCalculator)} step");
+            Context.Current.Log.Debug($"Executing {nameof(GivenIHaveEnteredSomethingIntoTheCalculator)} step");
 
-            using (var scope = Log.BeginScope("qwe"))
+            using (var scope = Context.Current.Log.BeginScope("qwe"))
             {
                 scope.Info("a");
-                Log.Info("b");
-                Log.RootScope.Info("root");
+                Context.Current.Log.Info("b");
+                Context.Current.Log.Root.Info("root");
 
-                scope.Status = Shared.Logging.LogScopeStatus.Skipped;
+                scope.Status = Shared.Execution.Logging.LogScopeStatus.Skipped;
             }
         }
 
         [When("I press add")]
         public void WhenIPressAdd()
         {
-            Log.Debug($"Executing {nameof(WhenIPressAdd)} step");
+            Context.Current.Log.Debug($"Executing {nameof(WhenIPressAdd)} step");
         }
 
         [Then("the result should be (.*) on the screen")]
         public void ThenTheResultShouldBe(int result)
         {
-            Log.Debug($"Executing {nameof(ThenTheResultShouldBe)} step");
+            Context.Current.Log.Debug($"Executing {nameof(ThenTheResultShouldBe)} step");
         }
 
         [Then(@"I execute failed step")]
