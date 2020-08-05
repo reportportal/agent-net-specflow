@@ -1,21 +1,51 @@
 ﻿using ReportPortal.Client.Abstractions.Models;
 using ReportPortal.Client.Abstractions.Requests;
+using ReportPortal.Shared.Execution.Logging;
 using ReportPortal.Shared.Extensibility;
+using ReportPortal.Shared.Extensibility.Commands;
 using ReportPortal.Shared.Internal.Logging;
-using ReportPortal.Shared.Logging;
 using ReportPortal.Shared.Reporter;
 using System.Collections.Generic;
 
 namespace ReportPortal.SpecFlowPlugin.LogHandler
 {
-    public class FirstActiveTestLogHandler : ILogHandler
+    public class FirstActiveTestLogHandler : ICommandsListener
     {
         private readonly ITraceLogger _traceLogger = TraceLogManager.Instance.GetLogger<FirstActiveTestLogHandler>();
 
-        public int Order => 10;
-
-        public void BeginScope(ILogScope logScope)
+        public void Initialize(ICommandsSource commandsSource)
         {
+            commandsSource.OnBeginLogScopeCommand += CommandsSource_OnBeginLogScopeCommand;
+            commandsSource.OnEndLogScopeCommand += CommandsSource_OnEndLogScopeCommand;
+            commandsSource.OnLogMessageCommand += CommandsSource_OnLogMessageCommand;
+        }
+
+        private void CommandsSource_OnLogMessageCommand(Shared.Execution.ILogContext logContext, Shared.Extensibility.Commands.CommandArgs.LogMessageCommandArgs args)
+        {
+            var logScope = args.LogScope;
+
+            ITestReporter testReporter;
+
+            if (logScope != null && ReportPortalAddin.LogScopes.ContainsKey(logScope.Id))
+            {
+                testReporter = ReportPortalAddin.LogScopes[logScope.Id];
+            }
+            else
+            {
+                // TODO: investigate SpecFlow how to understand current scenario context
+                testReporter = GetCurrentTestReporter();
+            }
+
+            if (testReporter != null)
+            {
+                testReporter.Log(args.LogMessage.ConvertToRequest());
+            }
+        }
+
+        private void CommandsSource_OnBeginLogScopeCommand(Shared.Execution.ILogContext logContext, Shared.Extensibility.Commands.CommandArgs.LogScopeCommandArgs args)
+        {
+            var logScope = args.LogScope;
+
             var startRequest = new StartTestItemRequest
             {
                 Name = logScope.Name,
@@ -34,47 +64,36 @@ namespace ReportPortal.SpecFlowPlugin.LogHandler
                 parentTestReporter = GetCurrentTestReporter();
             }
 
-            var nestedStep = parentTestReporter.StartChildTestReporter(startRequest);
-            ReportPortalAddin.LogScopes[logScope.Id] = nestedStep;
+            if (parentTestReporter != null)
+            {
+                var nestedStep = parentTestReporter.StartChildTestReporter(startRequest);
+                ReportPortalAddin.LogScopes[logScope.Id] = nestedStep;
+            }
+            else
+            {
+                _traceLogger.Warn("Unknown current step context to begin new log scope.");
+            }
         }
 
-        public void EndScope(ILogScope logScope)
+        private void CommandsSource_OnEndLogScopeCommand(Shared.Execution.ILogContext logContext, Shared.Extensibility.Commands.CommandArgs.LogScopeCommandArgs args)
         {
+            var logScope = args.LogScope;
+
             var finishRequest = new FinishTestItemRequest
             {
                 EndTime = logScope.EndTime.Value,
                 Status = _nestedStepStatusMap[logScope.Status]
             };
 
-            ReportPortalAddin.LogScopes[logScope.Id].Finish(finishRequest);
-            ReportPortalAddin.LogScopes.Remove(logScope.Id);
-        }
-
-        public bool Handle(ILogScope logScope, CreateLogItemRequest logRequest)
-        {
-            _traceLogger.Verbose("Identifying test context of log message...");
-
-            ITestReporter testReporter;
-
-            if (logScope != null)
+            if (ReportPortalAddin.LogScopes.ContainsKey(logScope.Id))
             {
-                testReporter = ReportPortalAddin.LogScopes[logScope.Id];
+                ReportPortalAddin.LogScopes[logScope.Id].Finish(finishRequest);
+                ReportPortalAddin.LogScopes.Remove(logScope.Id);
             }
             else
             {
-                // TODO: investigate SpecFlow how to understand current scenario context
-                testReporter = GetCurrentTestReporter();
+                _traceLogger.Warn($"Unknown current step context to end log scope with `{logScope.Id}` ID.");
             }
-            var handled = false;
-
-            if (testReporter != null)
-            {
-                testReporter.Log(logRequest);
-
-                handled = true;
-            }
-
-            return handled;
         }
 
         public ITestReporter GetCurrentTestReporter()
@@ -94,7 +113,7 @@ namespace ReportPortal.SpecFlowPlugin.LogHandler
             return testReporter;
         }
 
-        private Dictionary<LogScopeStatus, Status> _nestedStepStatusMap = new Dictionary<Shared.Logging.LogScopeStatus, Status> {
+        private Dictionary<LogScopeStatus, Status> _nestedStepStatusMap = new Dictionary<LogScopeStatus, Status> {
             { LogScopeStatus.InProgress, Status.InProgress },
             { LogScopeStatus.Passed, Status.Passed },
             { LogScopeStatus.Failed, Status.Failed },
