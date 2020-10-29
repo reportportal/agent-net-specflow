@@ -16,10 +16,11 @@ Scenario: Pass Scenario 2
 	Then the result should be 10 on the screen
 
 Scenario Outline: Parametrized scenario 3
+this is scenario outline description
 	Given I have entered <a> into the calculator
+	And I have entered <b> into the calculator
 
 	Examples:
-	| a	|
-	| 1	|
-	| 2	|
-	| 3	|
+		| a | b  |
+		| 1 | 11 |
+		| 2 | 22 |

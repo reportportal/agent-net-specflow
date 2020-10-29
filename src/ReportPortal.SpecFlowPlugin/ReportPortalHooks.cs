@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Text;
 using ReportPortal.Client;
 using ReportPortal.Client.Abstractions;
 using ReportPortal.Client.Abstractions.Models;
@@ -233,7 +234,7 @@ namespace ReportPortal.SpecFlowPlugin
 
                     // fetch scenario parameters (from Examples block)
                     var arguments = this.ScenarioContext.ScenarioInfo.Arguments;
-                    if (arguments != null)
+                    if (arguments != null && arguments.Count > 0)
                     {
                         request.Parameters = new List<KeyValuePair<string, string>>();
 
@@ -244,6 +245,44 @@ namespace ReportPortal.SpecFlowPlugin
                                 argument.Key.ToString(),
                                 argument.Value.ToString()
                             ));
+                        }
+
+                        // append scenario outline parameters to description
+                        var parametersInfo = new StringBuilder();
+                        parametersInfo.Append("|");
+                        foreach (var p in request.Parameters)
+                        {
+                            parametersInfo.Append(p.Key);
+
+                            parametersInfo.Append("|");
+                        }
+
+                        parametersInfo.AppendLine();
+                        parametersInfo.Append("|");
+                        foreach (var p in request.Parameters)
+                        {
+                            parametersInfo.Append("---");
+                            parametersInfo.Append("|");
+                        }
+
+                        parametersInfo.AppendLine();
+                        parametersInfo.Append("|");
+                        foreach (var p in request.Parameters)
+                        {
+                            parametersInfo.Append("**");
+                            parametersInfo.Append(p.Value);
+                            parametersInfo.Append("**");
+
+                            parametersInfo.Append("|");
+                        }
+
+                        if (string.IsNullOrEmpty(request.Description))
+                        {
+                            request.Description = parametersInfo.ToString();
+                        }
+                        else
+                        {
+                            request.Description = parametersInfo.ToString() + Environment.NewLine + Environment.NewLine + request.Description;
                         }
                     }
 
