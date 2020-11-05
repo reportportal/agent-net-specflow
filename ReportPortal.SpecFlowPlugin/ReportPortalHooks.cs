@@ -28,6 +28,7 @@ namespace ReportPortal.SpecFlowPlugin
                 var request = new StartLaunchRequest
                 {
                     Name = config.GetValue(ConfigurationPath.LaunchName, "SpecFlow Launch"),
+                    Description = config.GetValue<string>(ConfigurationPath.LaunchDescription, string.Empty),
                     StartTime = DateTime.UtcNow
                 };
 
