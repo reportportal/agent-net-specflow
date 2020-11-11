@@ -13,6 +13,7 @@ using ReportPortal.Shared.Internal.Logging;
 using ReportPortal.Shared.Reporter;
 using ReportPortal.SpecFlowPlugin.EventArguments;
 using ReportPortal.SpecFlowPlugin.Extensions;
+using ReportPortal.SpecFlowPlugin.LogHandler;
 using TechTalk.SpecFlow;
 
 namespace ReportPortal.SpecFlowPlugin
@@ -137,6 +138,8 @@ namespace ReportPortal.SpecFlowPlugin
             {
                 if (_launchReporter != null)
                 {
+                    ContextAwareLogHandler.ActiveFeatureContext = featureContext;
+
                     lock (LockHelper.GetLock(FeatureInfoEqualityComparer.GetFeatureInfoHashCode(featureContext.FeatureInfo)))
                     {
                         var currentFeature = ReportPortalAddin.GetFeatureTestReporter(featureContext);
@@ -212,6 +215,10 @@ namespace ReportPortal.SpecFlowPlugin
             {
                 _traceLogger.Error(exp.ToString());
             }
+            finally
+            {
+                ContextAwareLogHandler.ActiveFeatureContext = null;
+            }
         }
 
         [BeforeScenario(Order = -20000)]
@@ -219,6 +226,8 @@ namespace ReportPortal.SpecFlowPlugin
         {
             try
             {
+                ContextAwareLogHandler.ActiveScenarioContext = this.ScenarioContext;
+
                 var currentFeature = ReportPortalAddin.GetFeatureTestReporter(this.FeatureContext);
 
                 if (currentFeature != null)
@@ -366,6 +375,10 @@ namespace ReportPortal.SpecFlowPlugin
             {
                 _traceLogger.Error(exp.ToString());
             }
+            finally
+            {
+                ContextAwareLogHandler.ActiveScenarioContext = null;
+            }
         }
 
         [BeforeStep(Order = -20000)]
@@ -373,6 +386,8 @@ namespace ReportPortal.SpecFlowPlugin
         {
             try
             {
+                ContextAwareLogHandler.ActiveStepContext = this.StepContext;
+
                 var currentScenario = ReportPortalAddin.GetScenarioTestReporter(this.ScenarioContext);
 
                 var stepInfoRequest = new StartTestItemRequest
@@ -441,6 +456,10 @@ namespace ReportPortal.SpecFlowPlugin
             catch (Exception exp)
             {
                 _traceLogger.Error(exp.ToString());
+            }
+            finally
+            {
+                ContextAwareLogHandler.ActiveStepContext = null;
             }
         }
     }
