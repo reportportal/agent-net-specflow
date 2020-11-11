@@ -6,12 +6,14 @@ using ReportPortal.Shared.Extensibility.Commands;
 using ReportPortal.Shared.Internal.Logging;
 using ReportPortal.Shared.Reporter;
 using System.Collections.Generic;
+using System.Threading;
+using TechTalk.SpecFlow;
 
 namespace ReportPortal.SpecFlowPlugin.LogHandler
 {
-    public class FirstActiveTestLogHandler : ICommandsListener
+    public class ContextAwareLogHandler : ICommandsListener
     {
-        private readonly ITraceLogger _traceLogger = TraceLogManager.Instance.GetLogger<FirstActiveTestLogHandler>();
+        private readonly ITraceLogger _traceLogger = TraceLogManager.Instance.GetLogger<ContextAwareLogHandler>();
 
         public void Initialize(ICommandsSource commandsSource)
         {
@@ -96,18 +98,60 @@ namespace ReportPortal.SpecFlowPlugin.LogHandler
             }
         }
 
+        private static readonly AsyncLocal<ScenarioStepContext> _activeStepContext = new AsyncLocal<ScenarioStepContext>();
+
+        public static ScenarioStepContext ActiveStepContext
+        {
+            get
+            {
+                return _activeStepContext.Value;
+            }
+            set
+            {
+                _activeStepContext.Value = value;
+            }
+        }
+
+        private static readonly AsyncLocal<ScenarioContext> _activeScenarioContext = new AsyncLocal<ScenarioContext>();
+
+        public static ScenarioContext ActiveScenarioContext
+        {
+            get
+            {
+                return _activeScenarioContext.Value;
+            }
+            set
+            {
+                _activeScenarioContext.Value = value;
+            }
+        }
+
+        private static readonly AsyncLocal<FeatureContext> _activeFeatureContext = new AsyncLocal<FeatureContext>();
+
+        public static FeatureContext ActiveFeatureContext
+        {
+            get
+            {
+                return _activeFeatureContext.Value;
+            }
+            set
+            {
+                _activeFeatureContext.Value = value;
+            }
+        }
+
         public ITestReporter GetCurrentTestReporter()
         {
-            var testReporter = ReportPortalAddin.GetStepTestReporter(TechTalk.SpecFlow.ScenarioStepContext.Current);
+            var testReporter = ReportPortalAddin.GetStepTestReporter(ActiveStepContext);
 
             if (testReporter == null)
             {
-                testReporter = ReportPortalAddin.GetScenarioTestReporter(TechTalk.SpecFlow.ScenarioContext.Current);
+                testReporter = ReportPortalAddin.GetScenarioTestReporter(ActiveScenarioContext);
             }
 
             if (testReporter == null)
             {
-                testReporter = ReportPortalAddin.GetFeatureTestReporter(TechTalk.SpecFlow.FeatureContext.Current);
+                testReporter = ReportPortalAddin.GetFeatureTestReporter(ActiveFeatureContext);
             }
 
             return testReporter;
