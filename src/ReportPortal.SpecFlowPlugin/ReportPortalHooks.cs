@@ -120,7 +120,8 @@ namespace ReportPortal.SpecFlowPlugin
 
                         _traceLogger.Info($"Finishing to send results to ReportPortal...");
                         _launchReporter.Sync();
-                        _traceLogger.Info($"Elapsed: {sw.Elapsed}{Environment.NewLine}");
+                        _traceLogger.Info($"Elapsed: {sw.Elapsed}");
+                        _traceLogger.Info(_launchReporter.StatisticsCounter.ToString());
 
                         ReportPortalAddin.OnAfterRunFinished(null, new RunFinishedEventArgs(_service, request, _launchReporter));
                     }
