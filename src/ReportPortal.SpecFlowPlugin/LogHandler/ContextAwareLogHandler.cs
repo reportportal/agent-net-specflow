@@ -90,7 +90,7 @@ namespace ReportPortal.SpecFlowPlugin.LogHandler
             if (ReportPortalAddin.LogScopes.ContainsKey(logScope.Id))
             {
                 ReportPortalAddin.LogScopes[logScope.Id].Finish(finishRequest);
-                ReportPortalAddin.LogScopes.Remove(logScope.Id);
+                ReportPortalAddin.LogScopes.TryRemove(logScope.Id, out ITestReporter _);
             }
             else
             {

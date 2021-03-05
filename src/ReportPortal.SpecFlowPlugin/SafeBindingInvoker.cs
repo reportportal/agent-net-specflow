@@ -20,12 +20,14 @@ namespace ReportPortal.SpecFlowPlugin
         public override object InvokeBinding(IBinding binding, IContextManager contextManager, object[] arguments,
             ITestTracer testTracer, out TimeSpan duration)
         {
+            object result = null;
+
             var stopwatch = new Stopwatch();
             stopwatch.Start();
 
             try
             {
-                return base.InvokeBinding(binding, contextManager, arguments,
+                result = base.InvokeBinding(binding, contextManager, arguments,
                     testTracer, out duration);
             }
             catch (Exception ex)
@@ -47,7 +49,11 @@ namespace ReportPortal.SpecFlowPlugin
                     || hookBinding.HookType == HookType.AfterScenario
                     || hookBinding.HookType == HookType.AfterScenarioBlock)
                 {
-                    testTracer.TraceError(ex);
+                    stopwatch.Stop();
+
+                    duration = stopwatch.Elapsed;
+
+                    testTracer.TraceError(ex, duration);
                     SetTestError(contextManager.ScenarioContext, ex);
                 }
             }
@@ -58,7 +64,7 @@ namespace ReportPortal.SpecFlowPlugin
                 duration = stopwatch.Elapsed;
             }
 
-            return new object();
+            return result;
         }
 
         private static void SetTestError(ScenarioContext context, Exception ex)

@@ -2,10 +2,10 @@
   "$schema": "ReportPortal.config.schema",
   "enabled": true,
   "server": {
-    "url": "https://web.demo.reportportal.io/api/v1",
+    "url": "https://demo.reportportal.io/api/v1",
     "project": "default_personal",
     "authentication": {
-      "uuid": "0750ac40-5b5e-44b7-96b6-22ace45fc357"
+      "uuid": "ee0bd0ee-537a-4a86-9b43-f35605fda807"
     }
   },
   "launch": {
