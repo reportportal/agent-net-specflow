@@ -42,6 +42,10 @@ namespace ReportPortal.SpecFlowPlugin.LogHandler
             {
                 testReporter.Log(args.LogMessage.ConvertToRequest());
             }
+            else
+            {
+                _traceLogger.Warn("Unknown current context to log message.");
+            }
         }
 
         private void CommandsSource_OnBeginLogScopeCommand(Shared.Execution.ILogContext logContext, Shared.Extensibility.Commands.CommandArgs.LogScopeCommandArgs args)
@@ -55,20 +59,23 @@ namespace ReportPortal.SpecFlowPlugin.LogHandler
                 HasStats = false
             };
 
-            ITestReporter parentTestReporter;
+            ITestReporter testReporter = null;
 
             if (logScope.Parent != null)
             {
-                parentTestReporter = ReportPortalAddin.LogScopes[logScope.Parent.Id];
+                if (ReportPortalAddin.LogScopes.ContainsKey(logScope.Parent.Id))
+                {
+                    testReporter = ReportPortalAddin.LogScopes[logScope.Parent.Id];
+                }
             }
             else
             {
-                parentTestReporter = GetCurrentTestReporter();
+                testReporter = GetCurrentTestReporter();
             }
 
-            if (parentTestReporter != null)
+            if (testReporter != null)
             {
-                var nestedStep = parentTestReporter.StartChildTestReporter(startRequest);
+                var nestedStep = testReporter.StartChildTestReporter(startRequest);
                 ReportPortalAddin.LogScopes[logScope.Id] = nestedStep;
             }
             else
