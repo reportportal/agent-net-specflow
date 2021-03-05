@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using ReportPortal.Shared.Internal.Logging;
 using ReportPortal.Shared.Reporter;
 using ReportPortal.SpecFlowPlugin.EventArguments;
@@ -12,16 +11,16 @@ namespace ReportPortal.SpecFlowPlugin
     {
         private static readonly ITraceLogger Logger = TraceLogManager.Instance.GetLogger<ReportPortalAddin>();
 
-        private static readonly ConcurrentDictionary<FeatureInfo, ITestReporter> FeatureTestReporters = new ConcurrentDictionary<FeatureInfo, ITestReporter>(new FeatureInfoEqualityComparer());
+        private static ConcurrentDictionary<FeatureInfo, ITestReporter> FeatureTestReporters { get; } = new ConcurrentDictionary<FeatureInfo, ITestReporter>(new FeatureInfoEqualityComparer());
 
-        private static readonly ConcurrentDictionary<FeatureInfo, int> FeatureThreadCount = new ConcurrentDictionary<FeatureInfo, int>(new FeatureInfoEqualityComparer());
+        private static ConcurrentDictionary<FeatureInfo, int> FeatureThreadCount { get; } = new ConcurrentDictionary<FeatureInfo, int>(new FeatureInfoEqualityComparer());
 
-        private static readonly ConcurrentDictionary<ScenarioInfo, ITestReporter> ScenarioTestReporters = new ConcurrentDictionary<ScenarioInfo, ITestReporter>();
+        private static ConcurrentDictionary<ScenarioInfo, ITestReporter> ScenarioTestReporters { get; } = new ConcurrentDictionary<ScenarioInfo, ITestReporter>();
 
-        private static readonly ConcurrentDictionary<StepInfo, ITestReporter> StepTestReporters = new ConcurrentDictionary<StepInfo, ITestReporter>();
+        private static ConcurrentDictionary<StepInfo, ITestReporter> StepTestReporters { get; } = new ConcurrentDictionary<StepInfo, ITestReporter>();
 
         // key: log scope ID, value: according test reporter
-        public static readonly Dictionary<string, ITestReporter> LogScopes = new Dictionary<string, ITestReporter>();
+        public static ConcurrentDictionary<string, ITestReporter> LogScopes { get; } = new ConcurrentDictionary<string, ITestReporter>();
 
         public static ITestReporter GetFeatureTestReporter(FeatureContext context)
         {

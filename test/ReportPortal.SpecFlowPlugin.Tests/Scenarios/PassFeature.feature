@@ -1,7 +1,7 @@
 ﻿Feature: Pass
 	All scenarios in this feature are passed
 
-@mytag
+@mytag @browser:chrome
 Scenario: Pass Scenario 1
 	Given I have entered 50 into the calculator
 	And I have entered 70 into the calculator
