@@ -352,7 +352,17 @@ namespace ReportPortal.SpecFlowPlugin
                         });
                     }
 
+                    // determine scenario status
                     var status = this.ScenarioContext.ScenarioExecutionStatus == ScenarioExecutionStatus.OK ? Status.Passed : Status.Failed;
+
+                    // handle well-known unit framework's ignore exceptions
+                    if (this.ScenarioContext.TestError != null)
+                    {
+                        if (this.ScenarioContext.TestError.GetType().FullName.Equals("NUnit.Framework.IgnoreException"))
+                        {
+                            status = Status.Skipped;
+                        }
+                    }
 
                     var request = new FinishTestItemRequest
                     {
