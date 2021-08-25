@@ -24,3 +24,7 @@ Scenario: Should fail because of step fails before
 Scenario: Should fail because of step fails after
 	Given I have entered 50 into the calculator
 	When I press add
+
+@scenario_should_ignore_before_runtime
+Scenario: Should Be Ignored
+	Given I have entered 50 into the calculator
