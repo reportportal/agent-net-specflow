@@ -364,7 +364,8 @@ namespace ReportPortal.SpecFlowPlugin
                         var testErrorException = this.ScenarioContext.TestError.GetType();
 
                         if (testErrorException.FullName.Equals("NUnit.Framework.IgnoreException")
-                            || testErrorException.FullName.Equals("NUnit.Framework.InconclusiveException"))
+                            || testErrorException.FullName.Equals("NUnit.Framework.InconclusiveException")
+                            || testErrorException.FullName.Equals("Microsoft.VisualStudio.TestTools.UnitTesting.AssertInconclusiveException"))
                         {
                             status = Status.Skipped;
                             issue = new Issue
