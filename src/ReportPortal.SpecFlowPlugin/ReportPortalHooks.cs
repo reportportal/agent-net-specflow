@@ -8,6 +8,7 @@ using ReportPortal.Client;
 using ReportPortal.Client.Abstractions;
 using ReportPortal.Client.Abstractions.Models;
 using ReportPortal.Client.Abstractions.Requests;
+using ReportPortal.Client.Abstractions.Responses;
 using ReportPortal.Shared.Configuration;
 using ReportPortal.Shared.Converters;
 using ReportPortal.Shared.Internal.Logging;
@@ -352,12 +353,35 @@ namespace ReportPortal.SpecFlowPlugin
                         });
                     }
 
+                    Issue issue = null;
+
+                    // determine scenario status
                     var status = this.ScenarioContext.ScenarioExecutionStatus == ScenarioExecutionStatus.OK ? Status.Passed : Status.Failed;
+
+                    // handle well-known unit framework's ignore exceptions
+                    if (this.ScenarioContext.TestError != null)
+                    {
+                        var testErrorException = this.ScenarioContext.TestError.GetType();
+
+                        if (testErrorException.FullName.Equals("NUnit.Framework.IgnoreException")
+                            || testErrorException.FullName.Equals("NUnit.Framework.InconclusiveException")
+                            || testErrorException.FullName.Equals("Microsoft.VisualStudio.TestTools.UnitTesting.AssertInconclusiveException")
+                            || testErrorException.FullName.Equals("Xunit.SkipException"))
+                        {
+                            status = Status.Skipped;
+                            issue = new Issue
+                            {
+                                Type = WellKnownIssueType.NotDefect,
+                                Comment = this.ScenarioContext.TestError.Message
+                            };
+                        }
+                    }
 
                     var request = new FinishTestItemRequest
                     {
                         EndTime = DateTime.UtcNow,
-                        Status = status
+                        Status = status,
+                        Issue = issue
                     };
 
                     var eventArg = new TestItemFinishedEventArgs(_service, request, currentScenario, this.FeatureContext, this.ScenarioContext);

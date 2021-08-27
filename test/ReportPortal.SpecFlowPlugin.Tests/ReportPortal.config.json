@@ -11,7 +11,7 @@
   "launch": {
     "name": "SpecFlow Demo Launch",
     "description": "this is description",
-    "debugMode": true,
+    "debugMode": false,
     "attributes": [ "t1", "t2", "platform:x64" ]
   }
 }

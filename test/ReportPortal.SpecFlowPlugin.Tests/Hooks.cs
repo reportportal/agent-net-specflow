@@ -2,12 +2,20 @@
 using System.IO;
 using System.Reflection;
 using TechTalk.SpecFlow;
+using TechTalk.SpecFlow.UnitTestProvider;
 
 namespace ReportPortal.SpecFlowPlugin.IntegrationTests
 {
     [Binding]
     public sealed class Hooks
     {
+        private IUnitTestRuntimeProvider _unitTestRuntimeProvider;
+
+        public Hooks(IUnitTestRuntimeProvider unitTestRuntimeProvider)
+        {
+            _unitTestRuntimeProvider = unitTestRuntimeProvider;
+        }
+
         [BeforeTestRun]
         public static void BeforeTestRun()
         {
@@ -38,6 +46,13 @@ namespace ReportPortal.SpecFlowPlugin.IntegrationTests
         public void BeforeScenarioShouldFail()
         {
             throw new Exception("This scenario should fail before.");
+        }
+
+        [BeforeScenario("scenario_should_ignore_before_runtime")]
+        public void BeforeScenarioShouldIgnore()
+        {
+            //_unitTestRuntimeProvider.TestIgnore("This scenario should be ignored at runtime.");
+            _unitTestRuntimeProvider.TestInconclusive("This scenario should be ignored at runtime.");
         }
 
         [AfterScenario("scenario_should_fail_after")]

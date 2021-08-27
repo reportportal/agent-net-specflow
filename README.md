@@ -31,6 +31,7 @@ Example of config file:
 }
 ```
 
+Discover [more](https://github.com/reportportal/commons-net/blob/master/docs/Configuration.md) about configuration.
 
 # How To
 
