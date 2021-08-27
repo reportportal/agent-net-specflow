@@ -8,6 +8,7 @@ using ReportPortal.Client;
 using ReportPortal.Client.Abstractions;
 using ReportPortal.Client.Abstractions.Models;
 using ReportPortal.Client.Abstractions.Requests;
+using ReportPortal.Client.Abstractions.Responses;
 using ReportPortal.Shared.Configuration;
 using ReportPortal.Shared.Converters;
 using ReportPortal.Shared.Internal.Logging;
@@ -352,6 +353,8 @@ namespace ReportPortal.SpecFlowPlugin
                         });
                     }
 
+                    Issue issue = null;
+
                     // determine scenario status
                     var status = this.ScenarioContext.ScenarioExecutionStatus == ScenarioExecutionStatus.OK ? Status.Passed : Status.Failed;
 
@@ -361,13 +364,19 @@ namespace ReportPortal.SpecFlowPlugin
                         if (this.ScenarioContext.TestError.GetType().FullName.Equals("NUnit.Framework.IgnoreException"))
                         {
                             status = Status.Skipped;
+                            issue = new Issue
+                            {
+                                Type = WellKnownIssueType.NotDefect,
+                                Comment = this.ScenarioContext.TestError.Message
+                            };
                         }
                     }
 
                     var request = new FinishTestItemRequest
                     {
                         EndTime = DateTime.UtcNow,
-                        Status = status
+                        Status = status,
+                        Issue = issue
                     };
 
                     var eventArg = new TestItemFinishedEventArgs(_service, request, currentScenario, this.FeatureContext, this.ScenarioContext);
