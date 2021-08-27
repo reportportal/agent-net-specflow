@@ -361,7 +361,10 @@ namespace ReportPortal.SpecFlowPlugin
                     // handle well-known unit framework's ignore exceptions
                     if (this.ScenarioContext.TestError != null)
                     {
-                        if (this.ScenarioContext.TestError.GetType().FullName.Equals("NUnit.Framework.IgnoreException"))
+                        var testErrorException = this.ScenarioContext.TestError.GetType();
+
+                        if (testErrorException.FullName.Equals("NUnit.Framework.IgnoreException")
+                            || testErrorException.FullName.Equals("NUnit.Framework.InconclusiveException"))
                         {
                             status = Status.Skipped;
                             issue = new Issue
