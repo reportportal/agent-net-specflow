@@ -51,7 +51,8 @@ namespace ReportPortal.SpecFlowPlugin.IntegrationTests
         [BeforeScenario("scenario_should_ignore_before_runtime")]
         public void BeforeScenarioShouldIgnore()
         {
-            _unitTestRuntimeProvider.TestIgnore("This scenario should be ignored at runtime.");
+            //_unitTestRuntimeProvider.TestIgnore("This scenario should be ignored at runtime.");
+            _unitTestRuntimeProvider.TestInconclusive("This scenario should be ignored at runtime.");
         }
 
         [AfterScenario("scenario_should_fail_after")]
