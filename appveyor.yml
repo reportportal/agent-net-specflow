@@ -1,14 +1,10 @@
 ﻿image: Visual Studio 2019
 
-install:
-  - ps: gitversion /l console /output buildserver
+environment:
+  IGNORE_NORMALISATION_GIT_HEAD_MOVE: 1
 
 configuration:
   - Release
-
-dotnet_csproj:
-  patch: true
-  version: '$(GitVersion_SemVer)'
 
 build_script:
   - cmd: dotnet build
