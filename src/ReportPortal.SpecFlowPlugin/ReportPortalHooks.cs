@@ -21,7 +21,7 @@ using TechTalk.SpecFlow;
 namespace ReportPortal.SpecFlowPlugin
 {
     [Binding]
-    internal class ReportPortalHooks : Steps
+    internal class ReportPortalHooks
     {
         private static readonly ITraceLogger _traceLogger = TraceLogManager.Instance.GetLogger<ReportPortalHooks>();
 
@@ -225,27 +225,27 @@ namespace ReportPortal.SpecFlowPlugin
         }
 
         [BeforeScenario(Order = -20000)]
-        public void BeforeScenario()
+        public void BeforeScenario(FeatureContext featureContext, ScenarioContext scenarioContext)
         {
             try
             {
-                ContextAwareLogHandler.ActiveScenarioContext = this.ScenarioContext;
+                ContextAwareLogHandler.ActiveScenarioContext = scenarioContext;
 
-                var currentFeature = ReportPortalAddin.GetFeatureTestReporter(this.FeatureContext);
+                var currentFeature = ReportPortalAddin.GetFeatureTestReporter(featureContext);
 
                 if (currentFeature != null)
                 {
                     var request = new StartTestItemRequest
                     {
-                        Name = this.ScenarioContext.ScenarioInfo.Title,
-                        Description = this.ScenarioContext.ScenarioInfo.Description,
+                        Name = scenarioContext.ScenarioInfo.Title,
+                        Description = scenarioContext.ScenarioInfo.Description,
                         StartTime = DateTime.UtcNow,
                         Type = TestItemType.Step,
-                        Attributes = this.ScenarioContext.ScenarioInfo.Tags?.Select(t => new ItemAttributeConverter().ConvertFrom(t, (opts) => opts.UndefinedKey = "Tag")).ToList(),
+                        Attributes = scenarioContext.ScenarioInfo.Tags?.Select(t => new ItemAttributeConverter().ConvertFrom(t, (opts) => opts.UndefinedKey = "Tag")).ToList(),
                     };
 
                     // fetch scenario parameters (from Examples block)
-                    var arguments = this.ScenarioContext.ScenarioInfo.Arguments;
+                    var arguments = scenarioContext.ScenarioInfo.Arguments;
                     if (arguments != null && arguments.Count > 0)
                     {
                         request.Parameters = new List<KeyValuePair<string, string>>();
@@ -298,15 +298,15 @@ namespace ReportPortal.SpecFlowPlugin
                         }
                     }
 
-                    var eventArg = new TestItemStartedEventArgs(_service, request, currentFeature, this.FeatureContext, this.ScenarioContext);
+                    var eventArg = new TestItemStartedEventArgs(_service, request, currentFeature, featureContext, scenarioContext);
                     ReportPortalAddin.OnBeforeScenarioStarted(this, eventArg);
 
                     if (!eventArg.Canceled)
                     {
                         var currentScenario = currentFeature.StartChildTestReporter(request);
-                        ReportPortalAddin.SetScenarioTestReporter(this.ScenarioContext, currentScenario);
+                        ReportPortalAddin.SetScenarioTestReporter(scenarioContext, currentScenario);
 
-                        ReportPortalAddin.OnAfterScenarioStarted(this, new TestItemStartedEventArgs(_service, request, currentFeature, this.FeatureContext, this.ScenarioContext));
+                        ReportPortalAddin.OnAfterScenarioStarted(this, new TestItemStartedEventArgs(_service, request, currentFeature, featureContext, scenarioContext));
                     }
                 }
             }
@@ -317,33 +317,33 @@ namespace ReportPortal.SpecFlowPlugin
         }
 
         [AfterScenario(Order = 20000)]
-        public void AfterScenario()
+        public void AfterScenario(FeatureContext featureContext, ScenarioContext scenarioContext)
         {
             try
             {
-                var currentScenario = ReportPortalAddin.GetScenarioTestReporter(this.ScenarioContext);
+                var currentScenario = ReportPortalAddin.GetScenarioTestReporter(scenarioContext);
 
                 if (currentScenario != null)
                 {
-                    if (this.ScenarioContext.ScenarioExecutionStatus == ScenarioExecutionStatus.TestError)
+                    if (scenarioContext.ScenarioExecutionStatus == ScenarioExecutionStatus.TestError)
                     {
                         currentScenario.Log(new CreateLogItemRequest
                         {
                             Level = LogLevel.Error,
                             Time = DateTime.UtcNow,
-                            Text = this.ScenarioContext.TestError?.ToString()
+                            Text = scenarioContext.TestError?.ToString()
                         });
                     }
-                    else if (this.ScenarioContext.ScenarioExecutionStatus == ScenarioExecutionStatus.BindingError)
+                    else if (scenarioContext.ScenarioExecutionStatus == ScenarioExecutionStatus.BindingError)
                     {
                         currentScenario.Log(new CreateLogItemRequest
                         {
                             Level = LogLevel.Error,
                             Time = DateTime.UtcNow,
-                            Text = this.ScenarioContext.TestError?.Message
+                            Text = scenarioContext.TestError?.Message
                         });
                     }
-                    else if (this.ScenarioContext.ScenarioExecutionStatus == ScenarioExecutionStatus.UndefinedStep)
+                    else if (scenarioContext.ScenarioExecutionStatus == ScenarioExecutionStatus.UndefinedStep)
                     {
                         currentScenario.Log(new CreateLogItemRequest
                         {
@@ -356,12 +356,12 @@ namespace ReportPortal.SpecFlowPlugin
                     Issue issue = null;
 
                     // determine scenario status
-                    var status = this.ScenarioContext.ScenarioExecutionStatus == ScenarioExecutionStatus.OK ? Status.Passed : Status.Failed;
+                    var status = scenarioContext.ScenarioExecutionStatus == ScenarioExecutionStatus.OK ? Status.Passed : Status.Failed;
 
                     // handle well-known unit framework's ignore exceptions
-                    if (this.ScenarioContext.TestError != null)
+                    if (scenarioContext.TestError != null)
                     {
-                        var testErrorException = this.ScenarioContext.TestError.GetType();
+                        var testErrorException = scenarioContext.TestError.GetType();
 
                         if (testErrorException.FullName.Equals("NUnit.Framework.IgnoreException")
                             || testErrorException.FullName.Equals("NUnit.Framework.InconclusiveException")
@@ -372,7 +372,7 @@ namespace ReportPortal.SpecFlowPlugin
                             issue = new Issue
                             {
                                 Type = WellKnownIssueType.NotDefect,
-                                Comment = this.ScenarioContext.TestError.Message
+                                Comment = scenarioContext.TestError.Message
                             };
                         }
                     }
@@ -384,16 +384,16 @@ namespace ReportPortal.SpecFlowPlugin
                         Issue = issue
                     };
 
-                    var eventArg = new TestItemFinishedEventArgs(_service, request, currentScenario, this.FeatureContext, this.ScenarioContext);
+                    var eventArg = new TestItemFinishedEventArgs(_service, request, currentScenario, featureContext, scenarioContext);
                     ReportPortalAddin.OnBeforeScenarioFinished(this, eventArg);
 
                     if (!eventArg.Canceled)
                     {
                         currentScenario.Finish(request);
 
-                        ReportPortalAddin.OnAfterScenarioFinished(this, new TestItemFinishedEventArgs(_service, request, currentScenario, this.FeatureContext, this.ScenarioContext));
+                        ReportPortalAddin.OnAfterScenarioFinished(this, new TestItemFinishedEventArgs(_service, request, currentScenario, featureContext, scenarioContext));
 
-                        ReportPortalAddin.RemoveScenarioTestReporter(this.ScenarioContext, currentScenario);
+                        ReportPortalAddin.RemoveScenarioTestReporter(scenarioContext, currentScenario);
                     }
                 }
             }
@@ -408,31 +408,33 @@ namespace ReportPortal.SpecFlowPlugin
         }
 
         [BeforeStep(Order = -20000)]
-        public void BeforeStep()
+        public void BeforeStep(FeatureContext featureContext, ScenarioContext scenarioContext)
         {
+            var stepContext = scenarioContext.StepContext;
+
             try
             {
-                ContextAwareLogHandler.ActiveStepContext = this.StepContext;
+                ContextAwareLogHandler.ActiveStepContext = stepContext;
 
-                var currentScenario = ReportPortalAddin.GetScenarioTestReporter(this.ScenarioContext);
+                var currentScenario = ReportPortalAddin.GetScenarioTestReporter(scenarioContext);
 
                 var stepInfoRequest = new StartTestItemRequest
                 {
-                    Name = this.StepContext.StepInfo.GetCaption(),
+                    Name = stepContext.StepInfo.GetCaption(),
                     StartTime = DateTime.UtcNow,
                     HasStats = false
                 };
 
-                var eventArg = new StepStartedEventArgs(_service, stepInfoRequest, currentScenario, this.FeatureContext, this.ScenarioContext, this.StepContext);
+                var eventArg = new StepStartedEventArgs(_service, stepInfoRequest, currentScenario, featureContext, scenarioContext, stepContext);
                 ReportPortalAddin.OnBeforeStepStarted(this, eventArg);
 
                 if (!eventArg.Canceled)
                 {
                     var stepReporter = currentScenario.StartChildTestReporter(stepInfoRequest);
-                    ReportPortalAddin.SetStepTestReporter(this.StepContext, stepReporter);
+                    ReportPortalAddin.SetStepTestReporter(stepContext, stepReporter);
 
                     // step parameters
-                    var formattedParameters = this.StepContext.StepInfo.GetFormattedParameters();
+                    var formattedParameters = stepContext.StepInfo.GetFormattedParameters();
                     if (!string.IsNullOrEmpty(formattedParameters))
                     {
                         stepReporter.Log(new CreateLogItemRequest
@@ -453,29 +455,31 @@ namespace ReportPortal.SpecFlowPlugin
         }
 
         [AfterStep(Order = 20000)]
-        public void AfterStep()
+        public void AfterStep(FeatureContext featureContext, ScenarioContext scenarioContext)
         {
+            var stepContext = scenarioContext.StepContext;
+
             try
             {
-                var currentStep = ReportPortalAddin.GetStepTestReporter(this.StepContext);
+                var currentStep = ReportPortalAddin.GetStepTestReporter(stepContext);
 
                 var stepFinishRequest = new FinishTestItemRequest
                 {
                     EndTime = DateTime.UtcNow
                 };
 
-                if (this.ScenarioContext.ScenarioExecutionStatus == ScenarioExecutionStatus.TestError)
+                if (scenarioContext.ScenarioExecutionStatus == ScenarioExecutionStatus.TestError)
                 {
                     stepFinishRequest.Status = Status.Failed;
                 }
 
-                var eventArg = new StepFinishedEventArgs(_service, stepFinishRequest, currentStep, this.FeatureContext, this.ScenarioContext, this.StepContext);
+                var eventArg = new StepFinishedEventArgs(_service, stepFinishRequest, currentStep, featureContext, scenarioContext, stepContext);
                 ReportPortalAddin.OnBeforeStepFinished(this, eventArg);
 
                 if (!eventArg.Canceled)
                 {
                     currentStep.Finish(stepFinishRequest);
-                    ReportPortalAddin.RemoveStepTestReporter(this.StepContext, currentStep);
+                    ReportPortalAddin.RemoveStepTestReporter(stepContext, currentStep);
                     ReportPortalAddin.OnAfterStepFinished(this, eventArg);
                 }
             }
