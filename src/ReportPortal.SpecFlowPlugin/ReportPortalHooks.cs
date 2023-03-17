@@ -132,15 +132,7 @@ namespace ReportPortal.SpecFlowPlugin
 
                         _traceLogger.Info($"Finishing to send results to ReportPortal...");
 
-                        // Waiting all schedlued requests
-                        // TODO: use _launchReporter.Sync() when https://github.com/reportportal/commons-net/issues/113 is resolved
-                        if (_launchReporter.ChildTestReporters != null)
-                        {
-                            foreach (var childReporter in _launchReporter.ChildTestReporters)
-                            {
-                                childReporter.Sync();
-                            }
-                        }
+                        _launchReporter.Sync();
 
                         _traceLogger.Info($"Elapsed: {sw.Elapsed}");
                         _traceLogger.Info(_launchReporter.StatisticsCounter.ToString());
