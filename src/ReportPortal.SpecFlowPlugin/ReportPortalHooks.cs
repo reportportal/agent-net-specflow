@@ -63,7 +63,7 @@ namespace ReportPortal.SpecFlowPlugin
                     Shared.Extensibility.Embedded.Analytics.AnalyticsReportEventsObserver.DefineConsumer("agent-dotnet-specflow");
 
                     _launchReporter = _launchReporter ?? new LaunchReporter(_service, config, null, Shared.Extensibility.ExtensionManager.Instance);
-                    
+
                     _launchReporter.Start(request);
 
                     ReportPortalAddin.OnAfterRunStarted(null, new RunStartedEventArgs(_service, request, _launchReporter));
