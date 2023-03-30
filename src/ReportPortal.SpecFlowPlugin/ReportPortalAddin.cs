@@ -11,6 +11,8 @@ namespace ReportPortal.SpecFlowPlugin
     {
         private static readonly ITraceLogger Logger = TraceLogManager.Instance.GetLogger<ReportPortalAddin>();
 
+        public static ILaunchReporter LaunchReporter { get; internal set; }
+
         private static ConcurrentDictionary<FeatureInfo, ITestReporter> FeatureTestReporters { get; } = new ConcurrentDictionary<FeatureInfo, ITestReporter>(new FeatureInfoEqualityComparer());
 
         private static ConcurrentDictionary<FeatureInfo, int> FeatureThreadCount { get; } = new ConcurrentDictionary<FeatureInfo, int>(new FeatureInfoEqualityComparer());
