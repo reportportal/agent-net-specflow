@@ -1,5 +1,6 @@
 ﻿using ReportPortal.Client.Abstractions.Models;
 using ReportPortal.Client.Abstractions.Requests;
+using ReportPortal.Shared.Execution;
 using ReportPortal.Shared.Execution.Logging;
 using ReportPortal.Shared.Extensibility;
 using ReportPortal.Shared.Extensibility.Commands;
@@ -22,8 +23,14 @@ namespace ReportPortal.SpecFlowPlugin.LogHandler
             commandsSource.OnLogMessageCommand += CommandsSource_OnLogMessageCommand;
         }
 
-        private void CommandsSource_OnLogMessageCommand(Shared.Execution.ILogContext logContext, Shared.Extensibility.Commands.CommandArgs.LogMessageCommandArgs args)
+        private void CommandsSource_OnLogMessageCommand(ILogContext logContext, Shared.Extensibility.Commands.CommandArgs.LogMessageCommandArgs args)
         {
+            if (logContext is ILaunchContext && ReportPortalAddin.LaunchReporter != null)
+            {
+                ReportPortalAddin.LaunchReporter.Log(args.LogMessage.ConvertToRequest());
+                return;
+            }
+
             var logScope = args.LogScope;
 
             ITestReporter testReporter;
@@ -48,7 +55,7 @@ namespace ReportPortal.SpecFlowPlugin.LogHandler
             }
         }
 
-        private void CommandsSource_OnBeginLogScopeCommand(Shared.Execution.ILogContext logContext, Shared.Extensibility.Commands.CommandArgs.LogScopeCommandArgs args)
+        private void CommandsSource_OnBeginLogScopeCommand(ILogContext logContext, Shared.Extensibility.Commands.CommandArgs.LogScopeCommandArgs args)
         {
             var logScope = args.LogScope;
 
@@ -84,7 +91,7 @@ namespace ReportPortal.SpecFlowPlugin.LogHandler
             }
         }
 
-        private void CommandsSource_OnEndLogScopeCommand(Shared.Execution.ILogContext logContext, Shared.Extensibility.Commands.CommandArgs.LogScopeCommandArgs args)
+        private void CommandsSource_OnEndLogScopeCommand(ILogContext logContext, Shared.Extensibility.Commands.CommandArgs.LogScopeCommandArgs args)
         {
             var logScope = args.LogScope;
 

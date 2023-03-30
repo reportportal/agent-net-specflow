@@ -67,8 +67,9 @@ namespace ReportPortal.SpecFlowPlugin
                     _launchReporter.Start(request);
 
                     ReportPortalAddin.OnAfterRunStarted(null, new RunStartedEventArgs(_service, request, _launchReporter));
-
                 }
+
+                ReportPortalAddin.LaunchReporter = _launchReporter;
             }
             catch (Exception exp)
             {
