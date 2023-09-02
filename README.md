@@ -8,19 +8,17 @@ Install **ReportPortal.SpecFlow** NuGet package into your project with scenarios
 > PS> Install-Package ReportPortal.SpecFlow
 
 # Configuration
-Add `ReportPortal.config.json` file into tests project with `Copy to Output Directory = Copy if newer` property.
+Add `ReportPortal.json` file into tests project with `Copy to Output Directory = Copy if newer` property.
 
 Example of config file:
 ```json
 {
-  "$schema": "https://raw.githubusercontent.com/reportportal/agent-net-specflow/master/ReportPortal.SpecFlowPlugin/ReportPortal.config.schema",
+  "$schema": "https://raw.githubusercontent.com/reportportal/agent-net-specflow/master/src/ReportPortal.SpecFlowPlugin/ReportPortal.config.schema",
   "enabled": true,
   "server": {
-    "url": "https://rp.epam.com/api/v1/",
+    "url": "https://rp.epam.com",
     "project": "default_project",
-    "authentication": {
-      "uuid": "7853c7a9-7f27-43ea-835a-cab01355fd17"
-    }
+    "apiKey": "7853c7a9-7f27-43ea-835a-cab01355fd17"
   },
   "launch": {
     "name": "SpecFlow Demo Launch",
